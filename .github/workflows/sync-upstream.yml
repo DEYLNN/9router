@@ -1,0 +1,32 @@
+name: Sync upstream to main
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 * * * *" # tiap 1 jam
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Add upstream
+        run: |
+          git remote add upstream https://github.com/decolua/9router.git
+          git fetch upstream master
+
+      - name: Merge upstream/master into main
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git merge upstream/master --no-edit
+          git push origin main
