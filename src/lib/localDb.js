@@ -372,22 +372,34 @@ export async function createProviderConnection(data) {
   const db = await getDb();
   const now = new Date().toISOString();
 
-  // Upsert: check existing by provider + email (oauth) or provider + name (apikey)
+  // Upsert: check existing by ID first, then by provider + email (oauth) or provider + name (apikey)
   let existingIndex = -1;
-  if (data.authType === "oauth" && data.email) {
-    existingIndex = db.data.providerConnections.findIndex(
-      c => c.provider === data.provider && c.authType === "oauth" && c.email === data.email
-    );
-  } else if (data.authType === "apikey" && data.name) {
-    existingIndex = db.data.providerConnections.findIndex(
-      c => c.provider === data.provider && c.authType === "apikey" && c.name === data.name
-    );
+  
+  // First check if ID already exists in database
+  if (data.id) {
+    existingIndex = db.data.providerConnections.findIndex(c => c.id === data.id);
+  }
+  
+  // If no ID match, check by provider + email (oauth) or provider + name (apikey)
+  if (existingIndex === -1) {
+    if (data.authType === "oauth" && data.email) {
+      existingIndex = db.data.providerConnections.findIndex(
+        c => c.provider === data.provider && c.authType === "oauth" && c.email === data.email
+      );
+    } else if (data.authType === "apikey" && data.name) {
+      existingIndex = db.data.providerConnections.findIndex(
+        c => c.provider === data.provider && c.authType === "apikey" && c.name === data.name
+      );
+    }
   }
 
   if (existingIndex !== -1) {
+    // Update existing connection, preserve the original ID
+    const existingId = db.data.providerConnections[existingIndex].id;
     db.data.providerConnections[existingIndex] = {
       ...db.data.providerConnections[existingIndex],
       ...data,
+      id: existingId, // Always keep the existing ID
       updatedAt: now,
     };
     await safeWrite(db);
@@ -414,7 +426,7 @@ export async function createProviderConnection(data) {
   }
 
   const connection = {
-    id: uuidv4(),
+    id: data.id || uuidv4(), // Use provided ID if available, otherwise generate new one
     provider: data.provider,
     authType: data.authType || "oauth",
     name: connectionName,

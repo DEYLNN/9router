@@ -436,6 +436,44 @@ export async function getRecentLogs(limit = 200) {
 }
 
 /**
+ * Reset persisted usage data and logs without touching the main app database.
+ */
+export async function resetUsageData() {
+  if (isCloud) {
+    if (dbInstance) dbInstance.data = { ...defaultData, history: [], dailySummary: {} };
+    statsEmitter.emit("update");
+    return { deleted: [], skipped: ["cloud-runtime"] };
+  }
+
+  const deleted = [];
+  const skipped = [];
+  const files = [DB_FILE, LOG_FILE].filter(Boolean);
+
+  for (const file of files) {
+    try {
+      if (fs.existsSync(file)) {
+        fs.unlinkSync(file);
+        deleted.push(path.basename(file));
+      } else {
+        skipped.push(path.basename(file));
+      }
+    } catch (error) {
+      throw new Error(`Failed to delete ${path.basename(file)}: ${error.message}`);
+    }
+  }
+
+  dbInstance = null;
+  pendingRequests.byModel = {};
+  pendingRequests.byAccount = {};
+  lastErrorProvider.provider = "";
+  lastErrorProvider.ts = 0;
+  statsEmitter.emit("update");
+  statsEmitter.emit("pending");
+
+  return { deleted, skipped };
+}
+
+/**
  * Calculate cost for a usage entry
  * @param {string} provider - Provider ID
  * @param {string} model - Model ID
