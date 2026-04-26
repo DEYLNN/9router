@@ -32,6 +32,10 @@ export class DefaultExecutor extends BaseExecutor {
         return `${this.config.baseUrl}?beta=true`;
       case "gemini":
         return `${this.config.baseUrl}/${model}:${stream ? "streamGenerateContent?alt=sse" : "generateContent"}`;
+      case "cloudflare": {
+        const accountId = credentials?.providerSpecificData?.accountId || process.env.CLOUDFLARE_ACCOUNT_ID || "";
+        return this.config.baseUrl.replace("{accountId}", encodeURIComponent(accountId));
+      }
       default:
         return this.config.baseUrl;
     }
