@@ -20,6 +20,9 @@ export default function EditConnectionModal({ isOpen, connection, proxyPools, on
     deployment: "",
     organization: "",
   });
+  const [cloudflareData, setCloudflareData] = useState({
+    accountId: "",
+  });
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState(null);
   const [validating, setValidating] = useState(false);
@@ -42,6 +45,11 @@ export default function EditConnectionModal({ isOpen, connection, proxyPools, on
           organization: connection.providerSpecificData.organization || "",
         });
       }
+      if (connection.provider === "cloudflare") {
+        setCloudflareData({
+          accountId: connection.providerSpecificData?.accountId || "",
+        });
+      }
       setTestResult(null);
       setValidationResult(null);
     }
@@ -49,9 +57,20 @@ export default function EditConnectionModal({ isOpen, connection, proxyPools, on
 
   const isOAuth = connection?.authType === "oauth";
   const isAzure = connection?.provider === "azure";
+  const isCloudflare = connection?.provider === "cloudflare";
   const isCompatible = connection
     ? (isOpenAICompatibleProvider(connection.provider) || isAnthropicCompatibleProvider(connection.provider))
     : false;
+
+  const buildProviderSpecificData = () => {
+    if (isAzure) {
+      return azureData;
+    }
+    if (isCloudflare) {
+      return { accountId: cloudflareData.accountId.trim() };
+    }
+    return undefined;
+  };
 
   const handleTest = async () => {
     if (!connection?.provider) return;
@@ -79,7 +98,7 @@ export default function EditConnectionModal({ isOpen, connection, proxyPools, on
         body: JSON.stringify({
           provider: connection.provider,
           apiKey: formData.apiKey,
-          ...(isAzure ? { providerSpecificData: azureData } : {}),
+          ...(buildProviderSpecificData() ? { providerSpecificData: buildProviderSpecificData() } : {}),
         }),
       });
       const data = await res.json();
@@ -112,7 +131,7 @@ export default function EditConnectionModal({ isOpen, connection, proxyPools, on
               body: JSON.stringify({
                 provider: connection.provider,
                 apiKey: formData.apiKey,
-                ...(isAzure ? { providerSpecificData: azureData } : {}),
+                ...(buildProviderSpecificData() ? { providerSpecificData: buildProviderSpecificData() } : {}),
               }),
             });
             const data = await res.json();
@@ -138,6 +157,11 @@ export default function EditConnectionModal({ isOpen, connection, proxyPools, on
           apiVersion: azureData.apiVersion,
           deployment: azureData.deployment,
           organization: azureData.organization,
+        };
+      }
+      if (isCloudflare) {
+        updates.providerSpecificData = {
+          accountId: cloudflareData.accountId.trim(),
         };
       }
       
@@ -233,6 +257,19 @@ export default function EditConnectionModal({ isOpen, connection, proxyPools, on
           </div>
         )}
 
+        {isCloudflare && (
+          <div className="bg-sidebar/50 p-4 rounded-lg border border-accent/20">
+            <h3 className="font-semibold mb-3 text-sm">Cloudflare Configuration</h3>
+            <Input
+              label="Account ID"
+              value={cloudflareData.accountId}
+              onChange={(e) => setCloudflareData({ ...cloudflareData, accountId: e.target.value })}
+              placeholder="Your Cloudflare account ID"
+              hint="Required for Workers AI requests and validation."
+            />
+          </div>
+        )}
+
         {!isCompatible && !isAzure && (
           <div className="flex items-center gap-3">
             <Button onClick={handleTest} variant="secondary" disabled={testing}>
@@ -247,7 +284,7 @@ export default function EditConnectionModal({ isOpen, connection, proxyPools, on
         )}
 
         <div className="flex gap-2">
-          <Button onClick={handleSubmit} fullWidth disabled={saving}>{saving ? "Saving..." : "Save"}</Button>
+          <Button onClick={handleSubmit} fullWidth disabled={saving || (isCloudflare && !cloudflareData.accountId.trim())}>{saving ? "Saving..." : "Save"}</Button>
           <Button onClick={onClose} variant="ghost" fullWidth>Cancel</Button>
         </div>
       </div>

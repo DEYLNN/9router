@@ -53,6 +53,8 @@ const ALIAS_TO_PROVIDER_ID = {
   "volcengine-ark": "volcengine-ark",
   byteplus: "byteplus",
   bpm: "byteplus",
+  cf: "cloudflare",
+  cloudflare: "cloudflare",
   cursor: "cursor",
   vx: "vertex",
   vertex: "vertex",
