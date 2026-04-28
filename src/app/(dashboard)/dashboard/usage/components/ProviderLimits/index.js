@@ -442,17 +442,37 @@ export default function ProviderLimits() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <select
-            value={providerFilter}
-            onChange={(event) => setProviderFilter(event.target.value)}
-            className="h-10 min-w-0 flex-1 rounded-lg border border-black/10 bg-transparent px-3 text-sm text-text-primary sm:flex-none dark:border-white/10"
-            aria-label="Filter quota providers"
-          >
-            <option value="all">All providers</option>
+          <div className="flex max-w-full items-center gap-1.5 overflow-x-auto rounded-xl border border-black/10 bg-black/[0.02] p-1 dark:border-white/10 dark:bg-white/[0.03] sm:flex-wrap sm:overflow-visible">
+            <button
+              type="button"
+              onClick={() => setProviderFilter("all")}
+              className={`flex h-9 shrink-0 items-center gap-2 rounded-lg px-2.5 text-sm transition-colors ${providerFilter === "all" ? "bg-primary text-white shadow-sm" : "text-text-muted hover:bg-black/5 hover:text-text-primary dark:hover:bg-white/10"}`}
+              title="All providers"
+              aria-label="Show all providers"
+            >
+              <span className="material-symbols-outlined text-[18px]">apps</span>
+              <span className="hidden sm:inline">All</span>
+            </button>
             {providerOptions.map((provider) => (
-              <option key={provider} value={provider}>{provider}</option>
+              <button
+                key={provider}
+                type="button"
+                onClick={() => setProviderFilter(provider)}
+                className={`flex h-9 shrink-0 items-center gap-2 rounded-lg px-2 transition-colors ${providerFilter === provider ? "bg-primary/10 text-primary ring-1 ring-primary/30" : "text-text-muted hover:bg-black/5 hover:text-text-primary dark:hover:bg-white/10"}`}
+                title={provider}
+                aria-label={`Filter ${provider}`}
+              >
+                <ProviderIcon
+                  src={`/providers/${provider}.png`}
+                  alt={provider}
+                  size={22}
+                  className="size-[22px] rounded-md object-contain"
+                  fallbackText={provider.slice(0, 2).toUpperCase()}
+                />
+                <span className="hidden text-sm capitalize sm:inline">{provider}</span>
+              </button>
             ))}
-          </select>
+          </div>
           <button
             type="button"
             onClick={() => setExpiringFirst((prev) => !prev)}
