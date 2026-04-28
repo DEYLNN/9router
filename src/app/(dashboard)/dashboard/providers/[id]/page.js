@@ -724,7 +724,6 @@ export default function ProviderDetailPage() {
     if (isAnthropicCompatible) {
       return "/providers/anthropic-m.png";
     }
-    if (providerInfo.id === "cloudflare-ai") return "/providers/cloudflare.png";
     return `/providers/${providerInfo.id}.png`;
   };
 

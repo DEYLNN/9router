@@ -555,7 +555,7 @@ function ProviderCard({ providerId, provider, stats, authType, onToggle }) {
               }}
             >
               <ProviderIcon
-                src={provider.id === "cloudflare-ai" ? "/providers/cloudflare.png" : `/providers/${provider.id}.png`}
+                src={`/providers/${provider.id}.png`}
                 alt={provider.name}
                 size={30}
                 className="object-contain rounded-lg max-w-[32px] max-h-[32px]"
@@ -665,7 +665,6 @@ function ApiKeyProviderCard({
         ? "/providers/oai-r.png"
         : "/providers/oai-cc.png";
     if (isAnthropicCompatible) return "/providers/anthropic-m.png";
-    if (provider.id === "cloudflare-ai") return "/providers/cloudflare.png";
     return `/providers/${provider.id}.png`;
   };
 

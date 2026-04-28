@@ -26,7 +26,7 @@ const getPageInfo = (pathname) => {
       breadcrumbs: [
         { label: "Media Providers", href: `/dashboard/media-providers/${kindId}` },
         { label: kindConfig?.label || kindId, href: `/dashboard/media-providers/${kindId}` },
-        { label: provider?.name || providerId, image: providerId === "cloudflare-ai" ? "/providers/cloudflare.png" : `/providers/${providerId}.png` },
+        { label: provider?.name || providerId, image: `/providers/${providerId}.png` },
       ],
     };
   }
@@ -58,7 +58,7 @@ const getPageInfo = (pathname) => {
           { label: "Providers", href: "/dashboard/providers" },
           {
             label: providerInfo.name,
-            image: providerInfo.id === "cloudflare-ai" ? "/providers/cloudflare.png" : `/providers/${providerInfo.id}.png`,
+            image: `/providers/${providerInfo.id}.png`,
           },
         ],
       };
