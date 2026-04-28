@@ -474,49 +474,34 @@ export default function ProviderLimits() {
               <>
                 <button
                   type="button"
-                  className="fixed inset-0 z-30 hidden bg-black/10 backdrop-blur-[1px] sm:block"
+                  className="fixed inset-0 z-30 bg-transparent"
                   aria-label="Close provider filter"
                   onClick={() => setProviderMenuOpen(false)}
                 />
-                <div className="fixed inset-x-0 bottom-0 z-40 max-h-[75vh] overflow-hidden rounded-t-3xl border border-black/10 bg-surface/95 p-3 shadow-2xl shadow-black/20 backdrop-blur dark:border-white/10 dark:bg-surface/95 sm:absolute sm:bottom-auto sm:left-0 sm:right-auto sm:mt-2 sm:max-h-none sm:w-72 sm:rounded-2xl sm:p-1.5">
-                  <div className="mb-3 flex items-center justify-between px-1 sm:hidden">
-                    <div>
-                      <p className="text-sm font-semibold text-text-primary">Filter provider</p>
-                      <p className="text-xs text-text-muted">Pilih kategori quota</p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setProviderMenuOpen(false)}
-                      className="grid size-9 place-items-center rounded-full bg-black/5 text-text-muted dark:bg-white/10"
-                      aria-label="Close provider filter"
-                    >
-                      <span className="material-symbols-outlined text-[20px]">close</span>
-                    </button>
-                  </div>
-
+                <div className="absolute left-0 z-40 mt-2 w-64 overflow-hidden rounded-2xl border border-black/10 bg-surface/95 p-1.5 shadow-xl shadow-black/10 backdrop-blur dark:border-white/10 dark:bg-surface/95 sm:w-72">
                   <button
                     type="button"
                     onClick={() => { setProviderFilter("all"); setProviderMenuOpen(false); }}
-                    className={`flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-left text-sm transition-colors sm:rounded-xl sm:py-2 ${providerFilter === "all" ? "bg-primary/10 text-primary" : "text-text-primary hover:bg-black/5 dark:hover:bg-white/10"}`}
+                    className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-colors ${providerFilter === "all" ? "bg-primary/10 text-primary" : "text-text-primary hover:bg-black/5 dark:hover:bg-white/10"}`}
                   >
-                    <span className="material-symbols-outlined text-[24px] sm:text-[22px]">apps</span>
+                    <span className="material-symbols-outlined text-[22px]">apps</span>
                     <span className="font-medium">All providers</span>
                     {providerFilter === "all" && <span className="material-symbols-outlined ml-auto text-[20px]">check</span>}
                   </button>
-                  <div className="my-2 h-px bg-black/10 dark:bg-white/10 sm:my-1" />
-                  <div className="max-h-[52vh] overflow-y-auto pr-1 sm:max-h-72">
+                  <div className="my-1 h-px bg-black/10 dark:bg-white/10" />
+                  <div className="max-h-72 overflow-y-auto pr-1">
                     {providerOptions.map((provider) => (
                       <button
                         key={provider}
                         type="button"
                         onClick={() => { setProviderFilter(provider); setProviderMenuOpen(false); }}
-                        className={`flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-left text-sm transition-colors sm:rounded-xl sm:py-2 ${providerFilter === provider ? "bg-primary/10 text-primary" : "text-text-primary hover:bg-black/5 dark:hover:bg-white/10"}`}
+                        className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-colors ${providerFilter === provider ? "bg-primary/10 text-primary" : "text-text-primary hover:bg-black/5 dark:hover:bg-white/10"}`}
                       >
                         <ProviderIcon
                           src={`/providers/${provider}.png`}
                           alt={provider}
-                          size={26}
-                          className="size-[26px] rounded-md object-contain sm:size-6"
+                          size={24}
+                          className="size-6 rounded-md object-contain"
                           fallbackText={provider.slice(0, 2).toUpperCase()}
                         />
                         <span className="font-medium capitalize">{provider}</span>
