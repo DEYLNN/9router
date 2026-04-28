@@ -29,6 +29,7 @@ export default function ProviderLimits() {
   const [proxyPools, setProxyPools] = useState([]);
   const [providerFilter, setProviderFilter] = useState("all");
   const [expiringFirst, setExpiringFirst] = useState(false);
+  const [providerMenuOpen, setProviderMenuOpen] = useState(false);
 
   const intervalRef = useRef(null);
   const countdownRef = useRef(null);
@@ -389,6 +390,7 @@ export default function ProviderLimits() {
   });
 
   const providerOptions = Array.from(new Set(filteredConnections.map((conn) => conn.provider))).sort();
+  const selectedProviderLabel = providerFilter === "all" ? "All providers" : providerFilter;
 
   // Calculate summary stats
   const totalProviders = sortedConnections.length;
@@ -442,36 +444,64 @@ export default function ProviderLimits() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <div className="flex max-w-full items-center gap-1.5 overflow-x-auto rounded-xl border border-black/10 bg-black/[0.02] p-1 dark:border-white/10 dark:bg-white/[0.03] sm:flex-wrap sm:overflow-visible">
+          <div className="relative">
             <button
               type="button"
-              onClick={() => setProviderFilter("all")}
-              className={`flex h-9 shrink-0 items-center gap-2 rounded-lg px-2.5 text-sm transition-colors ${providerFilter === "all" ? "bg-primary text-white shadow-sm" : "text-text-muted hover:bg-black/5 hover:text-text-primary dark:hover:bg-white/10"}`}
-              title="All providers"
-              aria-label="Show all providers"
+              onClick={() => setProviderMenuOpen((prev) => !prev)}
+              className="flex h-10 min-w-[116px] items-center justify-between gap-2 rounded-xl border border-black/10 bg-black/[0.02] px-3 text-sm text-text-primary transition-colors hover:bg-black/5 dark:border-white/10 dark:bg-white/[0.03] dark:hover:bg-white/10 sm:min-w-[180px]"
+              aria-haspopup="menu"
+              aria-expanded={providerMenuOpen}
+              title="Filter quota providers"
             >
-              <span className="material-symbols-outlined text-[18px]">apps</span>
-              <span className="hidden sm:inline">All</span>
+              <span className="flex min-w-0 items-center gap-2">
+                {providerFilter === "all" ? (
+                  <span className="material-symbols-outlined text-[20px] text-text-muted">apps</span>
+                ) : (
+                  <ProviderIcon
+                    src={`/providers/${providerFilter}.png`}
+                    alt={providerFilter}
+                    size={22}
+                    className="size-[22px] rounded-md object-contain"
+                    fallbackText={providerFilter.slice(0, 2).toUpperCase()}
+                  />
+                )}
+                <span className="truncate capitalize hidden sm:inline">{selectedProviderLabel}</span>
+              </span>
+              <span className="material-symbols-outlined text-[18px] text-text-muted">expand_more</span>
             </button>
-            {providerOptions.map((provider) => (
-              <button
-                key={provider}
-                type="button"
-                onClick={() => setProviderFilter(provider)}
-                className={`flex h-9 shrink-0 items-center gap-2 rounded-lg px-2 transition-colors ${providerFilter === provider ? "bg-primary/10 text-primary ring-1 ring-primary/30" : "text-text-muted hover:bg-black/5 hover:text-text-primary dark:hover:bg-white/10"}`}
-                title={provider}
-                aria-label={`Filter ${provider}`}
-              >
-                <ProviderIcon
-                  src={`/providers/${provider}.png`}
-                  alt={provider}
-                  size={22}
-                  className="size-[22px] rounded-md object-contain"
-                  fallbackText={provider.slice(0, 2).toUpperCase()}
-                />
-                <span className="hidden text-sm capitalize sm:inline">{provider}</span>
-              </button>
-            ))}
+
+            {providerMenuOpen && (
+              <div className="absolute right-0 z-30 mt-2 w-64 overflow-hidden rounded-2xl border border-black/10 bg-surface/95 p-1.5 shadow-xl shadow-black/10 backdrop-blur dark:border-white/10 dark:bg-surface/95 sm:left-0 sm:right-auto">
+                <button
+                  type="button"
+                  onClick={() => { setProviderFilter("all"); setProviderMenuOpen(false); }}
+                  className={`flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm transition-colors ${providerFilter === "all" ? "bg-primary/10 text-primary" : "text-text-primary hover:bg-black/5 dark:hover:bg-white/10"}`}
+                >
+                  <span className="material-symbols-outlined text-[22px]">apps</span>
+                  <span className="font-medium">All providers</span>
+                </button>
+                <div className="my-1 h-px bg-black/10 dark:bg-white/10" />
+                <div className="max-h-72 overflow-y-auto pr-1">
+                  {providerOptions.map((provider) => (
+                    <button
+                      key={provider}
+                      type="button"
+                      onClick={() => { setProviderFilter(provider); setProviderMenuOpen(false); }}
+                      className={`flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm transition-colors ${providerFilter === provider ? "bg-primary/10 text-primary" : "text-text-primary hover:bg-black/5 dark:hover:bg-white/10"}`}
+                    >
+                      <ProviderIcon
+                        src={`/providers/${provider}.png`}
+                        alt={provider}
+                        size={24}
+                        className="size-6 rounded-md object-contain"
+                        fallbackText={provider.slice(0, 2).toUpperCase()}
+                      />
+                      <span className="font-medium capitalize">{provider}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
           <button
             type="button"
