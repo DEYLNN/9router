@@ -413,12 +413,7 @@ export const PROVIDER_MODELS = {
     { id: "nomic-ai/nomic-embed-text-v1.5", name: "Nomic Embed Text v1.5", type: "embedding" },
   ],
   cerebras: [
-    { id: "gpt-oss-120b", name: "GPT OSS 120B" },
-    { id: "zai-glm-4.7", name: "ZAI GLM 4.7" },
-    { id: "llama-3.3-70b", name: "Llama 3.3 70B" },
-    { id: "llama-4-scout-17b-16e-instruct", name: "Llama 4 Scout" },
     { id: "qwen-3-235b-a22b-instruct-2507", name: "Qwen3 235B A22B" },
-    { id: "qwen-3-32b", name: "Qwen3 32B" },
   ],
   cohere: [
     { id: "command-r-plus-08-2024", name: "Command R+ (Aug 2024)" },
