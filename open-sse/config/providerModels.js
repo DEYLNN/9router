@@ -456,7 +456,7 @@ export const PROVIDER_MODELS = {
     { id: "mimo-v2-omni", name: "MiMo V2 Omni" },
     { id: "mimo-v2-flash", name: "MiMo V2 Flash" },
   ],
-  canopywave: [
+  cwv: [
     { id: "xiaomimimo/mimo-v2.5", name: "Xiaomi MiMo V2.5" },
     { id: "moonshotai/kimi-k2.6", name: "Kimi K2.6" },
   ],
@@ -584,6 +584,7 @@ const OAUTH_ALIASES = {
   opencode: "oc",
   vertex: "vertex",
   "vertex-partner": "vertex-partner",
+  canopywave: "cwv",
 };
 
 // Derived from PROVIDERS — no need to maintain manually
