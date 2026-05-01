@@ -24,6 +24,7 @@ const DEFAULT_SETTINGS = {
   stickyRoundRobinLimit: 3,
   providerStrategies: {},
   comboStrategy: "fallback",
+  comboStickyRoundRobinLimit: 1,
   comboStrategies: {},
   requireLogin: true,
   tunnelDashboardAccess: true,
@@ -37,6 +38,8 @@ const DEFAULT_SETTINGS = {
   outboundNoProxy: "",
   mitmRouterBaseUrl: DEFAULT_MITM_ROUTER_BASE,
   rtkEnabled: true,
+  cavemanEnabled: false,
+  cavemanLevel: "full",
 };
 
 function cloneDefaultData() {
