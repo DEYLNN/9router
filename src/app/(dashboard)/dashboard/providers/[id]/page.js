@@ -807,6 +807,7 @@ export default function ProviderDetailPage() {
                 size="sm"
                 icon="add"
                 onClick={() => setShowAddApiKeyModal(true)}
+                disabled={connections.length > 0}
                 className="w-full sm:w-auto"
               >
                 Add
@@ -898,42 +899,46 @@ export default function ProviderDetailPage() {
               </div>
               <p className="text-text-main font-medium mb-1">No connections yet</p>
               <p className="text-sm text-text-muted mb-4">Add your first connection to get started</p>
-              <div className="flex flex-col gap-2 justify-center sm:flex-row">
-                {providerId === "iflow" && (
-                  <Button icon="cookie" variant="secondary" onClick={() => setShowIFlowCookieModal(true)}>
-                    Cookie Auth
+              {!isCompatible && (
+                <div className="flex flex-col gap-2 justify-center sm:flex-row">
+                  {providerId === "iflow" && (
+                    <Button icon="cookie" variant="secondary" onClick={() => setShowIFlowCookieModal(true)}>
+                      Cookie Auth
+                    </Button>
+                  )}
+                  <Button icon="add" onClick={() => isOAuth ? setShowOAuthModal(true) : setShowAddApiKeyModal(true)}>
+                    {providerId === "iflow" ? "OAuth" : "Add Connection"}
                   </Button>
-                )}
-                <Button icon="add" onClick={() => isOAuth ? setShowOAuthModal(true) : setShowAddApiKeyModal(true)}>
-                  {providerId === "iflow" ? "OAuth" : "Add Connection"}
-                </Button>
-              </div>
+                </div>
+              )}
             </div>
           ) : (
             <>
               {connectionsList}
-              <div className="mt-4 grid grid-cols-1 gap-2 sm:flex">
-                {providerId === "iflow" && (
+              {!isCompatible && (
+                <div className="mt-4 grid grid-cols-1 gap-2 sm:flex">
+                  {providerId === "iflow" && (
+                    <Button
+                      size="sm"
+                      icon="cookie"
+                      variant="secondary"
+                      onClick={() => setShowIFlowCookieModal(true)}
+                      title="Add connection using browser cookie"
+                      className="w-full sm:w-auto"
+                    >
+                      Cookie
+                    </Button>
+                  )}
                   <Button
                     size="sm"
-                    icon="cookie"
-                    variant="secondary"
-                    onClick={() => setShowIFlowCookieModal(true)}
-                    title="Add connection using browser cookie"
+                    icon="add"
+                    onClick={() => isOAuth ? setShowOAuthModal(true) : setShowAddApiKeyModal(true)}
                     className="w-full sm:w-auto"
                   >
-                    Cookie
+                    Add
                   </Button>
-                )}
-                <Button
-                  size="sm"
-                  icon="add"
-                  onClick={() => isOAuth ? setShowOAuthModal(true) : setShowAddApiKeyModal(true)}
-                  className="w-full sm:w-auto"
-                >
-                  Add
-                </Button>
-              </div>
+                </div>
+              )}
             </>
           )}
         </Card>
