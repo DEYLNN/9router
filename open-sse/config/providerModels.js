@@ -456,6 +456,10 @@ export const PROVIDER_MODELS = {
     { id: "mimo-v2-omni", name: "MiMo V2 Omni" },
     { id: "mimo-v2-flash", name: "MiMo V2 Flash" },
   ],
+  canopywave: [
+    { id: "xiaomimimo/mimo-v2.5", name: "Xiaomi MiMo V2.5" },
+    { id: "moonshotai/kimi-k2.6", name: "Kimi K2.6" },
+  ],
   hyperbolic: [
     { id: "Qwen/QwQ-32B", name: "QwQ 32B" },
     { id: "deepseek-ai/DeepSeek-R1", name: "DeepSeek R1" },

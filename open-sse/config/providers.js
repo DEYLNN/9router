@@ -376,6 +376,10 @@ export const PROVIDERS = {
     baseUrl: "https://api.xiaomimimo.com/v1/chat/completions",
     format: "openai"
   },
+  canopywave: {
+    baseUrl: "https://inference.canopywave.io/v1/chat/completions",
+    format: "openai"
+  },
 };
 
 export const OLLAMA_LOCAL_DEFAULT_HOST = "http://localhost:11434";
