@@ -1,5 +1,4 @@
 import { getProviderConnectionById, updateProviderConnection } from "@/lib/localDb";
-import { resolveConnectionProxyConfig } from "@/lib/network/connectionProxy";
 import { testProxyUrl } from "@/lib/network/proxyTest";
 import { isOpenAICompatibleProvider, isAnthropicCompatibleProvider } from "@/shared/constants/providers";
 import { PROVIDER_ENDPOINTS } from "@/shared/constants/config";
@@ -317,12 +316,6 @@ async function testOAuthConnection(connection, effectiveProxy = null) {
 
 async function fetchWithConnectionProxy(url, options = {}, effectiveProxy = null) {
   // Vercel relay: forward via relay URL
-  if (effectiveProxy?.vercelRelayUrl) {
-    const { proxyAwareFetch } = await import("open-sse/utils/proxyFetch.js");
-    return proxyAwareFetch(url, options, {
-      vercelRelayUrl: effectiveProxy.vercelRelayUrl,
-    });
-  }
 
   if (!effectiveProxy?.connectionProxyEnabled || !effectiveProxy?.connectionProxyUrl) {
     return fetch(url, options);
@@ -608,20 +601,6 @@ export async function testSingleConnection(id) {
   const connection = await getProviderConnectionById(id);
   if (!connection) return { valid: false, error: "Connection not found", latencyMs: 0, testedAt: new Date().toISOString() };
 
-  const effectiveProxy = await resolveConnectionProxyConfig(connection.providerSpecificData || {});
-
-  if (effectiveProxy.connectionProxyEnabled && effectiveProxy.connectionProxyUrl && !effectiveProxy.vercelRelayUrl) {
-    const proxyResult = await testProxyUrl({ proxyUrl: effectiveProxy.connectionProxyUrl });
-    if (!proxyResult.ok) {
-      const proxyError = proxyResult.error || `Proxy test failed with status ${proxyResult.status}`;
-      await updateProviderConnection(id, {
-        testStatus: "error",
-        lastError: proxyError,
-        lastErrorAt: new Date().toISOString(),
-      });
-      return { valid: false, error: proxyError, latencyMs: 0, testedAt: new Date().toISOString() };
-    }
-  }
 
   const start = Date.now();
   let result;
