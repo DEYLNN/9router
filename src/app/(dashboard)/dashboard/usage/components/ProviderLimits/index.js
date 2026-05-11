@@ -36,7 +36,6 @@ export default function ProviderLimits() {
   const [togglingId, setTogglingId] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedConnection, setSelectedConnection] = useState(null);
-  const [proxyPools, setProxyPools] = useState([]);
   const [providerFilter, setProviderFilter] = useState("all");
   const [expiringFirst, setExpiringFirst] = useState(false);
   const [providerMenuOpen, setProviderMenuOpen] = useState(false);
@@ -221,14 +220,7 @@ export default function ProviderLimits() {
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/api/proxy-pools?isActive=true", { cache: "no-store" })
-      .then((res) => res.json())
-      .then((data) => {
-        if (!cancelled && data?.proxyPools) {
-          setProxyPools(data.proxyPools);
-        }
-      })
-      .catch(() => {});
+    setProxyPools([]);
     return () => {
       cancelled = true;
     };
@@ -751,7 +743,6 @@ export default function ProviderLimits() {
       <EditConnectionModal
         isOpen={showEditModal}
         connection={selectedConnection}
-        proxyPools={proxyPools}
         onSave={handleUpdateConnection}
         onClose={() => {
           setShowEditModal(false);
