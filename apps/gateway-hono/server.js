@@ -105,6 +105,54 @@ app.use("*", cors({ origin: "*", allowMethods: ["GET", "POST", "PUT", "PATCH", "
 app.get("/health", (c) => c.json({ ok: true, runtime: "hono-bun", port }));
 app.get("/api/health", (c) => c.json({ ok: true, runtime: "hono-bun", port }));
 
+
+app.post("/api/auth/login", async (c) => {
+  try {
+    const body = await c.req.json().catch(() => ({}));
+    const password = body?.password || "";
+    const settings = await getSettings();
+
+    if (isTunnelRequestHono(c, settings) && settings.tunnelDashboardAccess !== true) {
+      return c.json({ error: "Dashboard access via tunnel is disabled" }, 403);
+    }
+
+    const storedHash = settings.password;
+    const isValid = storedHash
+      ? await bcrypt.compare(password, storedHash)
+      : password === (process.env.INITIAL_PASSWORD || "123456");
+
+    if (!isValid) {
+      return c.json({ error: "Invalid password" }, 401);
+    }
+
+    const token = await new SignJWT({ authenticated: true })
+      .setProtectedHeader({ alg: "HS256" })
+      .setExpirationTime("24h")
+      .sign(JWT_SECRET);
+
+    const forceSecureCookie = process.env.AUTH_COOKIE_SECURE === "true";
+    const forwardedProto = c.req.header("x-forwarded-proto");
+    const useSecureCookie = forceSecureCookie || forwardedProto === "https";
+    setCookie(c, "auth_token", token, {
+      httpOnly: true,
+      secure: useSecureCookie,
+      sameSite: "Lax",
+      path: "/",
+    });
+
+    return c.json({ success: true });
+  } catch (error) {
+    console.error("[hono] login error", error);
+    return c.json({ error: error?.message || "Login failed" }, 500);
+  }
+});
+
+app.post("/api/auth/logout", (c) => {
+  deleteCookie(c, "auth_token", { path: "/" });
+  return c.json({ success: true });
+});
+
+
 app.get("/v1", (c) => c.json({ ok: true, runtime: "hono-bun", endpoints: ["/v1/models"] }));
 app.get("/api/v1", (c) => c.json({ ok: true, runtime: "hono-bun", endpoints: ["/api/v1/models"] }));
 
