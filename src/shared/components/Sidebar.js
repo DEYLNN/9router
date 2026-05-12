@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -11,77 +11,19 @@ import { ConfirmModal } from "./Modal";
 
 // ─── icons ────────────────────────────────────────────────────────────────────
 const I = {
-  logo: (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/>
-    </svg>
-  ),
-  endpoint: (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-    </svg>
-  ),
-  providers: (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <rect x="2" y="3" width="20" height="5" rx="1"/><rect x="2" y="10" width="20" height="5" rx="1"/><rect x="2" y="17" width="20" height="5" rx="1"/>
-      <circle cx="18" cy="5.5" r="1" fill="currentColor"/><circle cx="18" cy="12.5" r="1" fill="currentColor"/><circle cx="18" cy="19.5" r="1" fill="currentColor"/>
-    </svg>
-  ),
-  combos: (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-    </svg>
-  ),
-  usage: (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path d="M18 20V10M12 20V4M6 20v-6"/>
-    </svg>
-  ),
-  quota: (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
-    </svg>
-  ),
-  terminal: (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/>
-    </svg>
-  ),
-  translate: (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path d="M5 8h14M5 8a2 2 0 010-4h14a2 2 0 010 4M5 8l1 12a2 2 0 002 2h8a2 2 0 002-2l1-12"/>
-    </svg>
-  ),
-  settings: (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
-    </svg>
-  ),
-  power: (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path d="M18.36 6.64a9 9 0 11-12.73 0M12 2v10"/>
-    </svg>
-  ),
-  update: (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0115-6.7L21 8M3 22v-6h6"/><path d="M21 12a9 9 0 01-15 6.7L3 16"/>
-    </svg>
-  ),
-  chevronRight: (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="m9 18 6-6-6-6"/>
-    </svg>
-  ),
-  search: (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-    </svg>
-  ),
-  spinner: (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ animation: "spin 0.8s linear infinite" }}>
-      <path d="M21 12a9 9 0 11-6.219-8.56"/>
-    </svg>
-  ),
+  logo: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg>,
+  endpoint: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>,
+  providers: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="3" width="20" height="5" rx="1"/><rect x="2" y="10" width="20" height="5" rx="1"/><rect x="2" y="17" width="20" height="5" rx="1"/><circle cx="18" cy="5.5" r="1" fill="currentColor"/><circle cx="18" cy="12.5" r="1" fill="currentColor"/><circle cx="18" cy="19.5" r="1" fill="currentColor"/></svg>,
+  combos: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>,
+  usage: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>,
+  quota: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>,
+  terminal: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>,
+  translate: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M5 8h14M5 8a2 2 0 010-4h14a2 2 0 010 4M5 8l1 12a2 2 0 002 2h8a2 2 0 002-2l1-12"/></svg>,
+  settings: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>,
+  power: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M18.36 6.64a9 9 0 11-12.73 0M12 2v10"/></svg>,
+  update: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0115-6.7L21 8M3 22v-6h6"/><path d="M21 12a9 9 0 01-15 6.7L3 16"/></svg>,
+  chevronRight: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m9 18 6-6-6-6"/></svg>,
+  chevronLeft: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m15 18-6-6 6-6"/></svg>,
 };
 
 const ICON_MAP = {
@@ -129,53 +71,57 @@ function NavItem({ href, label, icon, onClose, collapsed }) {
         alignItems: "center",
         gap: collapsed ? 0 : "9px",
         justifyContent: collapsed ? "center" : "flex-start",
-        height: "32px",
-        padding: collapsed ? "0" : "0 10px",
-        borderRadius: "7px",
+        height: "34px",
+        padding: collapsed ? "0 10px" : "0 10px",
+        borderRadius: "8px",
         fontSize: "13px",
         fontWeight: active ? 500 : 400,
         textDecoration: "none",
-        color: active ? "#fff" : "rgba(255,255,255,0.45)",
-        background: active ? "rgba(255,255,255,0.08)" : "transparent",
-        transition: "all 150ms ease",
-        position: "relative",
-        overflow: "hidden",
-        whiteSpace: "nowrap",
+        color: active ? "#09090B" : "rgba(255,255,255,0.5)",
+        background: active ? "#ffffff" : "transparent",
+        transition: "all 120ms ease",
+        marginBottom: "2px",
       }}
       onMouseEnter={e => {
         if (!active) {
-          e.currentTarget.style.color = "rgba(255,255,255,0.8)";
-          e.currentTarget.style.background = "rgba(255,255,255,0.05)";
+          e.currentTarget.style.color = "rgba(255,255,255,0.85)";
+          e.currentTarget.style.background = "rgba(255,255,255,0.07)";
         }
       }}
       onMouseLeave={e => {
         if (!active) {
-          e.currentTarget.style.color = "rgba(255,255,255,0.45)";
+          e.currentTarget.style.color = "rgba(255,255,255,0.5)";
           e.currentTarget.style.background = "transparent";
         }
       }}
     >
-      {active && (
-        <span style={{
-          position: "absolute", left: 0, top: "20%", bottom: "20%",
-          width: "2px", borderRadius: "0 2px 2px 0",
-          background: "#3B82F6",
-        }} />
-      )}
-      <span style={{ flexShrink: 0, display: "flex", color: active ? "#3B82F6" : "inherit" }}>
+      <span style={{
+        flexShrink: 0,
+        display: "flex",
+        color: active ? "#09090B" : "inherit",
+        opacity: active ? 1 : 0.8,
+      }}>
         {Icon}
       </span>
-      {!collapsed && <span style={{ overflow: "hidden", textOverflow: "ellipsis" }}>{label}</span>}
+      {!collapsed && (
+        <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+          {label}
+        </span>
+      )}
     </Link>
   );
 }
 
 // ─── section label ────────────────────────────────────────────────────────────
 function SectionLabel({ label, collapsed }) {
-  if (collapsed) return <div style={{ height: "1px", background: "rgba(255,255,255,0.06)", margin: "8px 12px" }} />;
+  if (collapsed) return <div style={{ height: "1px", background: "rgba(255,255,255,0.06)", margin: "8px 6px" }} />;
   return (
-    <div style={{ padding: "0 10px", marginTop: "16px", marginBottom: "4px" }}>
-      <span style={{ fontSize: "10px", fontWeight: 600, color: "rgba(255,255,255,0.25)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+    <div style={{ padding: "0 10px", marginTop: "18px", marginBottom: "4px" }}>
+      <span style={{
+        fontSize: "10px", fontWeight: 600,
+        color: "rgba(255,255,255,0.22)",
+        textTransform: "uppercase", letterSpacing: "0.09em",
+      }}>
         {label}
       </span>
     </div>
@@ -239,102 +185,77 @@ export default function Sidebar({ onClose, forceExpanded }) {
         flexDirection: "column",
         width: w,
         minHeight: "100%",
-        background: "#0C0C0E",
+        background: "#111113",
         borderRight: "1px solid rgba(255,255,255,0.06)",
         transition: "width 200ms cubic-bezier(0.4,0,0.2,1)",
         overflow: "hidden",
         flexShrink: 0,
-        position: "relative",
       }}>
 
-        {/* Logo + collapse toggle */}
+        {/* Logo */}
         <div style={{
           display: "flex",
           alignItems: "center",
           justifyContent: isCollapsed ? "center" : "space-between",
-          padding: isCollapsed ? "16px 0" : "14px 14px 14px 14px",
-          borderBottom: "1px solid rgba(255,255,255,0.06)",
+          padding: "16px 12px 12px",
           flexShrink: 0,
         }}>
-          {!isCollapsed && (
-            <Link href="/dashboard" style={{ display: "flex", alignItems: "center", gap: "8px", textDecoration: "none" }}>
-              <div style={{
-                width: "26px", height: "26px", borderRadius: "7px",
-                background: "linear-gradient(135deg, #3B82F6, #2563EB)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                color: "#fff", flexShrink: 0,
-                boxShadow: "0 0 0 1px rgba(59,130,246,0.3)",
-              }}>
-                {I.logo}
-              </div>
-              <div>
-                <div style={{ fontSize: "13px", fontWeight: 700, color: "#fff", letterSpacing: "-0.02em", lineHeight: 1 }}>
-                  {APP_CONFIG.name}
+          {!isCollapsed ? (
+            <>
+              <Link href="/dashboard" style={{ display: "flex", alignItems: "center", gap: "9px", textDecoration: "none" }}>
+                <div style={{
+                  width: "28px", height: "28px", borderRadius: "8px",
+                  background: "linear-gradient(135deg, #3B82F6 0%, #1d4ed8 100%)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  color: "#fff", flexShrink: 0,
+                }}>
+                  {I.logo}
                 </div>
-                <div style={{ fontSize: "10px", color: "rgba(255,255,255,0.3)", marginTop: "1px" }}>
-                  v{APP_CONFIG.version}
+                <div>
+                  <div style={{ fontSize: "14px", fontWeight: 700, color: "#fff", letterSpacing: "-0.03em", lineHeight: 1.1 }}>
+                    {APP_CONFIG.name}
+                  </div>
+                  <div style={{ fontSize: "10px", color: "rgba(255,255,255,0.28)", marginTop: "1px" }}>
+                    v{APP_CONFIG.version}
+                  </div>
                 </div>
-              </div>
-            </Link>
-          )}
-          {isCollapsed && (
-            <Link href="/dashboard" style={{ textDecoration: "none" }}>
-              <div style={{
-                width: "26px", height: "26px", borderRadius: "7px",
-                background: "linear-gradient(135deg, #3B82F6, #2563EB)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                color: "#fff",
-              }}>
-                {I.logo}
-              </div>
-            </Link>
-          )}
-          {!isCollapsed && !forceExpanded && (
+              </Link>
+              {!forceExpanded && (
+                <button
+                  onClick={() => setCollapsed(true)}
+                  style={{
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    width: "24px", height: "24px", borderRadius: "6px",
+                    background: "transparent", border: "none",
+                    color: "rgba(255,255,255,0.2)", cursor: "pointer",
+                    transition: "all 150ms ease", flexShrink: 0,
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.07)"; e.currentTarget.style.color = "rgba(255,255,255,0.6)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "rgba(255,255,255,0.2)"; }}
+                >
+                  {I.chevronLeft}
+                </button>
+              )}
+            </>
+          ) : (
             <button
-              onClick={() => setCollapsed(true)}
+              onClick={() => setCollapsed(false)}
               style={{
                 display: "flex", alignItems: "center", justifyContent: "center",
-                width: "22px", height: "22px", borderRadius: "5px",
-                background: "transparent", border: "none",
-                color: "rgba(255,255,255,0.25)", cursor: "pointer",
-                transition: "all 150ms ease",
+                width: "28px", height: "28px", borderRadius: "8px",
+                background: "linear-gradient(135deg, #3B82F6 0%, #1d4ed8 100%)",
+                border: "none", color: "#fff", cursor: "pointer",
               }}
-              onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.06)"; e.currentTarget.style.color = "rgba(255,255,255,0.6)"; }}
-              onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "rgba(255,255,255,0.25)"; }}
-              title="Collapse sidebar"
+              title="Expand sidebar"
             >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M15 18l-6-6 6-6"/>
-              </svg>
+              {I.logo}
             </button>
           )}
         </div>
 
-        {/* Expand button when collapsed */}
-        {isCollapsed && !forceExpanded && (
-          <button
-            onClick={() => setCollapsed(false)}
-            style={{
-              display: "flex", alignItems: "center", justifyContent: "center",
-              width: "100%", height: "32px",
-              background: "transparent", border: "none",
-              color: "rgba(255,255,255,0.25)", cursor: "pointer",
-              borderBottom: "1px solid rgba(255,255,255,0.06)",
-              transition: "all 150ms ease",
-            }}
-            onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.04)"; e.currentTarget.style.color = "rgba(255,255,255,0.5)"; }}
-            onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "rgba(255,255,255,0.25)"; }}
-            title="Expand sidebar"
-          >
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M9 18l6-6-6-6"/>
-            </svg>
-          </button>
-        )}
-
         {/* Update banner */}
         {updateInfo && !isCollapsed && (
-          <div style={{ margin: "10px 10px 0", padding: "8px 10px", borderRadius: "8px", background: "rgba(245,158,11,0.07)", border: "1px solid rgba(245,158,11,0.15)" }}>
+          <div style={{ margin: "0 10px 10px", padding: "8px 10px", borderRadius: "8px", background: "rgba(245,158,11,0.07)", border: "1px solid rgba(245,158,11,0.15)" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "6px" }}>
               <span style={{ fontSize: "11px", color: "#F59E0B", fontWeight: 600 }}>v{updateInfo.latestVersion} available</span>
               <button onClick={() => setShowUpdateModal(true)} style={{
@@ -350,7 +271,7 @@ export default function Sidebar({ onClose, forceExpanded }) {
         )}
 
         {/* Nav */}
-        <nav style={{ flex: 1, padding: isCollapsed ? "10px 8px" : "10px 8px", overflowY: "auto", overflowX: "hidden" }}>
+        <nav style={{ flex: 1, padding: "4px 8px", overflowY: "auto", overflowX: "hidden" }}>
           {NAV_MAIN.map(item => (
             <NavItem key={item.href} {...item} onClose={onClose} collapsed={isCollapsed} />
           ))}
@@ -371,30 +292,63 @@ export default function Sidebar({ onClose, forceExpanded }) {
 
         {/* Footer */}
         <div style={{
-          padding: isCollapsed ? "10px 8px" : "10px 8px",
+          padding: "10px 8px 14px",
           borderTop: "1px solid rgba(255,255,255,0.06)",
           flexShrink: 0,
         }}>
-          <button
-            onClick={() => setShowShutdownModal(true)}
-            title={isCollapsed ? "Shutdown" : undefined}
-            style={{
-              display: "flex", alignItems: "center",
-              justifyContent: isCollapsed ? "center" : "flex-start",
-              gap: isCollapsed ? 0 : "8px",
-              width: "100%", height: "32px",
-              padding: isCollapsed ? "0" : "0 10px",
-              borderRadius: "7px",
-              background: "transparent", border: "none",
-              color: "rgba(239,68,68,0.5)", fontSize: "13px",
-              cursor: "pointer", transition: "all 150ms ease",
-            }}
-            onMouseEnter={e => { e.currentTarget.style.background = "rgba(239,68,68,0.07)"; e.currentTarget.style.color = "#ef4444"; }}
-            onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "rgba(239,68,68,0.5)"; }}
-          >
-            {I.power}
-            {!isCollapsed && <span>Shutdown</span>}
-          </button>
+          {!isCollapsed ? (
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px", padding: "0 4px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px", minWidth: 0 }}>
+                <div style={{
+                  width: "26px", height: "26px", borderRadius: "50%",
+                  background: "linear-gradient(135deg, #3B82F6, #A855F7)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  color: "#fff", fontSize: "11px", fontWeight: 700, flexShrink: 0,
+                }}>
+                  A
+                </div>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontSize: "12px", fontWeight: 600, color: "rgba(255,255,255,0.8)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    Admin
+                  </div>
+                  <div style={{ fontSize: "10px", color: "rgba(255,255,255,0.3)" }}>
+                    Gateway
+                  </div>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowShutdownModal(true)}
+                title="Shutdown"
+                style={{
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  width: "28px", height: "28px", borderRadius: "7px",
+                  background: "transparent", border: "none",
+                  color: "rgba(239,68,68,0.45)", cursor: "pointer",
+                  transition: "all 150ms ease", flexShrink: 0,
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = "rgba(239,68,68,0.08)"; e.currentTarget.style.color = "#ef4444"; }}
+                onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "rgba(239,68,68,0.45)"; }}
+              >
+                {I.power}
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setShowShutdownModal(true)}
+              title="Shutdown"
+              style={{
+                display: "flex", alignItems: "center", justifyContent: "center",
+                width: "100%", height: "32px", borderRadius: "7px",
+                background: "transparent", border: "none",
+                color: "rgba(239,68,68,0.4)", cursor: "pointer",
+                transition: "all 150ms ease",
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = "rgba(239,68,68,0.08)"; e.currentTarget.style.color = "#ef4444"; }}
+              onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "rgba(239,68,68,0.4)"; }}
+            >
+              {I.power}
+            </button>
+          )}
         </div>
       </aside>
 
@@ -445,8 +399,6 @@ export default function Sidebar({ onClose, forceExpanded }) {
           )}
         </div>
       )}
-
-      <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
     </>
   );
 }
