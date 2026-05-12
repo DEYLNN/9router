@@ -11,108 +11,112 @@
    Brand orange (dark) / soft coral (light), neutral warm bases
    ============================================================ */
 :root {
-  /* Brand scale (light) - centered on #E56A4A */
-  --color-brand-50: #fdf1ed;
-  --color-brand-100: #fadccf;
-  --color-brand-200: #f4b59c;
-  --color-brand-300: #ee8d6a;
-  --color-brand-400: #ea7855;
-  --color-brand-500: #E56A4A;
-  --color-brand-600: #cc5236;
-  --color-brand-700: #a64027;
-  --color-brand-800: #7a2f1d;
-  --color-brand-900: #4d1e12;
+  /* Brand scale (light) - Ship Faster blue #3B82F6 */
+  --color-brand-50: #eff6ff;
+  --color-brand-100: #dbeafe;
+  --color-brand-200: #bfdbfe;
+  --color-brand-300: #93c5fd;
+  --color-brand-400: #60a5fa;
+  --color-brand-500: #3B82F6;
+  --color-brand-600: #2563eb;
+  --color-brand-700: #1d4ed8;
+  --color-brand-800: #1e40af;
+  --color-brand-900: #1e3a8a;
 
-  /* Primary (legacy alias for backward compat with existing components) */
+  /* Primary */
   --color-primary: var(--color-brand-500);
   --color-primary-hover: var(--color-brand-600);
 
   /* Surfaces & backgrounds (light) */
-  --color-bg: #FDFAF6;
-  --color-bg-alt: #F7F3EE;
+  --color-bg: #f8fafc;
+  --color-bg-alt: #f1f5f9;
   --color-surface: #ffffff;
-  --color-surface-2: #f4f4f5;
-  --color-surface-3: #e7e7e9;
-  --color-sidebar: rgba(244, 241, 236, 0.85);
+  --color-surface-2: #f4f6f8;
+  --color-surface-3: #e8ecf0;
+  --color-sidebar: rgba(241, 245, 249, 0.90);
 
   /* Borders */
-  --color-border: #e5e7eb;
-  --color-border-subtle: #f1f1f3;
+  --color-border: #e2e8f0;
+  --color-border-subtle: #f1f5f9;
 
   /* Text */
   --color-text: #0a0a0a;
   --color-text-main: #0a0a0a;
-  --color-text-muted: #6B7280;
-  --color-text-subtle: #9CA3AF;
+  --color-text-muted: #64748b;
+  --color-text-subtle: #94a3b8;
 
   /* Status */
-  --color-danger: #cf222e;
+  --color-danger: #ef4444;
   --color-success: #10B981;
   --color-warning: #F59E0B;
   --color-info: #3B82F6;
 
   /* Radius */
-  --radius-brand: 10px;
-  --radius-brand-lg: 14px;
+  --radius-brand: 8px;
+  --radius-brand-lg: 12px;
 
   /* Shadows */
   --shadow-soft: 0 1px 2px 0 rgba(0,0,0,0.04);
-  --shadow-warm: 0 2px 12px -2px rgba(229, 106, 74, 0.18);
-  --shadow-elevated: 0 12px 28px -4px rgba(60, 50, 45, 0.06);
+  --shadow-warm: 0 2px 12px -2px rgba(59, 130, 246, 0.18);
+  --shadow-elevated: 0 12px 28px -4px rgba(15, 23, 42, 0.08);
   --shadow-elev:
     inset 0 1px 0 0 rgba(255,255,255,0.8),
     0 1px 2px rgba(15,23,42,0.04),
     0 12px 36px -8px rgba(15,23,42,0.10);
-  --shadow-focus: 0 0 0 3px rgba(229,106,74,0.18);
+  --shadow-focus: 0 0 0 3px rgba(59,130,246,0.22);
 
   color-scheme: light;
 }
 
 .dark {
-  /* Brand scale (dark) - centered on #E56A4A, same as light for consistency */
-  --color-brand-50: #fdf1ed;
-  --color-brand-100: #fadccf;
-  --color-brand-200: #f4b59c;
-  --color-brand-300: #ee8d6a;
-  --color-brand-400: #ea7855;
-  --color-brand-500: #E56A4A;
-  --color-brand-600: #cc5236;
-  --color-brand-700: #a64027;
-  --color-brand-800: #7a2f1d;
-  --color-brand-900: #4d1e12;
+  /* Brand scale (dark) - Ship Faster blue #3B82F6 */
+  --color-brand-50: #eff6ff;
+  --color-brand-100: #dbeafe;
+  --color-brand-200: #bfdbfe;
+  --color-brand-300: #93c5fd;
+  --color-brand-400: #60a5fa;
+  --color-brand-500: #3B82F6;
+  --color-brand-600: #2563eb;
+  --color-brand-700: #1d4ed8;
+  --color-brand-800: #1e40af;
+  --color-brand-900: #1e3a8a;
 
-  --color-primary: #E56A4A;
-  --color-primary-hover: #cc5236;
+  --color-primary: #3B82F6;
+  --color-primary-hover: #2563eb;
 
-  /* Surfaces (dark - Claude-like neutral warm) */
-  --color-bg: #1a1a1a;
-  --color-bg-alt: #1F1F1E;
-  --color-surface: #262626;
-  --color-surface-2: #303030;
-  --color-surface-3: #3a3a3a;
-  --color-sidebar: rgba(30, 30, 30, 0.85);
+  /* Surfaces (dark - Ship Faster #0A0A0A base) */
+  --color-bg: #0A0A0A;
+  --color-bg-alt: #111111;
+  --color-surface: #161616;
+  --color-surface-2: #1e1e1e;
+  --color-surface-3: #262626;
+  --color-sidebar: rgba(14, 14, 14, 0.92);
 
-  --color-border: #333333;
-  --color-border-subtle: #2a2a2a;
+  --color-border: rgba(255,255,255,0.08);
+  --color-border-subtle: rgba(255,255,255,0.04);
 
-  --color-text: #ededed;
-  --color-text-main: #ededed;
-  --color-text-muted: #9ca3af;
+  --color-text: #ffffff;
+  --color-text-main: #ffffff;
+  --color-text-muted: #A3A3A3;
   --color-text-subtle: #6b7280;
 
-  --color-danger: #ef4444;
-  --color-success: #22c55e;
-  --color-warning: #fbbf24;
-  --color-info: #60a5fa;
+  /* Secondary accents */
+  --color-secondary: #A855F7;
+  --color-tertiary: #10B981;
 
-  --shadow-soft: 0 1px 2px 0 rgba(0,0,0,0.3);
-  --shadow-warm: 0 2px 12px -2px rgba(229, 106, 74, 0.25);
-  --shadow-elevated: 0 12px 28px -4px rgba(0, 0, 0, 0.45);
+  --color-danger: #ef4444;
+  --color-success: #10B981;
+  --color-warning: #fbbf24;
+  --color-info: #3B82F6;
+
+  --shadow-soft: 0 1px 2px 0 rgba(0,0,0,0.5);
+  --shadow-warm: 0 2px 12px -2px rgba(59, 130, 246, 0.20);
+  --shadow-elevated: 0 40px 100px -20px rgba(0,0,0,1);
   --shadow-elev:
-    inset 0 1px 0 0 rgba(255,255,255,0.06),
-    0 1px 2px rgba(0,0,0,0.4),
-    0 16px 48px -8px rgba(0,0,0,0.55);
-  --shadow-focus: 0 0 0 3px rgba(229, 106, 74, 0.18);
+    inset 0 0 40px 0 rgba(255,255,255,0.02),
+    0 1px 2px rgba(0,0,0,0.5),
+    0 40px 100px -20px rgba(0,0,0,1);
+  --shadow-focus: 0 0 0 3px rgba(59, 130, 246, 0.30);
 
   color-scheme: dark;
 }
@@ -170,18 +174,18 @@ select {
   --color-info: var(--color-info);
 
   /* Static fallbacks (explicit per-mode usage if needed) */
-  --color-bg-light: #FCFBF9;
-  --color-bg-dark: #1a1a1a;
+  --color-bg-light: #f8fafc;
+  --color-bg-dark: #0A0A0A;
   --color-surface-light: #ffffff;
-  --color-surface-dark: #262626;
-  --color-sidebar-light: #F4F1EC;
-  --color-sidebar-dark: #1F1F1E;
-  --color-border-light: #e5e7eb;
-  --color-border-dark: #333333;
+  --color-surface-dark: #161616;
+  --color-sidebar-light: #f1f5f9;
+  --color-sidebar-dark: #0e0e0e;
+  --color-border-light: #e2e8f0;
+  --color-border-dark: rgba(255,255,255,0.08);
   --color-text-main-light: #0a0a0a;
-  --color-text-main-dark: #ededed;
-  --color-text-muted-light: #6B7280;
-  --color-text-muted-dark: #9ca3af;
+  --color-text-main-dark: #ffffff;
+  --color-text-muted-light: #64748b;
+  --color-text-muted-dark: #A3A3A3;
 
   /* Radius */
   --radius-brand: var(--radius-brand);
@@ -195,7 +199,7 @@ select {
   --shadow-focus: var(--shadow-focus);
 
   /* Font - Inter primary, Apple system fallback */
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', system-ui, sans-serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Inter', system-ui, sans-serif;
 }
 
 /* Base */
@@ -209,11 +213,11 @@ body {
 
 /* Selection - brand-tinted */
 ::selection {
-  background-color: rgba(229, 106, 74, 0.25);
+  background-color: rgba(59, 130, 246, 0.25);
   color: var(--color-primary);
 }
 .dark ::selection {
-  background-color: rgba(229, 106, 74, 0.3);
+  background-color: rgba(59, 130, 246, 0.3);
   color: var(--color-brand-300);
 }
 
@@ -240,19 +244,19 @@ input, textarea {
 /* Thin horizontal scrollbar - brand colored */
 .scroll-thin-x {
   scrollbar-width: thin;
-  scrollbar-color: rgba(229, 106, 74, 0.55) transparent;
+  scrollbar-color: rgba(59, 130, 246, 0.55) transparent;
 }
 .dark .scroll-thin-x {
-  scrollbar-color: rgba(229, 106, 74, 0.55) transparent;
+  scrollbar-color: rgba(59, 130, 246, 0.55) transparent;
 }
 .scroll-thin-x::-webkit-scrollbar { height: 3px; }
 .scroll-thin-x::-webkit-scrollbar-track { background: transparent; }
 .scroll-thin-x::-webkit-scrollbar-thumb {
-  background: rgba(229, 106, 74, 0.55);
+  background: rgba(59, 130, 246, 0.55);
   border-radius: 3px;
 }
 .dark .scroll-thin-x::-webkit-scrollbar-thumb {
-  background: rgba(229, 106, 74, 0.55);
+  background: rgba(59, 130, 246, 0.55);
 }
 
 /* Reusable elevated card */
@@ -269,7 +273,7 @@ input, textarea {
 
 /* Hero gradient (compat) */
 .bg-hero-gradient {
-  background: linear-gradient(180deg, var(--color-bg-alt) 0%, var(--color-bg) 100%);
+  background: linear-gradient(135deg, var(--color-bg-alt) 0%, var(--color-bg) 100%);
 }
 
 /* macOS Vibrancy */
@@ -279,7 +283,7 @@ input, textarea {
   background: rgba(255, 255, 255, 0.72);
 }
 .dark .bg-vibrancy {
-  background: rgba(38, 38, 38, 0.72);
+  background: rgba(14, 14, 14, 0.85);
 }
 
 /* macOS Traffic Lights */
