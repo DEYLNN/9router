@@ -77,8 +77,8 @@ function NavItem({ href, label, icon, onClose, collapsed }) {
         fontSize: "13px",
         fontWeight: active ? 500 : 400,
         textDecoration: "none",
-        color: active ? "#09090B" : "rgba(255,255,255,0.5)",
-        background: active ? "#ffffff" : "transparent",
+        color: active ? "#fff" : "rgba(255,255,255,0.5)",
+        background: active ? "rgba(255,255,255,0.1)" : "transparent",
         transition: "all 120ms ease",
         marginBottom: "2px",
       }}
@@ -98,7 +98,7 @@ function NavItem({ href, label, icon, onClose, collapsed }) {
       <span style={{
         flexShrink: 0,
         display: "flex",
-        color: active ? "#09090B" : "inherit",
+        color: active ? "#3B82F6" : "inherit",
         opacity: active ? 1 : 0.8,
       }}>
         {Icon}

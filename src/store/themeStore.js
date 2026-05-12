@@ -21,10 +21,7 @@ const useThemeStore = create(
         applyTheme(newTheme);
       },
 
-      initTheme: () => {
-        const theme = get().theme;
-        applyTheme(theme);
-      },
+      initTheme: () => { set({ theme: "dark" }); applyTheme("dark"); },
     }),
     {
       name: THEME_CONFIG.storageKey,

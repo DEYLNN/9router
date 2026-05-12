@@ -5,7 +5,6 @@ import { useMemo, useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import PropTypes from "prop-types";
 import ProviderIcon from "@/shared/components/ProviderIcon";
-import ThemeToggle from "@/shared/components/ThemeToggle";
 import { useHeaderSearchStore } from "@/store/headerSearchStore";
 import { OAUTH_PROVIDERS, APIKEY_PROVIDERS } from "@/shared/constants/config";
 import { translate } from "@/i18n/runtime";
@@ -327,7 +326,6 @@ export default function Header({ onMenuClick, showMenuButton = true }) {
           <StatusDot />
         </div>
         <HeaderSearch />
-        <ThemeToggle />
         <ProfileMenu onLogout={handleLogout} />
       </div>
     </header>
