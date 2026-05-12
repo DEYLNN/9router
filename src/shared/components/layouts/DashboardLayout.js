@@ -6,29 +6,18 @@ import { useNotificationStore } from "@/store/notificationStore";
 import Sidebar from "../Sidebar";
 import Header from "../Header";
 
-function getToastStyle(type) {
-  if (type === "success") {
-    return {
-      wrapper: "border-green-500/30 bg-green-500/10 text-green-600 dark:text-green-400",
-      icon: "check_circle",
-    };
-  }
-  if (type === "error") {
-    return {
-      wrapper: "border-red-500/30 bg-red-500/10 text-red-600 dark:text-red-400",
-      icon: "error",
-    };
-  }
-  if (type === "warning") {
-    return {
-      wrapper: "border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400",
-      icon: "warning",
-    };
-  }
-  return {
-    wrapper: "border-blue-500/30 bg-blue-500/10 text-blue-600 dark:text-blue-400",
-    icon: "info",
-  };
+// ─── toast icons ─────────────────────────────────────────────────────────────
+const IcoCheck = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12"/></svg>;
+const IcoError = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>;
+const IcoWarn = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>;
+const IcoInfo = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>;
+const IcoX = () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6 6 18M6 6l12 12"/></svg>;
+
+function getToastConfig(type) {
+  if (type === "success") return { icon: IcoCheck, color: "#10B981", bg: "rgba(16,185,129,0.08)", border: "rgba(16,185,129,0.2)" };
+  if (type === "error") return { icon: IcoError, color: "#ef4444", bg: "rgba(239,68,68,0.08)", border: "rgba(239,68,68,0.2)" };
+  if (type === "warning") return { icon: IcoWarn, color: "#F59E0B", bg: "rgba(245,158,11,0.08)", border: "rgba(245,158,11,0.2)" };
+  return { icon: IcoInfo, color: "#3B82F6", bg: "rgba(59,130,246,0.08)", border: "rgba(59,130,246,0.2)" };
 }
 
 export default function DashboardLayout({ children }) {
@@ -37,66 +26,99 @@ export default function DashboardLayout({ children }) {
   const notifications = useNotificationStore((state) => state.notifications);
   const removeNotification = useNotificationStore((state) => state.removeNotification);
 
+  const isChat = pathname === "/dashboard/basic-chat";
+
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-bg">
-      <div className="fixed top-4 right-4 z-[80] flex w-[min(92vw,380px)] flex-col gap-2">
+    <div style={{ display: "flex", height: "100vh", width: "100%", overflow: "hidden", background: "var(--color-bg)" }}>
+
+      {/* Toast notifications */}
+      <div style={{ position: "fixed", top: "16px", right: "16px", zIndex: 80, display: "flex", flexDirection: "column", gap: "8px", width: "min(92vw, 360px)" }}>
         {notifications.map((n) => {
-          const style = getToastStyle(n.type);
+          const cfg = getToastConfig(n.type);
+          const Icon = cfg.icon;
           return (
-            <div
-              key={n.id}
-              className={`rounded-lg border px-3 py-2 shadow-lg backdrop-blur-sm ${style.wrapper}`}
-            >
-              <div className="flex items-start gap-2">
-                <span className="material-symbols-outlined text-[18px] leading-5">{style.icon}</span>
-                <div className="min-w-0 flex-1">
-                  {n.title ? <p className="text-xs font-semibold mb-0.5">{n.title}</p> : null}
-                  <p className="text-xs whitespace-pre-wrap break-words">{n.message}</p>
-                </div>
-                {n.dismissible ? (
-                  <button
-                    type="button"
-                    onClick={() => removeNotification(n.id)}
-                    className="text-current/70 hover:text-current"
-                    aria-label="Dismiss notification"
-                  >
-                    <span className="material-symbols-outlined text-[16px]">close</span>
-                  </button>
-                ) : null}
+            <div key={n.id} style={{
+              display: "flex", alignItems: "flex-start", gap: "10px",
+              padding: "10px 12px",
+              borderRadius: "10px",
+              background: cfg.bg,
+              border: `1px solid ${cfg.border}`,
+              backdropFilter: "blur(12px)",
+              boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
+            }}>
+              <span style={{ color: cfg.color, flexShrink: 0, marginTop: "1px" }}><Icon /></span>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                {n.title && <p style={{ fontSize: "12px", fontWeight: 600, color: "var(--color-text-main)", marginBottom: "2px" }}>{n.title}</p>}
+                <p style={{ fontSize: "12px", color: "var(--color-text-muted)", whiteSpace: "pre-wrap", wordBreak: "break-words" }}>{n.message}</p>
               </div>
+              {n.dismissible && (
+                <button onClick={() => removeNotification(n.id)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--color-text-subtle)", flexShrink: 0, display: "flex", padding: "2px" }}>
+                  <IcoX />
+                </button>
+              )}
             </div>
           );
         })}
       </div>
-      {/* Mobile sidebar overlay */}
+
+      {/* Mobile overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/20 lg:hidden"
+          style={{ position: "fixed", inset: 0, zIndex: 40, background: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)" }}
+          className="lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
-      {/* Sidebar - Desktop */}
-      <div className="hidden lg:flex">
+      {/* Sidebar desktop */}
+      <div className="hidden lg:flex" style={{ flexShrink: 0 }}>
         <Sidebar />
       </div>
 
-      {/* Sidebar - Mobile */}
+      {/* Sidebar mobile */}
       <div
-        className={`fixed inset-y-0 left-0 z-50 transform lg:hidden transition-transform duration-300 ease-in-out ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className="lg:hidden"
+        style={{
+          position: "fixed", inset: "0 auto 0 0", zIndex: 50,
+          transform: sidebarOpen ? "translateX(0)" : "translateX(-100%)",
+          transition: "transform 250ms cubic-bezier(0.4,0,0.2,1)",
+        }}
       >
         <Sidebar onClose={() => setSidebarOpen(false)} />
       </div>
 
-      {/* Main content */}
-      <main className="flex flex-col flex-1 h-full min-w-0 relative transition-colors duration-300 isolate">
-        {/* Faint grid background */}
-        <div className="landing-grid absolute inset-0 pointer-events-none -z-10" aria-hidden="true" />
+      {/* Main */}
+      <main style={{ display: "flex", flexDirection: "column", flex: 1, height: "100%", minWidth: 0, position: "relative", overflow: "hidden" }}>
+        {/* Subtle dot grid background */}
+        <div aria-hidden="true" style={{
+          position: "absolute", inset: 0, zIndex: 0, pointerEvents: "none",
+          backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px)",
+          backgroundSize: "24px 24px",
+        }} />
+
         <Header key={pathname} onMenuClick={() => setSidebarOpen(true)} />
-        <div className={`flex-1 overflow-y-auto custom-scrollbar ${pathname === "/dashboard/basic-chat" ? "" : "p-6 lg:p-10"} ${pathname === "/dashboard/basic-chat" ? "flex flex-col overflow-hidden" : ""}`}>
-          <div className={`${pathname === "/dashboard/basic-chat" ? "flex-1 w-full h-full flex flex-col" : "max-w-7xl mx-auto"}`}>{children}</div>
+
+        <div style={{
+          flex: 1,
+          overflowY: "auto",
+          position: "relative",
+          zIndex: 1,
+          padding: isChat ? "0" : "24px",
+          display: isChat ? "flex" : "block",
+          flexDirection: isChat ? "column" : undefined,
+        }}
+          className="custom-scrollbar"
+        >
+          <div style={{
+            maxWidth: isChat ? "100%" : "1280px",
+            margin: isChat ? "0" : "0 auto",
+            width: "100%",
+            height: isChat ? "100%" : undefined,
+            display: isChat ? "flex" : undefined,
+            flexDirection: isChat ? "column" : undefined,
+          }}>
+            {children}
+          </div>
         </div>
       </main>
     </div>
