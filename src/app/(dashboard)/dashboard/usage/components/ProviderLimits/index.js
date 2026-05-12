@@ -220,7 +220,6 @@ export default function ProviderLimits() {
 
   useEffect(() => {
     let cancelled = false;
-    setProxyPools([]);
     return () => {
       cancelled = true;
     };

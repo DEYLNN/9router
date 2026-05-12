@@ -9,263 +9,175 @@ import HeaderMenu from "@/shared/components/HeaderMenu";
 import ThemeToggle from "@/shared/components/ThemeToggle";
 import { useHeaderSearchStore } from "@/store/headerSearchStore";
 import { OAUTH_PROVIDERS, APIKEY_PROVIDERS } from "@/shared/constants/config";
-import { MEDIA_PROVIDER_KINDS, AI_PROVIDERS } from "@/shared/constants/providers";
 import { translate } from "@/i18n/runtime";
 
+// ─── inline SVG icons ────────────────────────────────────────────────────────
+const IcoMenu = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>;
+const IcoChevronRight = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="m9 18 6-6-6-6"/></svg>;
+const IcoSearch = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>;
+const IcoClose = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M18 6 6 18M6 6l12 12"/></svg>;
+const IcoEndpoint = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>;
+const IcoProviders = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="3" width="20" height="5" rx="1"/><rect x="2" y="10" width="20" height="5" rx="1"/><rect x="2" y="17" width="20" height="5" rx="1"/><circle cx="18" cy="5.5" r="1" fill="currentColor"/><circle cx="18" cy="12.5" r="1" fill="currentColor"/><circle cx="18" cy="19.5" r="1" fill="currentColor"/></svg>;
+const IcoCombos = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>;
+const IcoUsage = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>;
+const IcoQuota = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>;
+const IcoSettings = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>;
+const IcoTerminal = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>;
+const IcoTranslate = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M5 8h14M5 8a2 2 0 010-4h14a2 2 0 010 4M5 8l1 12a2 2 0 002 2h8a2 2 0 002-2l1-12"/></svg>;
+const IcoKey = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="7.5" cy="15.5" r="5.5"/><path d="M21 2l-9.6 9.6M15.5 7.5l3 3"/></svg>;
+const IcoMonitor = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>;
+
+const PAGE_ICON_MAP = {
+  api: IcoEndpoint,
+  dns: IcoProviders,
+  layers: IcoCombos,
+  bar_chart: IcoUsage,
+  data_usage: IcoQuota,
+  settings: IcoSettings,
+  terminal: IcoTerminal,
+  translate: IcoTranslate,
+  vpn_key: IcoKey,
+  monitor: IcoMonitor,
+};
+
+// ─── page info ────────────────────────────────────────────────────────────────
 const getPageInfo = (pathname) => {
   if (!pathname) return { title: "", description: "", breadcrumbs: [] };
 
-  // Media provider detail: /dashboard/media-providers/[kind]/[id]
-  const mediaDetailMatch = pathname.match(/\/media-providers\/([^/]+)\/([^/]+)$/);
-  if (mediaDetailMatch) {
-    const kindId = mediaDetailMatch[1];
-    const providerId = mediaDetailMatch[2];
-    const kindConfig = MEDIA_PROVIDER_KINDS.find((k) => k.id === kindId);
-    const provider = AI_PROVIDERS[providerId];
-    return {
-      title: provider?.name || providerId,
-      description: "",
-      breadcrumbs: [
-        { label: "Media Providers", href: `/dashboard/media-providers/${kindId}` },
-        { label: kindConfig?.label || kindId, href: `/dashboard/media-providers/${kindId}` },
-        { label: provider?.name || providerId, image: `/providers/${providerId}.png` },
-      ],
-    };
-  }
-
-  // Media provider kind: /dashboard/media-providers/[kind]
-  const mediaKindMatch = pathname.match(/\/media-providers\/([^/]+)$/);
-  if (mediaKindMatch) {
-    const kindId = mediaKindMatch[1];
-    const kindConfig = MEDIA_PROVIDER_KINDS.find((k) => k.id === kindId);
-    return {
-      title: kindConfig?.label || kindId,
-      description: `Manage your ${kindConfig?.label || kindId} providers`,
-      icon: kindConfig?.icon || "perm_media",
-      breadcrumbs: [],
-    };
-  }
-
-  // Provider detail page: /dashboard/providers/[id]
   const providerMatch = pathname.match(/\/providers\/([^/]+)$/);
   if (providerMatch) {
     const providerId = providerMatch[1];
-    const providerInfo =
-      OAUTH_PROVIDERS[providerId] || APIKEY_PROVIDERS[providerId];
+    const providerInfo = OAUTH_PROVIDERS[providerId] || APIKEY_PROVIDERS[providerId];
     if (providerInfo) {
       return {
         title: providerInfo.name,
         description: "",
         breadcrumbs: [
           { label: "Providers", href: "/dashboard/providers" },
-          {
-            label: providerInfo.name,
-            image: `/providers/${providerInfo.id}.png`,
-          },
+          { label: providerInfo.name, image: `/providers/${providerInfo.id}.png` },
         ],
       };
     }
   }
 
-  if (pathname.includes("/providers") && !pathname.includes("/media-providers"))
-    return {
-      title: "Providers",
-      description: "Manage your AI provider connections",
-      icon: "dns",
-      breadcrumbs: [],
-    };
-  if (pathname.includes("/combos"))
-    return {
-      title: "Combos",
-      description: "Model combos with fallback",
-      icon: "layers",
-      breadcrumbs: [],
-    };
-  if (pathname.includes("/usage"))
-    return {
-      title: "Usage & Analytics",
-      description:
-        "Monitor your API usage, token consumption, and request logs",
-      icon: "bar_chart",
-      breadcrumbs: [],
-    };
-  if (pathname.includes("/auth-files"))
-    return {
-      title: "Auth Files",
-      description: "Map provider credentials stored in the local database",
-      icon: "vpn_key",
-      breadcrumbs: [],
-    };
-  if (pathname.includes("/quota"))
-    return {
-      title: "Quota Tracker",
-      description: "Track and manage your API quota limits",
-      icon: "data_usage",
-      breadcrumbs: [],
-    };
-  if (pathname.includes("/mitm"))
-    return {
-      title: "MITM Proxy",
-      description: "Intercept CLI tool traffic and route through 9Router",
-      icon: "security",
-      breadcrumbs: [],
-    };
-  if (pathname.includes("/cli-tools"))
-    return {
-      title: "CLI Tools",
-      description: "Configure CLI tools",
-      icon: "terminal",
-      breadcrumbs: [],
-    };
-  if (pathname.includes("/proxy-pools"))
-    return {
-      title: "Proxy Pools",
-      description: "Manage your proxy pool configurations",
-      icon: "lan",
-      breadcrumbs: [],
-    };
-  if (pathname.includes("/skills"))
-    return {
-      title: "Agent Skills",
-      description: "Copy a link and paste to your AI to use 9Router — no install needed",
-      icon: "extension",
-      breadcrumbs: [],
-    };
-  if (pathname.includes("/endpoint"))
-    return {
-      title: "Endpoint",
-      description: "API endpoint configuration",
-      icon: "api",
-      breadcrumbs: [],
-    };
-  if (pathname.includes("/profile"))
-    return {
-      title: "Settings",
-      description: "Manage your preferences",
-      icon: "settings",
-      breadcrumbs: [],
-    };
-  if (pathname.includes("/translator"))
-    return {
-      title: "Translator",
-      description: "Debug translation flow between formats",
-      icon: "translate",
-      breadcrumbs: [],
-    };
-  if (pathname.includes("/console-log"))
-    return {
-      title: "Console Log",
-      description: "Live server console output",
-      icon: "monitor",
-      breadcrumbs: [],
-    };
-  if (pathname === "/dashboard")
-    return {
-      title: "Endpoint",
-      description: "API endpoint configuration",
-      icon: "api",
-      breadcrumbs: [],
-    };
+  if (pathname.includes("/providers")) return { title: "Providers", description: "Manage your AI provider connections", icon: "dns", breadcrumbs: [] };
+  if (pathname.includes("/combos")) return { title: "Combos", description: "Model combos with fallback", icon: "layers", breadcrumbs: [] };
+  if (pathname.includes("/usage")) return { title: "Usage & Analytics", description: "Monitor your API usage, token consumption, and request logs", icon: "bar_chart", breadcrumbs: [] };
+  if (pathname.includes("/auth-files")) return { title: "Auth Files", description: "Map provider credentials stored in the local database", icon: "vpn_key", breadcrumbs: [] };
+  if (pathname.includes("/quota")) return { title: "Quota Tracker", description: "Track and manage your API quota limits", icon: "data_usage", breadcrumbs: [] };
+  if (pathname.includes("/endpoint")) return { title: "Endpoint", description: "API endpoint configuration", icon: "api", breadcrumbs: [] };
+  if (pathname.includes("/profile")) return { title: "Settings", description: "Manage your preferences", icon: "settings", breadcrumbs: [] };
+  if (pathname.includes("/translator")) return { title: "Translator", description: "Debug translation flow between formats", icon: "translate", breadcrumbs: [] };
+  if (pathname.includes("/console-log")) return { title: "Console Log", description: "Live server console output", icon: "monitor", breadcrumbs: [] };
+  if (pathname === "/dashboard") return { title: "Endpoint", description: "API endpoint configuration", icon: "api", breadcrumbs: [] };
   return { title: "", description: "", breadcrumbs: [] };
 };
 
+// ─── header ───────────────────────────────────────────────────────────────────
 export default function Header({ onMenuClick, showMenuButton = true }) {
   const pathname = usePathname();
   const router = useRouter();
-
-  // Memoize page info to prevent unnecessary recalculations
   const pageInfo = useMemo(() => getPageInfo(pathname), [pathname]);
   const { title, description, icon, breadcrumbs } = pageInfo;
 
   const handleLogout = async () => {
     try {
       const res = await fetch("/api/auth/logout", { method: "POST" });
-      if (res.ok) {
-        router.push("/login");
-        router.refresh();
-      }
+      if (res.ok) { router.push("/login"); router.refresh(); }
     } catch (err) {
       console.error("Failed to logout:", err);
     }
   };
 
+  const PageIcon = icon ? (PAGE_ICON_MAP[icon] || null) : null;
+
   return (
-    <header className="shrink-0 flex items-center justify-between gap-3 px-4 lg:px-8 pt-3 pb-2 border-b border-border-subtle bg-surface/60 backdrop-blur-xl lg:bg-transparent lg:backdrop-blur-none z-20">
-      {/* Mobile menu button */}
-      <div className="flex items-center gap-3 lg:hidden shrink-0">
+    <header style={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: "12px",
+      height: "52px",
+      padding: "0 20px",
+      background: "var(--color-surface)",
+      borderBottom: "1px solid var(--color-border)",
+      flexShrink: 0,
+      zIndex: 20,
+    }}>
+      {/* Left: mobile menu + title */}
+      <div style={{ display: "flex", alignItems: "center", gap: "12px", minWidth: 0, flex: 1 }}>
+        {/* Mobile menu button */}
         {showMenuButton && (
           <button
             onClick={onMenuClick}
-            className="text-text-main hover:text-primary transition-colors"
+            className="lg:hidden"
+            style={{
+              display: "flex", alignItems: "center", justifyContent: "center",
+              width: "36px", height: "36px", borderRadius: "8px",
+              background: "transparent", border: "none",
+              color: "var(--color-text-muted)", cursor: "pointer",
+              flexShrink: 0,
+              transition: "color 150ms ease",
+            }}
+            onMouseEnter={e => e.currentTarget.style.color = "var(--color-text-main)"}
+            onMouseLeave={e => e.currentTarget.style.color = "var(--color-text-muted)"}
           >
-            <span className="material-symbols-outlined">menu</span>
+            <IcoMenu />
           </button>
         )}
-      </div>
 
-      {/* Page title with breadcrumbs */}
-      <div className="flex flex-col min-w-0 flex-1">
+        {/* Breadcrumbs or title */}
         {breadcrumbs.length > 0 ? (
-          <div className="flex items-center gap-2">
+          <div style={{ display: "flex", alignItems: "center", gap: "6px", minWidth: 0 }}>
             {breadcrumbs.map((crumb, index) => (
-              <div
-                key={`${crumb.label}-${crumb.href || "current"}`}
-                className="flex items-center gap-2"
-              >
-                {index > 0 && (
-                  <span className="material-symbols-outlined text-text-muted text-base">
-                    chevron_right
-                  </span>
-                )}
+              <div key={`${crumb.label}-${crumb.href || "current"}`} style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                {index > 0 && <span style={{ color: "var(--color-text-subtle)", opacity: 0.5 }}><IcoChevronRight /></span>}
                 {crumb.href ? (
-                  <Link
-                    href={crumb.href}
-                    className="text-text-muted hover:text-primary transition-colors"
+                  <Link href={crumb.href} style={{ fontSize: "14px", color: "var(--color-text-muted)", textDecoration: "none", transition: "color 150ms ease" }}
+                    onMouseEnter={e => e.currentTarget.style.color = "var(--color-primary)"}
+                    onMouseLeave={e => e.currentTarget.style.color = "var(--color-text-muted)"}
                   >
                     {crumb.label}
                   </Link>
                 ) : (
-                  <div className="flex items-center gap-2">
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                     {crumb.image && (
-                      <ProviderIcon
-                        src={crumb.image}
-                        alt={crumb.label}
-                        size={28}
-                        className="object-contain rounded max-w-[28px] max-h-[28px]"
+                      <ProviderIcon src={crumb.image} alt={crumb.label} size={24}
+                        className="object-contain rounded"
                         fallbackText={crumb.label.slice(0, 2).toUpperCase()}
                       />
                     )}
-                    <h1 className="text-base lg:text-2xl font-semibold text-text-main tracking-tight truncate">
+                    <span style={{ fontSize: "15px", fontWeight: 600, color: "var(--color-text-main)", letterSpacing: "-0.02em", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       {translate(crumb.label)}
-                    </h1>
+                    </span>
                   </div>
                 )}
               </div>
             ))}
           </div>
         ) : title ? (
-          <div>
-            <div className="flex items-center gap-2">
-              {icon && (
-                <span className="material-symbols-outlined text-primary text-xl lg:text-2xl">
-                  {icon}
+          <div style={{ minWidth: 0 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              {PageIcon && (
+                <span style={{ color: "var(--color-primary)", opacity: 0.8, flexShrink: 0 }}>
+                  <PageIcon />
                 </span>
               )}
-              <h1 className="text-base lg:text-2xl font-semibold tracking-tight truncate">
+              <span style={{ fontSize: "15px", fontWeight: 600, color: "var(--color-text-main)", letterSpacing: "-0.02em", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                 {translate(title)}
-              </h1>
+              </span>
+              {description && (
+                <span className="hidden lg:block" style={{ fontSize: "12px", color: "var(--color-text-subtle)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  — {translate(description)}
+                </span>
+              )}
             </div>
-            {description && (
-              <p className="hidden lg:block text-sm text-text-muted truncate">
-                {translate(description)}
-              </p>
-            )}
           </div>
         ) : null}
       </div>
 
-      {/* Right actions */}
-      <div className="flex items-center gap-1 shrink-0">
+      {/* Right: search + theme + menu */}
+      <div style={{ display: "flex", alignItems: "center", gap: "4px", flexShrink: 0 }}>
         <HeaderSearch />
         <ThemeToggle />
         <HeaderMenu onLogout={handleLogout} />
@@ -274,6 +186,7 @@ export default function Header({ onMenuClick, showMenuButton = true }) {
   );
 }
 
+// ─── header search ────────────────────────────────────────────────────────────
 function HeaderSearch() {
   const visible = useHeaderSearchStore((s) => s.visible);
   const query = useHeaderSearchStore((s) => s.query);
@@ -283,25 +196,39 @@ function HeaderSearch() {
   if (!visible) return null;
 
   return (
-    <div className="relative w-[160px] sm:w-[220px]">
-      <span className="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-text-muted text-[16px] pointer-events-none">
-        search
+    <div style={{ position: "relative", width: "160px" }} className="sm:w-[200px]">
+      <span style={{ position: "absolute", left: "9px", top: "50%", transform: "translateY(-50%)", color: "var(--color-text-subtle)", pointerEvents: "none", display: "flex" }}>
+        <IcoSearch />
       </span>
       <input
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder={placeholder}
-        className="w-full h-8 pl-7 pr-7 rounded-lg border border-border bg-surface/60 text-sm focus:outline-none focus:border-primary/50 transition-colors"
+        style={{
+          width: "100%", boxSizing: "border-box",
+          height: "32px", paddingLeft: "28px", paddingRight: query ? "28px" : "10px",
+          borderRadius: "8px",
+          border: "1px solid var(--color-border)",
+          background: "var(--color-surface-2)",
+          color: "var(--color-text-main)",
+          fontSize: "13px", outline: "none",
+          transition: "border-color 150ms ease",
+        }}
+        onFocus={e => e.target.style.borderColor = "rgba(59,130,246,0.5)"}
+        onBlur={e => e.target.style.borderColor = "var(--color-border)"}
       />
       {query && (
         <button
           type="button"
           onClick={() => setQuery("")}
-          className="absolute right-1 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-main p-0.5 rounded"
-          aria-label="Clear search"
+          style={{
+            position: "absolute", right: "8px", top: "50%", transform: "translateY(-50%)",
+            background: "none", border: "none", cursor: "pointer",
+            color: "var(--color-text-subtle)", display: "flex", padding: "2px",
+          }}
         >
-          <span className="material-symbols-outlined text-[16px]">close</span>
+          <IcoClose />
         </button>
       )}
     </div>

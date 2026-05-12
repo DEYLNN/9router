@@ -6,25 +6,40 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/shared/utils/cn";
 import { APP_CONFIG, UPDATER_CONFIG } from "@/shared/constants/config";
-import { MEDIA_PROVIDER_KINDS } from "@/shared/constants/providers";
 import { useCopyToClipboard } from "@/shared/hooks/useCopyToClipboard";
 import Button from "./Button";
 import { ConfirmModal } from "./Modal";
 
-// const VISIBLE_MEDIA_KINDS = ["embedding", "image", "imageToText", "tts", "stt", "webSearch", "webFetch", "video", "music"];
-const VISIBLE_MEDIA_KINDS = ["embedding", "image", "tts", "stt"];
-// Combined entry: webSearch + webFetch share one page at /dashboard/media-providers/web
-const COMBINED_WEB_ITEM = { id: "web", label: "Web Fetch & Search", icon: "travel_explore", href: "/dashboard/media-providers/web" };
+// ─── inline SVG icons ────────────────────────────────────────────────────────
+const IcoEndpoint = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>;
+const IcoProviders = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="3" width="20" height="5" rx="1"/><rect x="2" y="10" width="20" height="5" rx="1"/><rect x="2" y="17" width="20" height="5" rx="1"/><circle cx="18" cy="5.5" r="1" fill="currentColor"/><circle cx="18" cy="12.5" r="1" fill="currentColor"/><circle cx="18" cy="19.5" r="1" fill="currentColor"/></svg>;
+const IcoCombos = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>;
+const IcoUsage = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>;
+const IcoQuota = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>;
+const IcoTerminal = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>;
+const IcoTranslate = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M5 8h14M5 8a2 2 0 010-4h14a2 2 0 010 4M5 8l1 12a2 2 0 002 2h8a2 2 0 002-2l1-12"/></svg>;
+const IcoSettings = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>;
+const IcoShutdown = () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M18.36 6.64a9 9 0 11-12.73 0M12 2v10"/></svg>;
+const IcoUpdate = () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0115-6.7L21 8M3 22v-6h6"/><path d="M21 12a9 9 0 01-15 6.7L3 16"/></svg>;
+const IcoLogo = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg>;
+
+const ICON_MAP = {
+  api: IcoEndpoint,
+  dns: IcoProviders,
+  layers: IcoCombos,
+  bar_chart: IcoUsage,
+  data_usage: IcoQuota,
+  terminal: IcoTerminal,
+  translate: IcoTranslate,
+  settings: IcoSettings,
+};
 
 const navItems = [
   { href: "/dashboard/endpoint", label: "Endpoint", icon: "api" },
   { href: "/dashboard/providers", label: "Providers", icon: "dns" },
-  // { href: "/dashboard/basic-chat", label: "Basic Chat", icon: "chat" }, // Hidden
   { href: "/dashboard/combos", label: "Combos", icon: "layers" },
   { href: "/dashboard/usage", label: "Usage", icon: "bar_chart" },
   { href: "/dashboard/quota", label: "Quota Tracker", icon: "data_usage" },
-  { href: "/dashboard/mitm", label: "MITM", icon: "security" },
-  { href: "/dashboard/cli-tools", label: "CLI Tools", icon: "terminal" },
 ];
 
 const debugItems = [
@@ -32,14 +47,8 @@ const debugItems = [
   { href: "/dashboard/translator", label: "Translator", icon: "translate" },
 ];
 
-const systemItems = [
-  { href: "/dashboard/proxy-pools", label: "Proxy Pools", icon: "lan" },
-  { href: "/dashboard/skills", label: "Skills", icon: "extension" },
-];
-
 export default function Sidebar({ onClose }) {
   const pathname = usePathname();
-  const [mediaOpen, setMediaOpen] = useState(false);
   const [showShutdownModal, setShowShutdownModal] = useState(false);
   const [isShuttingDown, setIsShuttingDown] = useState(false);
   const [isDisconnected, setIsDisconnected] = useState(false);
@@ -59,7 +68,6 @@ export default function Sidebar({ onClose }) {
       .catch(() => {});
   }, []);
 
-  // Lazy check for new npm version on mount
   useEffect(() => {
     fetch("/api/version")
       .then(res => res.json())
@@ -74,15 +82,10 @@ export default function Sidebar({ onClose }) {
     return pathname.startsWith(href);
   };
 
-  // Open manual update panel (no countdown yet — user must click Copy to trigger shutdown)
-  const handleUpdate = () => {
-    setShowUpdateModal(false);
-    setIsUpdating(true);
-  };
+  const handleUpdate = () => { setShowUpdateModal(false); setIsUpdating(true); };
 
-  // Triggered by Copy button inside ManualUpdatePanel: copy + countdown + shutdown
   const handleCopyAndShutdown = async () => {
-    try { await navigator.clipboard.writeText(INSTALL_CMD); } catch { /* clipboard blocked */ }
+    try { await navigator.clipboard.writeText(INSTALL_CMD); } catch { }
     copy(INSTALL_CMD);
     let remaining = UPDATER_CONFIG.shutdownCountdownSec;
     setShutdownCountdown(remaining);
@@ -97,68 +100,100 @@ export default function Sidebar({ onClose }) {
     }, 1000);
   };
 
-  const handleCancelUpdate = () => {
-    setIsUpdating(false);
-    setShutdownCountdown(0);
-  };
-
-  // Note: legacy updater poll removed. New flow: copy install cmd + shutdown server,
-  // user runs the command manually in another terminal.
-
+  const handleCancelUpdate = () => { setIsUpdating(false); setShutdownCountdown(0); };
 
   const handleShutdown = async () => {
     setIsShuttingDown(true);
-    try {
-      await fetch("/api/shutdown", { method: "POST" });
-    } catch (e) {
-      // Expected to fail as server shuts down; ignore error
-    }
+    try { await fetch("/api/shutdown", { method: "POST" }); } catch { }
     setIsShuttingDown(false);
     setShowShutdownModal(false);
     setIsDisconnected(true);
   };
 
+  const NavItem = ({ href, label, icon }) => {
+    const active = isActive(href);
+    const Icon = ICON_MAP[icon] || IcoEndpoint;
+    return (
+      <Link
+        href={href}
+        onClick={onClose}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+          padding: "0 10px",
+          height: "36px",
+          borderRadius: "8px",
+          fontSize: "13px",
+          fontWeight: 500,
+          textDecoration: "none",
+          transition: "background 150ms ease, color 150ms ease",
+          borderLeft: active ? "2px solid var(--color-primary)" : "2px solid transparent",
+          background: active ? "rgba(59,130,246,0.08)" : "transparent",
+          color: active ? "var(--color-primary)" : "var(--color-text-muted)",
+          marginBottom: "2px",
+        }}
+        onMouseEnter={e => { if (!active) { e.currentTarget.style.background = "var(--color-surface-2)"; e.currentTarget.style.color = "var(--color-text-main)"; } }}
+        onMouseLeave={e => { if (!active) { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--color-text-muted)"; } }}
+      >
+        <span style={{ opacity: active ? 1 : 0.7, flexShrink: 0 }}><Icon /></span>
+        {label}
+      </Link>
+    );
+  };
+
   return (
     <>
-      <aside className="flex w-72 flex-col border-r border-border-subtle bg-vibrancy backdrop-blur-xl transition-colors duration-300 min-h-full">
-        {/* Traffic lights */}
-        <div className="flex items-center gap-2 px-6 pt-5 pb-2">
-          <div className="w-3 h-3 rounded-full bg-[#FF5F56]" />
-          <div className="w-3 h-3 rounded-full bg-[#FFBD2E]" />
-          <div className="w-3 h-3 rounded-full bg-[#27C93F]" />
-        </div>
-
+      <aside style={{
+        display: "flex",
+        flexDirection: "column",
+        width: "240px",
+        minHeight: "100%",
+        background: "var(--color-surface)",
+        borderRight: "1px solid var(--color-border)",
+        flexShrink: 0,
+      }}>
         {/* Logo */}
-        <div className="px-6 py-4 flex flex-col gap-2">
-          <Link href="/dashboard" className="flex items-center gap-3">
-            <div className="flex items-center justify-center size-9 rounded-[10px] bg-gradient-to-br from-brand-500 to-brand-700 shadow-[var(--shadow-warm)]">
-              <span className="material-symbols-outlined text-white text-[20px]">hub</span>
+        <div style={{ padding: "20px 16px 12px", borderBottom: "1px solid var(--color-border)" }}>
+          <Link href="/dashboard" style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none" }}>
+            <div style={{
+              display: "flex", alignItems: "center", justifyContent: "center",
+              width: "32px", height: "32px", borderRadius: "8px",
+              background: "var(--color-primary)",
+              color: "#fff", flexShrink: 0,
+            }}>
+              <IcoLogo />
             </div>
-            <div className="flex flex-col">
-              <h1 className="text-lg font-semibold tracking-tight text-text-main">
+            <div>
+              <div style={{ fontSize: "14px", fontWeight: 700, color: "var(--color-text-main)", letterSpacing: "-0.02em" }}>
                 {APP_CONFIG.name}
-              </h1>
-              <span className="text-xs text-text-muted">v{APP_CONFIG.version}</span>
+              </div>
+              <div style={{ fontSize: "11px", color: "var(--color-text-subtle)" }}>v{APP_CONFIG.version}</div>
             </div>
           </Link>
+
           {updateInfo && (
-            <div className="flex flex-col gap-1.5 rounded p-1 -m-1">
-              <span className="text-xs font-semibold text-green-600 dark:text-amber-500">
-                ↑ New version available: v{updateInfo.latestVersion}
-              </span>
-              <div className="flex items-center gap-2">
+            <div style={{ marginTop: "10px", padding: "8px", borderRadius: "8px", background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.2)" }}>
+              <div style={{ fontSize: "11px", fontWeight: 600, color: "#F59E0B", marginBottom: "6px" }}>
+                Update available: v{updateInfo.latestVersion}
+              </div>
+              <div style={{ display: "flex", gap: "6px" }}>
                 <button
                   onClick={() => setShowUpdateModal(true)}
-                  className="px-2 py-1 rounded bg-green-600 hover:bg-green-700 dark:bg-amber-500 dark:hover:bg-amber-600 text-white text-[11px] font-semibold transition-colors cursor-pointer"
+                  style={{
+                    display: "flex", alignItems: "center", gap: "4px",
+                    padding: "4px 8px", borderRadius: "6px",
+                    background: "#F59E0B", border: "none",
+                    color: "#000", fontSize: "11px", fontWeight: 600, cursor: "pointer",
+                  }}
                 >
-                  Update now
+                  <IcoUpdate /> Update
                 </button>
                 <button
                   onClick={() => copy(INSTALL_CMD)}
-                  title="Copy install command"
-                  className="flex-1 text-left hover:opacity-80 transition-opacity cursor-pointer min-w-0"
+                  style={{ background: "none", border: "none", cursor: "pointer", flex: 1, textAlign: "left", overflow: "hidden" }}
                 >
-                  <code className="block text-[10px] text-green-600/80 dark:text-amber-400/70 font-mono truncate">
+                  <code style={{ fontSize: "10px", color: "rgba(245,158,11,0.7)", fontFamily: "monospace", display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                     {copied ? "✓ copied!" : INSTALL_CMD}
                   </code>
                 </button>
@@ -167,181 +202,45 @@ export default function Sidebar({ onClose }) {
           )}
         </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 px-4 py-2 space-y-0.5 overflow-y-auto custom-scrollbar">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={onClose}
-              className={cn(
-                "flex items-center gap-3 px-3 py-1 rounded-lg transition-all group",
-                isActive(item.href)
-                  ? "bg-primary/10 text-primary"
-                  : "text-text-muted hover:bg-surface-2 hover:text-text-main"
-              )}
-            >
-              <span
-                className={cn(
-                  "material-symbols-outlined text-[18px]",
-                  isActive(item.href) ? "fill-1" : "group-hover:text-primary transition-colors"
-                )}
-              >
-                {item.icon}
-              </span>
-              <span className="text-[13px] font-medium">{item.label}</span>
-            </Link>
-          ))}
+        {/* Nav */}
+        <nav style={{ flex: 1, padding: "12px 8px", overflowY: "auto" }}>
+          {navItems.map(item => <NavItem key={item.href} {...item} />)}
 
           {/* System section */}
-          <div className="pt-3 mt-2 space-y-0.5">
-            <p className="px-4 text-xs font-semibold text-text-muted/60 uppercase tracking-wider mb-2">
+          <div style={{ marginTop: "16px", marginBottom: "6px", padding: "0 10px" }}>
+            <span style={{ fontSize: "10px", fontWeight: 600, color: "var(--color-text-subtle)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
               System
-            </p>
-
-            {/* Media Providers accordion */}
-            <button
-              onClick={() => setMediaOpen((v) => !v)}
-              className={cn(
-                "w-full flex items-center gap-3 px-3 py-1 rounded-lg transition-all group",
-                pathname.startsWith("/dashboard/media-providers")
-                  ? "bg-primary/10 text-primary"
-                  : "text-text-muted hover:bg-surface-2 hover:text-text-main"
-              )}
-            >
-              <span className="material-symbols-outlined text-[18px]">perm_media</span>
-              <span className="text-[13px] font-medium flex-1 text-left">Media Providers</span>
-              <span className="material-symbols-outlined text-[14px] transition-transform" style={{ transform: mediaOpen ? "rotate(180deg)" : "rotate(0deg)" }}>
-                expand_more
-              </span>
-            </button>
-            {mediaOpen && (
-              <div className="pl-4">
-                {MEDIA_PROVIDER_KINDS.filter((k) => VISIBLE_MEDIA_KINDS.includes(k.id)).map((kind) => (
-                  <Link
-                    key={kind.id}
-                    href={`/dashboard/media-providers/${kind.id}`}
-                    onClick={onClose}
-                    className={cn(
-                      "flex items-center gap-3 px-4 py-1 rounded-lg transition-all group",
-                      pathname.startsWith(`/dashboard/media-providers/${kind.id}`)
-                        ? "bg-primary/10 text-primary"
-                        : "text-text-muted hover:bg-surface-2 hover:text-text-main"
-                    )}
-                  >
-                    <span className="material-symbols-outlined text-[16px]">{kind.icon}</span>
-                    <span className="text-sm">{kind.label}</span>
-                  </Link>
-                ))}
-                <Link
-                  key={COMBINED_WEB_ITEM.id}
-                  href={COMBINED_WEB_ITEM.href}
-                  onClick={onClose}
-                  className={cn(
-                    "flex items-center gap-3 px-4 py-1 rounded-lg transition-all group",
-                    pathname.startsWith(COMBINED_WEB_ITEM.href)
-                      ? "bg-primary/10 text-primary"
-                      : "text-text-muted hover:bg-surface-2 hover:text-text-main"
-                  )}
-                >
-                  <span className="material-symbols-outlined text-[16px]">{COMBINED_WEB_ITEM.icon}</span>
-                  <span className="text-sm">{COMBINED_WEB_ITEM.label}</span>
-                </Link>
-              </div>
-            )}
-
-            {systemItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={onClose}
-                className={cn(
-                  "flex items-center gap-3 px-3 py-1 rounded-lg transition-all group",
-                  isActive(item.href)
-                    ? "bg-primary/10 text-primary"
-                    : "text-text-muted hover:bg-surface-2 hover:text-text-main"
-                )}
-              >
-                <span
-                  className={cn(
-                    "material-symbols-outlined text-[18px]",
-                    isActive(item.href) ? "fill-1" : "group-hover:text-primary transition-colors"
-                  )}
-                >
-                  {item.icon}
-                </span>
-                <span className="text-[13px] font-medium">{item.label}</span>
-              </Link>
-            ))}
-
-            {/* Debug items (inside System section, before Settings) */}
-            {debugItems.map((item) => {
-              const show = item.href !== "/dashboard/translator" || enableTranslator;
-              return show ? (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={onClose}
-                  className={cn(
-                    "flex items-center gap-3 px-3 py-1 rounded-lg transition-all group",
-                    isActive(item.href)
-                      ? "bg-primary/10 text-primary"
-                      : "text-text-muted hover:bg-surface-2 hover:text-text-main"
-                  )}
-                >
-                  <span
-                    className={cn(
-                      "material-symbols-outlined text-[18px]",
-                      isActive(item.href) ? "fill-1" : "group-hover:text-primary transition-colors"
-                    )}
-                  >
-                    {item.icon}
-                  </span>
-                  <span className="text-[13px] font-medium">{item.label}</span>
-                </Link>
-              ) : null;
-            })}
-
-            {/* Settings */}
-            <Link
-              href="/dashboard/profile"
-              onClick={onClose}
-              className={cn(
-                "flex items-center gap-3 px-3 py-1 rounded-lg transition-all group",
-                isActive("/dashboard/profile")
-                  ? "bg-primary/10 text-primary"
-                  : "text-text-muted hover:bg-surface-2 hover:text-text-main"
-              )}
-            >
-              <span
-                className={cn(
-                  "material-symbols-outlined text-[18px]",
-                  isActive("/dashboard/profile") ? "fill-1" : "group-hover:text-primary transition-colors"
-                )}
-              >
-                settings
-              </span>
-              <span className="text-[13px] font-medium">Settings</span>
-            </Link>
+            </span>
           </div>
+
+          {debugItems.map(item => {
+            const show = item.href !== "/dashboard/translator" || enableTranslator;
+            return show ? <NavItem key={item.href} {...item} /> : null;
+          })}
+
+          <NavItem href="/dashboard/profile" label="Settings" icon="settings" />
         </nav>
 
-        {/* Footer section */}
-        <div className="p-3 border-t border-border-subtle">
-          {/* Shutdown button */}
-          <Button
-            variant="outline"
-            fullWidth
-            icon="power_settings_new"
+        {/* Footer */}
+        <div style={{ padding: "12px 8px", borderTop: "1px solid var(--color-border)" }}>
+          <button
             onClick={() => setShowShutdownModal(true)}
-            className="text-red-500 border-red-200 hover:bg-red-50 hover:border-red-300"
+            style={{
+              display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
+              width: "100%", padding: "8px 12px", borderRadius: "8px",
+              background: "transparent",
+              border: "1px solid rgba(239,68,68,0.2)",
+              color: "#ef4444", fontSize: "13px", fontWeight: 500,
+              cursor: "pointer", transition: "background 150ms ease",
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = "rgba(239,68,68,0.08)"}
+            onMouseLeave={e => e.currentTarget.style.background = "transparent"}
           >
-            Shutdown
-          </Button>
+            <IcoShutdown /> Shutdown
+          </button>
         </div>
       </aside>
 
-      {/* Shutdown Confirmation Modal */}
       <ConfirmModal
         isOpen={showShutdownModal}
         onClose={() => setShowShutdownModal(false)}
@@ -354,7 +253,6 @@ export default function Sidebar({ onClose }) {
         loading={isShuttingDown}
       />
 
-      {/* Update Confirmation Modal */}
       <ConfirmModal
         isOpen={showUpdateModal}
         onClose={() => setShowUpdateModal(false)}
@@ -366,9 +264,8 @@ export default function Sidebar({ onClose }) {
         variant="primary"
       />
 
-      {/* Disconnected / Updating Overlay */}
       {(isDisconnected || isUpdating) && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-6">
+        <div style={{ position: "fixed", inset: 0, zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.85)", backdropFilter: "blur(8px)", padding: "24px" }}>
           {isUpdating ? (
             <ManualUpdatePanel
               latestVersion={updateInfo?.latestVersion}
@@ -380,15 +277,13 @@ export default function Sidebar({ onClose }) {
               isDisconnected={isDisconnected}
             />
           ) : (
-            <div className="text-center p-8">
-              <div className="flex items-center justify-center size-16 rounded-full bg-red-500/20 text-red-500 mx-auto mb-4">
-                <span className="material-symbols-outlined text-[32px]">power_off</span>
+            <div style={{ textAlign: "center", padding: "32px" }}>
+              <div style={{ width: "56px", height: "56px", borderRadius: "50%", background: "rgba(239,68,68,0.15)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", color: "#ef4444" }}>
+                <IcoShutdown />
               </div>
-              <h2 className="text-xl font-semibold text-white mb-2">Server Disconnected</h2>
-              <p className="text-text-muted mb-6">The proxy server has been stopped.</p>
-              <Button variant="secondary" onClick={() => globalThis.location.reload()}>
-                Reload Page
-              </Button>
+              <h2 style={{ fontSize: "18px", fontWeight: 600, color: "#fff", marginBottom: "8px" }}>Server Disconnected</h2>
+              <p style={{ color: "var(--color-text-muted)", marginBottom: "24px" }}>The proxy server has been stopped.</p>
+              <Button variant="secondary" onClick={() => globalThis.location.reload()}>Reload Page</Button>
             </div>
           )}
         </div>
@@ -397,50 +292,36 @@ export default function Sidebar({ onClose }) {
   );
 }
 
-Sidebar.propTypes = {
-  onClose: PropTypes.func,
-};
+Sidebar.propTypes = { onClose: PropTypes.func };
 
 function ManualUpdatePanel({ latestVersion, installCmd, copied, onCopyAndShutdown, onCancel, countdown, isDisconnected }) {
   const isCountingDown = countdown > 0;
   return (
-    <div className="w-full max-w-lg rounded-xl bg-neutral-900/95 border border-white/10 p-6 text-white">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="flex items-center justify-center size-11 rounded-full bg-amber-500/20 text-amber-400">
-          <span className="material-symbols-outlined text-[24px]">content_copy</span>
+    <div style={{ width: "100%", maxWidth: "480px", borderRadius: "12px", background: "rgba(22,22,22,0.98)", border: "1px solid var(--color-border)", padding: "24px", color: "#fff" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
+        <div style={{ width: "40px", height: "40px", borderRadius: "50%", background: "rgba(245,158,11,0.15)", display: "flex", alignItems: "center", justifyContent: "center", color: "#F59E0B", flexShrink: 0 }}>
+          <IcoUpdate />
         </div>
         <div>
-          <h2 className="text-lg font-semibold">Update 9Router{latestVersion ? ` to v${latestVersion}` : ""}</h2>
-          <p className="text-xs text-white/60">
-            {isDisconnected
-              ? "Server stopped. Paste the command into a terminal to install."
-              : isCountingDown
-                ? `Command copied. Server will stop in ${countdown}s...`
-                : "Click the button below to copy the install command and shutdown."}
+          <h2 style={{ fontSize: "16px", fontWeight: 600, marginBottom: "2px" }}>Update 9Router{latestVersion ? ` to v${latestVersion}` : ""}</h2>
+          <p style={{ fontSize: "12px", color: "var(--color-text-muted)" }}>
+            {isDisconnected ? "Server stopped. Paste the command into a terminal." : isCountingDown ? `Shutting down in ${countdown}s...` : "Copy the install command and shutdown to update."}
           </p>
         </div>
       </div>
-
-      <p className="text-sm text-white/80 mb-2">Install command:</p>
-      <div className="w-full px-3 py-2 rounded bg-white/5 mb-4">
-        <code className="text-xs font-mono text-amber-400 break-all">{installCmd}</code>
+      <div style={{ background: "rgba(255,255,255,0.04)", borderRadius: "8px", padding: "10px 12px", marginBottom: "16px" }}>
+        <code style={{ fontSize: "12px", fontFamily: "monospace", color: "#F59E0B", wordBreak: "break-all" }}>{installCmd}</code>
       </div>
-
-      <ol className="text-xs text-white/70 space-y-1 list-decimal list-inside mb-4">
-        <li>Click <strong>Copy & Shutdown</strong> below.</li>
+      <ol style={{ fontSize: "12px", color: "var(--color-text-muted)", paddingLeft: "16px", marginBottom: "16px", lineHeight: 1.8 }}>
+        <li>Click <strong style={{ color: "#fff" }}>Copy & Shutdown</strong> below.</li>
         <li>Paste the command into your terminal and press Enter.</li>
-        <li>Run <code className="px-1 rounded bg-white/10 text-green-400">9router</code> again after install.</li>
+        <li>Run <code style={{ background: "rgba(255,255,255,0.08)", padding: "1px 4px", borderRadius: "3px", color: "#10B981" }}>9router</code> again after install.</li>
       </ol>
-
       {isDisconnected ? (
-        <Button variant="secondary" fullWidth onClick={() => globalThis.location.reload()}>
-          Reload Page
-        </Button>
+        <Button variant="secondary" fullWidth onClick={() => globalThis.location.reload()}>Reload Page</Button>
       ) : (
-        <div className="flex gap-2">
-          <Button variant="secondary" onClick={onCancel} disabled={isCountingDown}>
-            Cancel
-          </Button>
+        <div style={{ display: "flex", gap: "8px" }}>
+          <Button variant="secondary" onClick={onCancel} disabled={isCountingDown}>Cancel</Button>
           <Button variant="primary" fullWidth onClick={onCopyAndShutdown} disabled={isCountingDown}>
             {copied ? "✓ Copied — shutting down..." : isCountingDown ? `Shutting down in ${countdown}s` : "Copy & Shutdown"}
           </Button>
