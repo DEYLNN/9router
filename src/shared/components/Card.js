@@ -25,9 +25,9 @@ export default function Card({
   return (
     <div
       className={cn(
-        "bg-surface border border-border-subtle",
-        elev ? "rounded-[14px] shadow-[var(--shadow-elev)]" : "rounded-[14px] shadow-[var(--shadow-soft)]",
-        hover && "hover:shadow-[var(--shadow-warm)] hover:border-brand-500/30 transition-all cursor-pointer",
+        "bg-surface border border-border rounded-[10px]",
+        elev ? "shadow-[var(--shadow-elev)]" : "shadow-[var(--shadow-soft)]",
+        hover && "hover:border-[rgba(255,255,255,0.14)] hover:bg-surface-2 transition-all cursor-pointer",
         paddings[padding],
         className
       )}
@@ -38,7 +38,7 @@ export default function Card({
           <div className="flex items-center gap-3">
             {icon && (
               <div className="p-2 rounded-[10px] bg-bg text-text-muted">
-                <span className="material-symbols-outlined text-[20px]">{icon}</span>
+                <span style={{ fontSize: "18px", color: "var(--color-text-muted)" }}>{icon}</span>
               </div>
             )}
             <div>

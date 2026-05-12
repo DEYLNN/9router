@@ -3,12 +3,12 @@
 import { cn } from "@/shared/utils/cn";
 
 const variants = {
-  primary: "bg-brand-500 hover:bg-brand-600 text-white shadow-sm disabled:bg-surface-3 disabled:text-text-muted",
-  secondary: "bg-surface-2 hover:bg-surface-3 text-text-main border border-border disabled:opacity-50",
-  outline: "border border-border text-text-main hover:bg-surface-2 hover:border-brand-500/40",
-  ghost: "text-text-muted hover:bg-surface-2 hover:text-text-main",
-  danger: "bg-red-500 hover:bg-red-600 text-white shadow-sm disabled:bg-surface-3 disabled:text-text-muted",
-  success: "bg-green-600 hover:bg-green-700 text-white shadow-sm disabled:bg-surface-3 disabled:text-text-muted",
+  primary: "bg-[#3B82F6] hover:bg-[#2563EB] text-white disabled:opacity-40",
+  secondary: "bg-[var(--color-surface-2)] hover:bg-[var(--color-surface-3)] text-[var(--color-text-main)] border border-[rgba(255,255,255,0.08)] hover:border-[rgba(255,255,255,0.14)] disabled:opacity-40",
+  outline: "border border-[rgba(255,255,255,0.12)] text-[var(--color-text-main)] hover:bg-[var(--color-surface-2)] hover:border-[rgba(59,130,246,0.4)]",
+  ghost: "text-[var(--color-text-muted)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-text-main)]",
+  danger: "bg-[rgba(239,68,68,0.1)] hover:bg-[rgba(239,68,68,0.18)] text-[#ef4444] border border-[rgba(239,68,68,0.2)] disabled:opacity-40",
+  success: "bg-[rgba(16,185,129,0.1)] hover:bg-[rgba(16,185,129,0.18)] text-[#10B981] border border-[rgba(16,185,129,0.2)] disabled:opacity-40",
 };
 
 const sizes = {
@@ -43,14 +43,16 @@ export default function Button({
       {...props}
     >
       {loading ? (
-        <span className="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ animation: "spin 0.8s linear infinite" }}><path d="M21 12a9 9 0 11-6.219-8.56"/></svg>
       ) : icon ? (
-        <span className="material-symbols-outlined text-[18px]">{icon}</span>
+        <span style={{ display: "flex", alignItems: "center" }}>{icon}</span>
       ) : null}
       {children}
       {iconRight && !loading && (
-        <span className="material-symbols-outlined text-[18px]">{iconRight}</span>
+        <span style={{ display: "flex", alignItems: "center" }}>{iconRight}</span>
       )}
     </button>
   );
 }
+
+// Note: add @keyframes spin to globals.css if not present
