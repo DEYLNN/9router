@@ -47,7 +47,7 @@ function getStatusDisplay(connected, error, errorCode) {
     );
   }
   if (parts.length === 0) {
-    return <span className="text-text-muted">No connections</span>;
+    return <span style={{ fontSize: "11px", color: "var(--color-text-subtle)", fontWeight: 500 }}>No connections</span>;
   }
   return parts;
 }
@@ -307,7 +307,7 @@ export default function ProvidersPage() {
           <span className="material-symbols-outlined text-[32px] text-text-muted mb-2">
             search_off
           </span>
-          <p className="text-text-muted text-sm">No providers match your search</p>
+          <p style={{ fontSize: "12px", color: "var(--color-text-subtle)", margin: 0 }}>No providers match your search</p>
         </div>
       )}
 
@@ -1265,7 +1265,7 @@ function ProviderTestResultsView({ results }) {
         </div>
       ))}
       {items.length === 0 && (
-        <div className="text-center py-4 text-text-muted text-sm">
+        <div className="text-center py-4" style={{ fontSize: "12px", color: "var(--color-text-subtle)" }}>
           No active connections found for this group.
         </div>
       )}
