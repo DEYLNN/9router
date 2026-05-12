@@ -20,6 +20,19 @@ import * as log from "../utils/logger.js";
 import { updateProviderCredentials, checkAndRefreshToken } from "../services/tokenRefresh.js";
 import { getProjectIdForConnection } from "open-sse/services/projectId.js";
 
+const PROVIDER_ALIAS_TO_CANONICAL = {
+  cwv: "canopywave",
+  canopywave: "canopywave",
+  cf: "cloudflare-ai",
+  cloudflare: "cloudflare-ai",
+  "cloudflare-ai": "cloudflare-ai",
+};
+
+function canonicalProviderId(provider) {
+  return PROVIDER_ALIAS_TO_CANONICAL[provider] || provider;
+}
+
+
 /**
  * Handle chat completion request
  * Supports: OpenAI, Claude, Gemini, OpenAI Responses API formats
@@ -175,8 +188,9 @@ async function handleSingleModelChat(body, modelStr, clientRawRequest = null, re
         return unavailableResponse(status, `[${provider}/${model}] ${errorMsg}`, credentials.retryAfter, credentials.retryAfterHuman);
       }
       if (excludeConnectionIds.size === 0) {
-        log.warn("AUTH", `No active credentials for provider: ${provider}`);
-        return errorResponse(HTTP_STATUS.NOT_FOUND, `No active credentials for provider: ${provider}`);
+  const canonicalProvider = canonicalProviderId(provider);
+        log.warn("AUTH", `No active credentials for provider: ${provider} (canonical: ${canonicalProvider})`);
+        return errorResponse(HTTP_STATUS.NOT_FOUND, `No active credentials for provider: ${provider} (canonical: ${canonicalProvider})`);
       }
       log.warn("CHAT", "No more accounts available", { provider });
       return errorResponse(lastStatus || HTTP_STATUS.SERVICE_UNAVAILABLE, lastError || "All accounts unavailable");
