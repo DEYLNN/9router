@@ -344,7 +344,7 @@ export default function ProvidersPage() {
             <span>No custom providers — use buttons above to add OpenAI/Anthropic compatible endpoints</span>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "8px" }}>
             {[...compatibleProviders, ...anthropicCompatibleProviders].map(
               (info) => (
                 <ApiKeyProviderCard
@@ -392,7 +392,7 @@ export default function ProvidersPage() {
             </button>
           </div>
         </div>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "8px" }}>
           {oauthEntries.map(([key, info]) => (
             <ProviderCard
               key={key}
@@ -433,7 +433,7 @@ export default function ProvidersPage() {
             {testingMode === "free" ? "Testing..." : "Test All"}
           </button>
         </div>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "8px" }}>
           {freeEntries.map(([key, info]) => (
             <ProviderCard
               key={key}
@@ -484,7 +484,7 @@ export default function ProvidersPage() {
             {testingMode === "apikey" ? "Testing..." : "Test All"}
           </button>
         </div>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "8px" }}>
           {visibleApikeyEntries.map(([key, info]) => (
             <ApiKeyProviderCard
               key={key}
@@ -515,7 +515,7 @@ export default function ProvidersPage() {
             Web Cookie Providers{" "}
           </h2>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "8px" }}>
           {Object.entries(WEB_COOKIE_PROVIDERS).map(([key, info]) => (
             <ApiKeyProviderCard
               key={key}
@@ -723,86 +723,72 @@ function ApiKeyProviderCard({
   };
 
   return (
-    <Link href={`/dashboard/providers/${providerId}`} className="group min-w-0">
-      <Card
-        padding="xs"
-        className={`h-full hover:bg-black/[0.01] dark:hover:bg-white/[0.01] transition-colors cursor-pointer ${allDisabled ? "opacity-50" : ""}`}
+    <Link href={`/dashboard/providers/${providerId}`} style={{ textDecoration: "none", display: "block", minWidth: 0 }} className="group">
+      <div style={{
+        display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px",
+        padding: "12px 14px",
+        borderRadius: "10px",
+        background: "var(--color-surface)",
+        border: "1px solid var(--color-border)",
+        cursor: "pointer",
+        opacity: allDisabled ? 0.5 : 1,
+        transition: "border-color 150ms ease, background 150ms ease",
+        height: "100%",
+        boxSizing: "border-box",
+      }}
+        onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.14)"; e.currentTarget.style.background = "var(--color-surface-2)"; }}
+        onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--color-border)"; e.currentTarget.style.background = "var(--color-surface)"; }}
       >
-        <div className="flex min-w-0 items-center justify-between gap-3">
-          <div className="flex min-w-0 items-center gap-3">
-            <div
-              className="size-8 shrink-0 rounded-lg flex items-center justify-center"
-              style={{
-                backgroundColor: `${provider.color?.length > 7 ? provider.color : provider.color + "15"}`,
-              }}
-            >
-              <ProviderIcon
-                src={getIconPath()}
-                alt={provider.name}
-                size={30}
-                className="object-contain rounded-lg max-w-[30px] max-h-[30px]"
-                fallbackText={
-                  provider.textIcon || provider.id.slice(0, 2).toUpperCase()
-                }
-                fallbackColor={provider.color}
-              />
-            </div>
-            <div className="min-w-0">
-              <h3 className="truncate font-semibold">{provider.name}</h3>
-              <div className="flex min-w-0 items-center gap-1.5 text-xs flex-wrap">
-                {allDisabled ? (
-                  <Badge variant="default" size="sm">
-                    <span className="flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[12px]">
-                        pause_circle
-                      </span>
-                      Disabled
-                    </span>
-                  </Badge>
-                ) : (
-                  <>
-                    {getStatusDisplay(connected, error, errorCode)}
-                    {isCompatible && (
-                      <Badge variant="default" size="sm">
-                        {provider.apiType === "responses"
-                          ? "Responses"
-                          : "Chat"}
-                      </Badge>
-                    )}
-                    {isAnthropicCompatible && (
-                      <Badge variant="default" size="sm">
-                        Messages
-                      </Badge>
-                    )}
-                    {errorTime && (
-                      <span className="text-text-muted">{errorTime}</span>
-                    )}
-                  </>
-                )}
-              </div>
-            </div>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px", minWidth: 0 }}>
+          <div style={{
+            width: "34px", height: "34px", borderRadius: "8px", flexShrink: 0,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            background: provider.color ? `${provider.color}18` : "rgba(255,255,255,0.06)",
+            border: `1px solid ${provider.color ? `${provider.color}25` : "rgba(255,255,255,0.06)"}`,
+          }}>
+            <ProviderIcon
+              src={getIconPath()}
+              alt={provider.name}
+              size={22}
+              className="object-contain rounded"
+              fallbackText={provider.textIcon || provider.id.slice(0, 2).toUpperCase()}
+              fallbackColor={provider.color}
+            />
           </div>
-          <div className="flex shrink-0 items-center gap-2">
-            {stats.total > 0 && (
-              <div
-                className="opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  onToggle(!allDisabled ? false : true);
-                }}
-              >
-                <Toggle
-                  size="sm"
-                  checked={!allDisabled}
-                  onChange={() => {}}
-                  title={allDisabled ? "Enable provider" : "Disable provider"}
-                />
-              </div>
-            )}
+          <div style={{ minWidth: 0 }}>
+            <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--color-text-main)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", letterSpacing: "-0.01em" }}>
+              {provider.name}
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginTop: "2px" }}>
+              {allDisabled ? (
+                <span style={{ fontSize: "11px", color: "var(--color-text-subtle)", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "4px", padding: "1px 6px" }}>Disabled</span>
+              ) : (
+                <>
+                  {getStatusDisplay(connected, error, errorCode)}
+                  {isCompatible && (
+                    <span style={{ fontSize: "10px", color: "#F59E0B", background: "rgba(245,158,11,0.1)", border: "1px solid rgba(245,158,11,0.2)", borderRadius: "4px", padding: "1px 5px", fontWeight: 600 }}>
+                      {provider.apiType === "responses" ? "Responses" : "Chat"}
+                    </span>
+                  )}
+                  {isAnthropicCompatible && (
+                    <span style={{ fontSize: "10px", color: "#A855F7", background: "rgba(168,85,247,0.1)", border: "1px solid rgba(168,85,247,0.2)", borderRadius: "4px", padding: "1px 5px", fontWeight: 600 }}>Messages</span>
+                  )}
+                  {errorTime && <span style={{ fontSize: "11px", color: "var(--color-text-subtle)" }}>{errorTime}</span>}
+                </>
+              )}
+            </div>
           </div>
         </div>
-      </Card>
+        {stats.total > 0 && (
+          <div
+            className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
+            style={{ transition: "opacity 150ms ease", flexShrink: 0 }}
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggle(!allDisabled ? false : true); }}
+          >
+            <Toggle size="sm" checked={!allDisabled} onChange={() => {}} title={allDisabled ? "Enable provider" : "Disable provider"} />
+          </div>
+        )}
+      </div>
     </Link>
   );
 }
