@@ -622,7 +622,7 @@ export default function ProviderLimits() {
               padding="none"
               className={`min-w-0 ${isInactive ? "opacity-60" : ""}`}
             >
-              <div className="px-3 py-2 border-b border-black/10 dark:border-white/10">
+              <div className="px-3 py-2 border-b border-[rgba(255,255,255,0.08)]">
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2 min-w-0">
                     <div className="w-8 h-8 shrink-0 rounded-md flex items-center justify-center overflow-hidden">
@@ -655,7 +655,7 @@ export default function ProviderLimits() {
                       type="button"
                       onClick={() => refreshProvider(conn.id, conn.provider)}
                       disabled={isLoading || rowBusy}
-                      className="p-1.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors disabled:opacity-50"
+                      className="p-1.5 rounded-lg hover:bg-[rgba(255,255,255,0.05)] transition-colors disabled:opacity-50"
                       title="Refresh quota"
                     >
                       <span
@@ -671,7 +671,7 @@ export default function ProviderLimits() {
                         setShowEditModal(true);
                       }}
                       disabled={rowBusy}
-                      className="p-1.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 text-text-muted hover:text-primary transition-colors disabled:opacity-50"
+                      className="p-1.5 rounded-lg hover:bg-[rgba(255,255,255,0.05)] text-text-muted hover:text-primary transition-colors disabled:opacity-50"
                       title="Edit connection"
                     >
                       <span className="material-symbols-outlined text-[18px]">

@@ -300,7 +300,7 @@ function ModelItem({ index, model, isFirst, isLast, onEdit, onMoveUp, onMoveDown
         />
       ) : (
         <div
-          className="min-w-0 flex-1 cursor-text truncate rounded px-1.5 py-0.5 font-mono text-xs text-text-main hover:bg-black/5 dark:hover:bg-white/5"
+          className="min-w-0 flex-1 cursor-text truncate rounded px-1.5 py-0.5 font-mono text-xs text-[var(--color-text-main)] hover:bg-[rgba(255,255,255,0.05)]"
           onClick={() => setEditing(true)}
           title="Click to edit"
         >
@@ -313,28 +313,28 @@ function ModelItem({ index, model, isFirst, isLast, onEdit, onMoveUp, onMoveDown
         <button
           onClick={onMoveUp}
           disabled={isFirst}
-          className={`p-0.5 rounded ${isFirst ? "text-text-muted/20 cursor-not-allowed" : "text-text-muted hover:text-primary hover:bg-black/5 dark:hover:bg-white/5"}`}
+          className={`p-0.5 rounded transition-colors ${isFirst ? "text-[rgba(255,255,255,0.15)] cursor-not-allowed" : "text-[var(--color-text-subtle)] hover:text-[#3B82F6] hover:bg-[rgba(59,130,246,0.08)]"}`}
           title="Move up"
         >
-          <span className="material-symbols-outlined text-[12px]">arrow_upward</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
         </button>
         <button
           onClick={onMoveDown}
           disabled={isLast}
-          className={`p-0.5 rounded ${isLast ? "text-text-muted/20 cursor-not-allowed" : "text-text-muted hover:text-primary hover:bg-black/5 dark:hover:bg-white/5"}`}
+          className={`p-0.5 rounded transition-colors ${isLast ? "text-[rgba(255,255,255,0.15)] cursor-not-allowed" : "text-[var(--color-text-subtle)] hover:text-[#3B82F6] hover:bg-[rgba(59,130,246,0.08)]"}`}
           title="Move down"
         >
-          <span className="material-symbols-outlined text-[12px]">arrow_downward</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
         </button>
       </div>
 
       {/* Remove */}
       <button
         onClick={onRemove}
-        className="p-0.5 hover:bg-red-500/10 rounded text-text-muted hover:text-red-500 transition-all"
+        className="p-0.5 rounded transition-colors text-[var(--color-text-subtle)] hover:text-[#ef4444] hover:bg-[rgba(239,68,68,0.08)]"
         title="Remove"
       >
-        <span className="material-symbols-outlined text-[12px]">close</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
       </button>
     </div>
   );
@@ -448,8 +448,8 @@ function ComboFormModal({ isOpen, combo, onClose, onSave, activeProviders, kindF
             <label className="text-sm font-medium mb-1.5 block">Models</label>
 
             {models.length === 0 ? (
-              <div className="text-center py-4 border border-dashed border-black/10 dark:border-white/10 rounded-lg bg-black/[0.01] dark:bg-white/[0.01]">
-                <span className="material-symbols-outlined text-text-muted text-xl mb-1">layers</span>
+              <div className="text-center py-6 border border-dashed border-[rgba(255,255,255,0.08)] rounded-[8px] bg-[rgba(255,255,255,0.02)]">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ color: "var(--color-text-subtle)" }}><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
                 <p className="text-xs text-text-muted">No models added yet</p>
               </div>
             ) : (
@@ -477,9 +477,9 @@ function ComboFormModal({ isOpen, combo, onClose, onSave, activeProviders, kindF
             {/* Add Model button */}
             <button
               onClick={() => setShowModelSelect(true)}
-              className="w-full mt-2 py-2 border border-dashed border-black/10 dark:border-white/10 rounded-lg text-xs text-primary font-medium hover:text-primary hover:border-primary/50 transition-colors flex items-center justify-center gap-1"
+              className="w-full mt-2 py-2 border border-dashed border-[rgba(59,130,246,0.25)] rounded-[8px] text-xs text-[#3B82F6] font-medium hover:border-[rgba(59,130,246,0.5)] hover:bg-[rgba(59,130,246,0.05)] transition-colors flex items-center justify-center gap-1"
             >
-              <span className="material-symbols-outlined text-[16px]">add</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 5v14M5 12h14"/></svg>
               Add Model
             </button>
           </div>
