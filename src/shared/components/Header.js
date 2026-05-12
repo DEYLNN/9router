@@ -250,21 +250,24 @@ export default function Header({ onMenuClick, showMenuButton = true }) {
       {/* Left */}
       <div style={{ display: "flex", alignItems: "center", gap: "10px", minWidth: 0, flex: 1 }}>
         {showMenuButton && (
-          <button
-            onClick={onMenuClick}
-            className="lg:hidden"
-            style={{
-              display: "flex", alignItems: "center", justifyContent: "center",
-              width: "36px", height: "36px", borderRadius: "8px",
-              background: "transparent", border: "none",
-              color: "rgba(255,255,255,0.4)", cursor: "pointer",
-              transition: "all 150ms ease", flexShrink: 0,
-            }}
-            onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.06)"; e.currentTarget.style.color = "rgba(255,255,255,0.8)"; }}
-            onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "rgba(255,255,255,0.4)"; }}
-          >
-            {I.menu}
-          </button>
+          <>
+            <button
+              onClick={onMenuClick}
+              style={{
+                display: "flex", alignItems: "center", justifyContent: "center",
+                width: "36px", height: "36px", borderRadius: "8px",
+                background: "transparent", border: "none",
+                color: "rgba(255,255,255,0.4)", cursor: "pointer",
+                transition: "all 150ms ease", flexShrink: 0,
+              }}
+              className="lg:hidden"
+              onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.06)"; e.currentTarget.style.color = "rgba(255,255,255,0.8)"; }}
+              onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "rgba(255,255,255,0.4)"; }}
+            >
+              {I.menu}
+            </button>
+            <style>{`@media (min-width: 1024px) { .mobile-menu-btn { display: none !important; } }`}</style>
+          </>
         )}
 
         {/* Breadcrumbs */}
