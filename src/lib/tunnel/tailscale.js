@@ -3,7 +3,9 @@ import path from "path";
 import os from "os";
 import { execSync, exec, spawn } from "child_process";
 import { promisify } from "util";
-import { execWithPassword } from "@/mitm/dns/dnsConfig";
+async function execWithPassword(cmd, password) {
+  return execAsync(cmd, { windowsHide: true, env: { ...process.env, PATH: EXTENDED_PATH } });
+}
 import { saveTailscalePid, loadTailscalePid, clearTailscalePid } from "./state.js";
 import { DATA_DIR } from "@/lib/dataDir.js";
 
@@ -501,6 +503,20 @@ export async function startDaemonWithPassword(sudoPassword) {
   await ensureUserOwnedDir(TAILSCALE_DIR);
 
   const tailscaledBin = IS_MAC ? "/usr/local/bin/tailscaled" : "tailscaled";
+  const hasSystemTailscaled = IS_MAC
+    ? fs.existsSync(tailscaledBin)
+    : (() => {
+        try {
+          execSync("command -v tailscaled", { stdio: "ignore", windowsHide: true, env: { ...process.env, PATH: EXTENDED_PATH }, timeout: 1500 });
+          return true;
+        } catch {
+          return false;
+        }
+      })();
+  if (!hasSystemTailscaled) {
+    throw new Error("tailscaled executable not found. Install Tailscale first before starting the daemon.");
+  }
+
   const daemonArgs = [
     `--socket=${TAILSCALE_SOCKET}`,
     `--statedir=${TAILSCALE_DIR}`,

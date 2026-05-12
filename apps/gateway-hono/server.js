@@ -294,7 +294,25 @@ app.post("/api/auth/logout", (c) => {
 });
 app.get("/api/settings/require-login", (c) => nextRouteHandler(c, requireLoginGet));
 app.get("/api/tags", (c) => nextRouteHandler(c, tagsGet));
-app.post("/api/locale", (c) => nextRouteHandler(c, localePost));
+app.post("/api/locale", async (c) => {
+  try {
+    const body = await c.req.json().catch(() => ({}));
+    const locale = body?.locale;
+    const supported = new Set(["en", "zh-CN", "zh-TW", "ja", "ko", "fr", "de", "es", "ru", "pt", "it", "id"]);
+    if (!locale || !supported.has(locale)) {
+      return c.json({ error: "Invalid locale" }, 400);
+    }
+    setCookie(c, "NEXT_LOCALE", locale, {
+      path: "/",
+      maxAge: 60 * 60 * 24 * 365,
+      sameSite: "Lax",
+    });
+    return c.json({ success: true, locale });
+  } catch (error) {
+    console.error("[hono] locale error", error);
+    return c.json({ error: "Failed to set locale" }, 500);
+  }
+});
 app.get("/api/models", (c) => nextRouteHandler(c, modelsGet));
 app.put("/api/models", (c) => nextRouteHandler(c, modelsPut));
 app.get("/api/models/availability", (c) => nextRouteHandler(c, modelAvailabilityGet));
