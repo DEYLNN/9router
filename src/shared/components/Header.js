@@ -13,7 +13,7 @@ import { translate } from "@/i18n/runtime";
 const I = {
   menu: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>,
   chevron: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="m9 18 6-6-6-6"/></svg>,
-  search: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>,
+  search: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>,
   close: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6 6 18M6 6l12 12"/></svg>,
   user: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
   logout: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>,
@@ -87,7 +87,7 @@ function ProfileMenu({ onLogout }) {
         onClick={() => setOpen(o => !o)}
         style={{
           display: "flex", alignItems: "center", justifyContent: "center",
-          width: "30px", height: "30px", borderRadius: "50%",
+          width: "32px", height: "32px", borderRadius: "50%",
           background: open ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.06)",
           border: "1px solid rgba(255,255,255,0.1)",
           color: "rgba(255,255,255,0.7)", cursor: "pointer",
@@ -179,7 +179,7 @@ function HeaderSearch() {
         placeholder={placeholder}
         style={{
           width: "100%", boxSizing: "border-box",
-          height: "30px", paddingLeft: "28px", paddingRight: query ? "28px" : "10px",
+          height: "34px", paddingLeft: "30px", paddingRight: query ? "28px" : "10px",
           borderRadius: "7px",
           border: focused ? "1px solid rgba(59,130,246,0.4)" : "1px solid rgba(255,255,255,0.08)",
           background: focused ? "rgba(59,130,246,0.05)" : "rgba(255,255,255,0.04)",
@@ -236,12 +236,10 @@ export default function Header({ onMenuClick, showMenuButton = true }) {
       display: "flex",
       alignItems: "center",
       justifyContent: "space-between",
-      gap: "12px",
-      height: "48px",
-      padding: "0 16px",
-      background: "rgba(12,12,14,0.85)",
-      backdropFilter: "blur(12px)",
-      WebkitBackdropFilter: "blur(12px)",
+      gap: "16px",
+      height: "56px",
+      padding: "0 20px",
+      background: "#111113",
       borderBottom: "1px solid rgba(255,255,255,0.06)",
       flexShrink: 0,
       zIndex: 20,
@@ -257,7 +255,7 @@ export default function Header({ onMenuClick, showMenuButton = true }) {
             className="lg:hidden"
             style={{
               display: "flex", alignItems: "center", justifyContent: "center",
-              width: "32px", height: "32px", borderRadius: "7px",
+              width: "36px", height: "36px", borderRadius: "8px",
               background: "transparent", border: "none",
               color: "rgba(255,255,255,0.4)", cursor: "pointer",
               transition: "all 150ms ease", flexShrink: 0,
