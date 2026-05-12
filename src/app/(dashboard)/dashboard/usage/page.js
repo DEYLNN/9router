@@ -4,6 +4,7 @@ import { Suspense, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { UsageStats, RequestLogger, CardSkeleton, SegmentedControl } from "@/shared/components";
 import RequestDetailsTab from "./components/RequestDetailsTab";
+import RequestLogsTable from "./components/RequestLogsTable";
 
 const PERIODS = [
   { value: "24h", label: "24h" },
@@ -48,6 +49,7 @@ function UsageContent() {
         <SegmentedControl
           options={[
             { value: "overview", label: "Overview" },
+            { value: "logs", label: "Logs" },
             { value: "details", label: "Details" },
           ]}
           value={activeTab}
@@ -74,7 +76,11 @@ function UsageContent() {
               <UsageStats period={period} setPeriod={setPeriod} hidePeriodSelector />
             </Suspense>
           )}
-          {activeTab === "logs" && <RequestLogger />}
+          {activeTab === "logs" && (
+            <Suspense fallback={<CardSkeleton />}>
+              <RequestLogsTable />
+            </Suspense>
+          )}
           {activeTab === "details" && <RequestDetailsTab />}
         </>
       )}
