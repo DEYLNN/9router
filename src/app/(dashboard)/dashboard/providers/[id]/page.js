@@ -36,6 +36,7 @@ export default function ProviderDetailPage() {
   const [modelTestResults, setModelTestResults] = useState({});
   const [modelsTestError, setModelsTestError] = useState("");
   const [testingModelId, setTestingModelId] = useState(null);
+  const [testingConnId, setTestingConnId] = useState(null);
   const [showAddCustomModel, setShowAddCustomModel] = useState(false);
   const [selectedConnectionIds, setSelectedConnectionIds] = useState([]);
   const [providerStrategy, setProviderStrategy] = useState(null); // null = use global, "round-robin" = override
@@ -480,6 +481,7 @@ export default function ProviderDetailPage() {
                 onMoveUp={() => handleSwapPriority(index, index - 1)}
                 onMoveDown={() => handleSwapPriority(index, index + 1)}
                 onToggleActive={(isActive) => handleUpdateConnectionStatus(conn.id, isActive)}
+                onTest={() => handleTestConnection(conn.id)}
                 onEdit={() => {
                   setSelectedConnection(conn);
                   setShowEditModal(true);
@@ -510,6 +512,26 @@ export default function ProviderDetailPage() {
       setModelsTestError("Network error");
     } finally {
       setTestingModelId(null);
+    }
+  };
+
+  const handleTestConnection = async (connId) => {
+    if (testingConnId) return;
+    setTestingConnId(connId);
+    try {
+      const res = await fetch(`/api/providers/${connId}/test`, { method: "POST" });
+      const data = await res.json();
+      setConnections((prev) =>
+        prev.map((c) =>
+          c.id === connId ? { ...c, testStatus: data.valid ? "active" : "error" } : c
+        )
+      );
+    } catch {
+      setConnections((prev) =>
+        prev.map((c) => (c.id === connId ? { ...c, testStatus: "error" } : c))
+      );
+    } finally {
+      setTestingConnId(null);
     }
   };
 
