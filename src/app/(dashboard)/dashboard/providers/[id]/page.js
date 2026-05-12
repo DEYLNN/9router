@@ -161,7 +161,6 @@ export default function ProviderDetailPage() {
       const connectionsData = await connectionsRes.json();
       const nodesData = await nodesRes.json();
       const settingsData = settingsRes.ok ? await settingsRes.json() : {};
-      setProxyPools([]);
       if (connectionsRes.ok) {
         const filtered = (connectionsData.connections || []).filter(c => c.provider === providerId);
         setConnections(filtered);
