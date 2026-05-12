@@ -69,6 +69,8 @@ const ALIAS_TO_PROVIDER_ID = {
   "xiaomi-mimo": "xiaomi-mimo",
   cf: "cloudflare-ai",
   "cloudflare-ai": "cloudflare-ai",
+  cwv: "canopywave",
+  canopywave: "canopywave",
   // Image/video providers
   fal: "fal-ai",
   "fal-ai": "fal-ai",
