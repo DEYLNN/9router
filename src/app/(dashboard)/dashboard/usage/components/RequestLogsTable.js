@@ -387,8 +387,8 @@ export default function RequestLogsTable() {
           </button>
           {providerDropdownOpen && (
             <>
-              <button type="button" className="fixed inset-0 z-30 bg-transparent" onClick={() => setProviderDropdownOpen(false)} aria-label="Close provider filter" />
-              <div className="fixed left-3 right-3 z-40 mt-2 max-h-80 overflow-y-auto rounded-2xl border border-white/10 bg-[#151519]/95 p-1.5 shadow-2xl shadow-black/40 backdrop-blur sm:absolute sm:left-auto sm:right-0 sm:w-[260px]">
+              <button type="button" className="fixed inset-0 z-[100] bg-transparent" onClick={() => setProviderDropdownOpen(false)} aria-label="Close provider filter" />
+              <div className="fixed left-3 right-3 z-[110] mt-2 max-h-80 overflow-y-auto rounded-2xl border border-white/10 bg-[#151519]/95 p-1.5 shadow-2xl shadow-black/40 backdrop-blur sm:absolute sm:left-auto sm:right-0 sm:w-[260px]">
                 {["", ...providers].map((p) => {
                   const active = filterProvider === p;
                   const label = p ? providerLabel(p) : "All providers";
@@ -413,8 +413,8 @@ export default function RequestLogsTable() {
           </button>
           {statusDropdownOpen && (
             <>
-              <button type="button" className="fixed inset-0 z-30 bg-transparent" onClick={() => setStatusDropdownOpen(false)} aria-label="Close status filter" />
-              <div className="fixed left-3 right-3 z-40 mt-2 rounded-2xl border border-white/10 bg-[#151519]/95 p-1.5 shadow-2xl shadow-black/40 backdrop-blur sm:absolute sm:left-auto sm:right-0 sm:w-[160px]">
+              <button type="button" className="fixed inset-0 z-[100] bg-transparent" onClick={() => setStatusDropdownOpen(false)} aria-label="Close status filter" />
+              <div className="fixed left-3 right-3 z-[110] mt-2 rounded-2xl border border-white/10 bg-[#151519]/95 p-1.5 shadow-2xl shadow-black/40 backdrop-blur sm:absolute sm:left-auto sm:right-0 sm:w-[160px]">
                 {[{id:"",label:"All status"},{id:"ok",label:"OK only"},{id:"error",label:"Error only"}].map((item) => (
                   <button key={item.id || "all"} type="button" onClick={() => { setFilterStatus(item.id); setStatusDropdownOpen(false); setPage(0); }} className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm transition-colors ${filterStatus === item.id ? "bg-primary/10 text-primary" : "text-text-main hover:bg-white/10"}`}>
                     {item.label}
