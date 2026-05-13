@@ -154,6 +154,19 @@ export default function Sidebar({ onClose, forceExpanded }) {
     fetch("/api/version").then(r => r.json()).then(d => { if (d.hasUpdate) setUpdateInfo(d); }).catch(() => {});
   }, []);
 
+  // Auto-collapse on narrow desktop / tablet (between 1024 and 1280px)
+  useEffect(() => {
+    if (forceExpanded) return;
+    const check = () => {
+      const w = typeof window !== "undefined" ? window.innerWidth : 0;
+      if (w >= 1024 && w < 1280) setCollapsed(true);
+      else if (w >= 1280) setCollapsed(false);
+    };
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, [forceExpanded]);
+
   const handleUpdate = () => { setShowUpdateModal(false); setIsUpdating(true); };
 
   const handleCopyAndShutdown = async () => {
@@ -182,7 +195,7 @@ export default function Sidebar({ onClose, forceExpanded }) {
     setIsDisconnected(true);
   };
 
-  const w = isCollapsed ? "56px" : "220px";
+  const w = isCollapsed ? "56px" : "232px";
 
   return (
     <>

@@ -162,7 +162,7 @@ function HeaderSearch() {
   if (!visible) return null;
 
   return (
-    <div style={{ position: "relative", width: "180px" }}>
+    <div style={{ position: "relative", width: "clamp(120px, 28vw, 200px)" }}>
       <span style={{
         position: "absolute", left: "9px", top: "50%", transform: "translateY(-50%)",
         color: focused ? "rgba(59,130,246,0.7)" : "rgba(255,255,255,0.25)",
@@ -235,9 +235,9 @@ export default function Header({ onMenuClick, showMenuButton = true }) {
       display: "flex",
       alignItems: "center",
       justifyContent: "space-between",
-      gap: "16px",
+      gap: "12px",
       height: "56px",
-      padding: "0 20px",
+      padding: "0 clamp(10px, 2.5vw, 20px)",
       background: "#111113",
       borderBottom: "1px solid rgba(255,255,255,0.06)",
       flexShrink: 0,

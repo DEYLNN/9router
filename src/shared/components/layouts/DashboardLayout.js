@@ -82,9 +82,11 @@ export default function DashboardLayout({ children }) {
           position: "fixed", inset: "0 auto 0 0", zIndex: 50,
           transform: sidebarOpen ? "translateX(0)" : "translateX(-100%)",
           transition: "transform 250ms cubic-bezier(0.4,0,0.2,1)",
+          maxWidth: "min(86vw, 300px)",
+          boxShadow: sidebarOpen ? "0 24px 60px rgba(0,0,0,0.6)" : "none",
         }}
       >
-        <Sidebar onClose={() => setSidebarOpen(false)} />
+        <Sidebar onClose={() => setSidebarOpen(false)} forceExpanded={true} />
       </div>
 
       {/* Main */}
