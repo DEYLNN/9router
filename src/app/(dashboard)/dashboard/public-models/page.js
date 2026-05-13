@@ -221,36 +221,64 @@ export default function PublicModelsPage() {
       </section>
 
       {loading ? (
-        <div style={{ border: "1px solid rgba(255,255,255,.08)", borderRadius: 18, padding: 28, color: "var(--color-text-muted)", background: "rgba(255,255,255,.035)" }}>Loading model inventory…</div>
+        <div className="theme-glass" style={{ borderRadius: 18, padding: 28, color: "var(--color-text-muted)" }}>Loading model inventory…</div>
       ) : Object.keys(grouped).length === 0 ? (
-        <div style={{ border: "1px solid rgba(255,255,255,.08)", borderRadius: 18, padding: 28, color: "var(--color-text-muted)", background: "rgba(255,255,255,.035)" }}>No models found.</div>
+        <div className="theme-glass" style={{ borderRadius: 18, padding: 28, color: "var(--color-text-muted)" }}>No models found.</div>
       ) : (
-        <div style={{ display: "grid", gap: 14 }}>
+        <div style={{ display: "grid", gap: 12 }}>
           {Object.entries(grouped).map(([owner, items]) => {
             const enabledCount = items.filter((m) => enabledSet.has(m.id)).length;
             return (
-              <div key={owner} style={{ border: "1px solid rgba(255,255,255,.08)", borderRadius: 20, overflow: "hidden", background: "linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.025))", boxShadow: "0 18px 45px rgba(0,0,0,.14)" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 14, padding: "14px clamp(12px, 2vw, 18px)", borderBottom: "1px solid rgba(255,255,255,.07)" }}>
+              <div key={owner} className="theme-glass" style={{ borderRadius: 18, overflow: "hidden" }}>
+                <div style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  gap: 12,
+                  padding: "12px clamp(12px, 2vw, 16px)",
+                  borderBottom: "1px solid var(--theme-glass-border)",
+                  background: "linear-gradient(135deg, rgba(14,142,142,0.08), rgba(29,85,212,0.04))",
+                }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 12, minWidth: 0 }}>
                     <ProviderAvatar owner={owner} />
                     <div style={{ minWidth: 0 }}>
-                      <h2 style={{ fontSize: 15, fontWeight: 690, margin: 0, textTransform: "capitalize", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{shortProviderName(owner)}</h2>
-                      <div style={{ fontSize: 12, color: "var(--color-text-muted)", marginTop: 2, wordBreak: "break-all" }}>{owner}</div>
+                      <h2 style={{ fontSize: 14, fontWeight: 720, margin: 0, textTransform: "capitalize", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", color: "var(--color-text-main)" }}>{shortProviderName(owner)}</h2>
+                      <div className="theme-mono" style={{ fontSize: 11, color: "var(--color-text-muted)", marginTop: 2, wordBreak: "break-all" }}>{owner}</div>
                     </div>
                   </div>
-                  <Badge variant={enabledCount ? "success" : "default"} size="sm">{enabledCount}/{items.length} enabled</Badge>
+                  <Badge variant={enabledCount ? "success" : "default"} size="sm">{enabledCount}/{items.length}</Badge>
                 </div>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 245px), 1fr))", gap: 10, padding: "clamp(8px, 2vw, 14px)" }}>
-                  {items.map((model) => {
+
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  {items.map((model, index) => {
                     const enabled = enabledSet.has(model.id);
                     return (
-                      <div key={model.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, padding: "clamp(9px, 2vw, 13px)", border: `1px solid ${enabled ? "rgba(16,185,129,.32)" : "rgba(255,255,255,.075)"}`, borderRadius: 14, background: enabled ? "linear-gradient(135deg, rgba(16,185,129,.12), rgba(20,184,166,.045))" : "rgba(255,255,255,.025)", boxShadow: enabled ? "inset 0 1px 0 rgba(255,255,255,.08), 0 10px 28px rgba(16,185,129,.08)" : "inset 0 1px 0 rgba(255,255,255,.04)" }}>
-                        <div style={{ minWidth: 0 }}>
-                          <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 6 }}>
-                            <span style={{ width: 8, height: 8, borderRadius: 999, background: enabled ? "#10b981" : "rgba(255,255,255,.2)", boxShadow: enabled ? "0 0 0 4px rgba(16,185,129,.12)" : "none" }} />
-                            <span style={{ fontSize: 11, color: enabled ? "#10b981" : "var(--color-text-muted)", fontWeight: 700, textTransform: "uppercase", letterSpacing: ".08em" }}>{enabled ? "Exposed" : "Private"}</span>
+                      <div key={model.id} style={{
+                        display: "grid",
+                        gridTemplateColumns: "minmax(0, 1fr) auto",
+                        alignItems: "center",
+                        gap: 12,
+                        padding: "12px clamp(12px, 2vw, 16px)",
+                        borderTop: index === 0 ? "none" : "1px solid rgba(23,33,27,0.07)",
+                        background: enabled ? "rgba(14,142,142,0.055)" : "rgba(255,251,236,0.28)",
+                        transition: "background 150ms ease",
+                      }}>
+                        <div style={{ minWidth: 0, display: "flex", alignItems: "center", gap: 10 }}>
+                          <span style={{
+                            width: 10,
+                            height: 10,
+                            borderRadius: 999,
+                            background: enabled ? "var(--theme-accent-teal)" : "rgba(31,42,36,0.22)",
+                            boxShadow: enabled ? "0 0 0 4px rgba(14,142,142,0.12)" : "none",
+                            flexShrink: 0,
+                          }} />
+                          <div style={{ minWidth: 0 }}>
+                            <div className="theme-mono" style={{ fontSize: 12.5, fontWeight: 650, color: "var(--color-text-main)", wordBreak: "break-word", lineHeight: 1.45 }}>{model.id}</div>
+                            <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 3, flexWrap: "wrap" }}>
+                              <span style={{ fontSize: 10.5, color: enabled ? "var(--theme-accent-teal)" : "var(--color-text-muted)", fontWeight: 750, textTransform: "uppercase", letterSpacing: ".08em" }}>{enabled ? "Exposed" : "Private"}</span>
+                              <span className="theme-mono" style={{ fontSize: 10.5, color: "var(--color-text-subtle)" }}>owned_by: {model.owned_by}</span>
+                            </div>
                           </div>
-                          <div style={{ fontSize: 13, fontWeight: 570, wordBreak: "break-all", lineHeight: 1.45 }}>{model.id}</div>
                         </div>
                         <Toggle size="sm" checked={enabled} onChange={(checked) => toggleModel(model.id, checked)} disabled={saving} />
                       </div>
