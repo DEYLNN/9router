@@ -694,3 +694,14 @@ table td, table th {
 html, body {
   font-feature-settings: "ss01", "ss02";
 }
+
+/* Sidebar/navbar stronger light treatment */
+:root {
+  --theme-shell-bg: linear-gradient(180deg, rgba(255, 248, 220, 0.92), rgba(255, 240, 198, 0.84));
+  --theme-shell-border: rgba(139, 92, 32, 0.18);
+  --theme-shell-hover: rgba(139, 92, 32, 0.075);
+  --theme-shell-active-bg: rgba(14, 142, 142, 0.14);
+  --theme-shell-text: #1F2A24;
+  --theme-shell-text-muted: rgba(31, 42, 36, 0.68);
+  --theme-shell-text-subtle: rgba(31, 42, 36, 0.45);
+}
