@@ -175,7 +175,7 @@ app.get("/api/v1", (c) => c.json({ ok: true, runtime: "hono-bun", endpoints: ["/
 
 async function modelsHandler(c) {
   try {
-    const data = await buildModelsList(["llm"]);
+    const data = await buildModelsList(["llm"], { publicOnly: true });
     return c.json({ object: "list", data });
   } catch (error) {
     console.error("[hono] models error", error);
