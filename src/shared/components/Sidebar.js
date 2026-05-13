@@ -104,7 +104,7 @@ function NavItem({ href, label, icon, onClose, collapsed }) {
       <span style={{
         flexShrink: 0,
         display: "flex",
-        color: active ? "#3B82F6" : "inherit",
+        color: active ? "var(--theme-accent-teal)" : "inherit",
         opacity: active ? 1 : 0.8,
       }}>
         {Icon}
@@ -204,8 +204,10 @@ export default function Sidebar({ onClose, forceExpanded }) {
         flexDirection: "column",
         width: w,
         minHeight: "100%",
-        background: "#111113",
-        borderRight: "1px solid rgba(255,255,255,0.06)",
+        background: "rgba(17, 17, 19, 0.55)",
+        backdropFilter: "blur(18px) saturate(140%)",
+        WebkitBackdropFilter: "blur(18px) saturate(140%)",
+        borderRight: "1px solid rgba(255, 251, 236, 0.07)",
         transition: "width 200ms cubic-bezier(0.4,0,0.2,1)",
         overflow: "hidden",
         flexShrink: 0,
@@ -223,10 +225,11 @@ export default function Sidebar({ onClose, forceExpanded }) {
             <>
               <Link href="/dashboard" style={{ display: "flex", alignItems: "center", gap: "9px", textDecoration: "none" }}>
                 <div style={{
-                  width: "28px", height: "28px", borderRadius: "8px",
-                  background: "linear-gradient(135deg, #3B82F6 0%, #1d4ed8 100%)",
+                  width: "28px", height: "28px", borderRadius: "9px",
+                  background: "linear-gradient(135deg, var(--theme-accent-teal) 0%, var(--theme-accent-blue) 100%)",
                   display: "flex", alignItems: "center", justifyContent: "center",
                   color: "#fff", flexShrink: 0,
+                  boxShadow: "0 6px 18px -6px rgba(17, 166, 166, 0.55)",
                 }}>
                   {I.logo}
                 </div>
@@ -261,9 +264,10 @@ export default function Sidebar({ onClose, forceExpanded }) {
               onClick={() => setCollapsed(false)}
               style={{
                 display: "flex", alignItems: "center", justifyContent: "center",
-                width: "28px", height: "28px", borderRadius: "8px",
-                background: "linear-gradient(135deg, #3B82F6 0%, #1d4ed8 100%)",
+                width: "28px", height: "28px", borderRadius: "9px",
+                background: "linear-gradient(135deg, var(--theme-accent-teal) 0%, var(--theme-accent-blue) 100%)",
                 border: "none", color: "#fff", cursor: "pointer",
+                boxShadow: "0 6px 18px -6px rgba(17, 166, 166, 0.55)",
               }}
               title="Expand sidebar"
             >
