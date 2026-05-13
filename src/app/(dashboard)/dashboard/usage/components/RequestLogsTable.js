@@ -340,7 +340,7 @@ export default function RequestLogsTable() {
       </div>
 
       {/* toolbar */}
-      <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-white/10 bg-[#151519]/80 p-3 shadow-[0_18px_60px_rgba(0,0,0,0.18)] backdrop-blur">
+      <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-white/10 bg-[#151519] p-3 shadow-[0_18px_60px_rgba(0,0,0,0.18)]">
         {/* search */}
         <div style={{ position: "relative", flex: "1 1 180px", minWidth: "140px" }}>
           <span style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)", color: "var(--color-text-subtle)", pointerEvents: "none" }}>
