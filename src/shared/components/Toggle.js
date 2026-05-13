@@ -37,16 +37,18 @@ export default function Toggle({
         onClick={handleClick}
         className={cn(
           "relative inline-flex shrink-0 cursor-pointer rounded-full",
-          "transition-colors duration-200 ease-in-out",
-          "focus:outline-none focus:ring-2 focus:ring-brand-500/30",
-          checked ? "bg-[var(--theme-accent-teal)] shadow-[0_0_0_4px_rgba(17,166,166,0.10)]" : "bg-[rgba(255,251,236,0.10)] border border-[rgba(255,251,236,0.06)]",
+          "transition-all duration-200 ease-in-out",
+          "focus:outline-none focus:ring-2 focus:ring-[var(--theme-accent-teal)]/25",
+          checked
+            ? "bg-[var(--theme-accent-teal)] shadow-[0_0_0_4px_rgba(17,166,166,0.10)] border border-[rgba(17,166,166,0.35)]"
+            : "bg-[rgba(31,42,36,0.16)] border border-[rgba(31,42,36,0.22)] shadow-inner",
           sizes[size].track,
           disabled && "cursor-not-allowed"
         )}
       >
         <span
           className={cn(
-            "pointer-events-none inline-block rounded-full bg-white shadow-sm",
+            "pointer-events-none inline-block rounded-full bg-white shadow-[0_1px_4px_rgba(23,33,27,0.28)] ring-1 ring-black/5",
             "transform transition duration-200 ease-in-out",
             checked ? sizes[size].translate : "translate-x-0.5",
             sizes[size].thumb,
