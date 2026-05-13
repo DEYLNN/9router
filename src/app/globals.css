@@ -484,11 +484,11 @@ button {
    left alone for now; Step 1 is design tokens only.
    ============================================================ */
 .dark {
-  /* Warm ambient base (near-black with warm undertone) */
-  --theme-ink: rgba(23, 33, 27, 0.92);
-  --theme-paper: rgba(255, 251, 236, 0.06);
-  --theme-paper-strong: rgba(255, 251, 236, 0.12);
-  --theme-paper-glass: rgba(255, 251, 236, 0.06);
+  /* Cool neutral glass with teal undertone — dark-first polish */
+  --theme-ink: rgba(250, 250, 250, 0.92);
+  --theme-paper: rgba(24, 26, 30, 0.55);
+  --theme-paper-strong: rgba(32, 34, 38, 0.7);
+  --theme-paper-glass: rgba(24, 26, 30, 0.55);
 
   /* Accents borrowed from Mahiru + Cuties */
   --theme-accent-teal:   #11A6A6;
@@ -498,22 +498,22 @@ button {
   --theme-accent-sky:    #72C8D4;
   --theme-accent-lilac:  #9DB8D0;
 
-  /* Ambient multi-point glow (used as body background overlay) */
+  /* Ambient multi-point glow — lower opacity for dark mode */
   --theme-ambient:
-    radial-gradient(circle at 14% 8%, rgba(114, 200, 212, 0.14), transparent 55%),
-    radial-gradient(circle at 86% 12%, rgba(36, 107, 254, 0.14), transparent 50%),
-    radial-gradient(circle at 82% 88%, rgba(201, 138, 173, 0.14), transparent 60%),
-    radial-gradient(circle at 12% 92%, rgba(17, 166, 166, 0.12), transparent 55%);
+    radial-gradient(circle at 14% 8%, rgba(17, 166, 166, 0.11), transparent 55%),
+    radial-gradient(circle at 86% 12%, rgba(36, 107, 254, 0.10), transparent 50%),
+    radial-gradient(circle at 82% 88%, rgba(201, 138, 173, 0.09), transparent 60%),
+    radial-gradient(circle at 12% 92%, rgba(17, 163, 106, 0.08), transparent 55%);
 
-  /* Elevated glass surface */
-  --theme-glass-bg: rgba(255, 251, 236, 0.045);
-  --theme-glass-border: rgba(255, 251, 236, 0.09);
-  --theme-glass-hi: 0 1px 0 rgba(255, 251, 236, 0.06) inset;
-  --theme-glass-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.55);
+  /* Elevated cool glass surface */
+  --theme-glass-bg: rgba(24, 26, 30, 0.55);
+  --theme-glass-border: rgba(255, 255, 255, 0.07);
+  --theme-glass-hi: 0 1px 0 rgba(255, 255, 255, 0.04) inset;
+  --theme-glass-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.70);
 
   /* Data / mono chips */
   --theme-data: var(--theme-accent-blue);
-  --theme-mono-color: #E7E2D0;
+  --theme-mono-color: #FAFAFA;
 
   /* Radius scale (more editorial, larger corners) */
   --radius-editorial-sm: 10px;

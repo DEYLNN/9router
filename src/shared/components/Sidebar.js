@@ -207,7 +207,7 @@ export default function Sidebar({ onClose, forceExpanded }) {
         background: "rgba(17, 17, 19, 0.55)",
         backdropFilter: "blur(18px) saturate(140%)",
         WebkitBackdropFilter: "blur(18px) saturate(140%)",
-        borderRight: "1px solid rgba(255, 251, 236, 0.07)",
+        borderRight: "1px solid rgba(255, 255, 255, 0.06)",
         transition: "width 200ms cubic-bezier(0.4,0,0.2,1)",
         overflow: "hidden",
         flexShrink: 0,

@@ -241,7 +241,7 @@ export default function Header({ onMenuClick, showMenuButton = true }) {
       background: "rgba(17, 17, 19, 0.55)",
       backdropFilter: "blur(18px) saturate(140%)",
       WebkitBackdropFilter: "blur(18px) saturate(140%)",
-      borderBottom: "1px solid rgba(255, 251, 236, 0.07)",
+      borderBottom: "1px solid rgba(255, 255, 255, 0.06)",
       flexShrink: 0,
       zIndex: 20,
       position: "sticky",

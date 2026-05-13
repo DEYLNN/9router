@@ -74,7 +74,7 @@ export default function LoginPage() {
       <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#09090B" }}>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "12px" }}>
           <IcoSpinner />
-          <span style={{ fontSize: "13px", color: "rgba(255,251,236,0.35)" }}>Initializing...</span>
+          <span style={{ fontSize: "13px", color: "rgba(250,250,250,0.40)" }}>Initializing...</span>
         </div>
         <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
       </div>
@@ -98,7 +98,7 @@ export default function LoginPage() {
         className="theme-ambient-bg"
         style={{
           position: "absolute", inset: 0, pointerEvents: "none",
-          opacity: 0.9, mixBlendMode: "screen",
+          opacity: 1,
         }}
       />
       {/* soft dot grid with mask */}
@@ -126,10 +126,10 @@ export default function LoginPage() {
             <IcoLogo />
           </div>
           <div style={{ textAlign: "center" }}>
-            <h1 className="theme-display" style={{ fontSize: "clamp(28px, 6vw, 34px)", margin: 0, color: "#FAF6E7" }}>
+            <h1 className="theme-display" style={{ fontSize: "clamp(28px, 6vw, 34px)", margin: 0, color: "#FAFAFA" }}>
               9Router
             </h1>
-            <p className="theme-mono" style={{ fontSize: "12px", letterSpacing: "0.12em", textTransform: "uppercase", marginTop: "6px", color: "rgba(255,251,236,0.42)" }}>
+            <p className="theme-mono" style={{ fontSize: "12px", letterSpacing: "0.12em", textTransform: "uppercase", marginTop: "6px", color: "rgba(250,250,250,0.45)" }}>
               AI Gateway · Editorial Console
             </p>
           </div>
@@ -148,22 +148,22 @@ export default function LoginPage() {
               <span className="theme-chip theme-chip--teal" style={{ alignSelf: "flex-start" }}>
                 Secure access
               </span>
-              <h2 className="theme-display" style={{ fontSize: "22px", color: "#FAF6E7", margin: 0, marginTop: "6px" }}>
+              <h2 className="theme-display" style={{ fontSize: "22px", color: "#FAFAFA", margin: 0, marginTop: "6px" }}>
                 Welcome back
               </h2>
-              <p style={{ fontSize: "13px", color: "rgba(255,251,236,0.55)", margin: 0, lineHeight: 1.55 }}>
+              <p style={{ fontSize: "13px", color: "rgba(250,250,250,0.60)", margin: 0, lineHeight: 1.55 }}>
                 Sign in to continue to your AI gateway dashboard.
               </p>
             </div>
 
             <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <label className="theme-mono" style={{ fontSize: "11px", color: "rgba(255,251,236,0.55)", letterSpacing: "0.16em", textTransform: "uppercase" }}>
+              <label className="theme-mono" style={{ fontSize: "11px", color: "rgba(250,250,250,0.60)", letterSpacing: "0.16em", textTransform: "uppercase" }}>
                 Password
               </label>
               <div style={{ position: "relative" }}>
                 <span style={{
                   position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)",
-                  color: focused ? "var(--theme-accent-teal)" : "rgba(255,251,236,0.35)",
+                  color: focused ? "var(--theme-accent-teal)" : "rgba(250,250,250,0.40)",
                   display: "flex", pointerEvents: "none",
                   transition: "color 150ms ease",
                 }}>
@@ -191,7 +191,7 @@ export default function LoginPage() {
                         ? "1px solid rgba(17,166,166,0.55)"
                         : "1px solid rgba(255,251,236,0.12)",
                     background: "rgba(9,9,11,0.45)",
-                    color: "#FAF6E7",
+                    color: "#FAFAFA",
                     fontSize: "14px",
                     outline: "none",
                     transition: "border-color 150ms ease, box-shadow 150ms ease",
@@ -243,7 +243,7 @@ export default function LoginPage() {
               <div style={{
                 fontSize: "12px",
                 textAlign: "center",
-                color: "rgba(255,251,236,0.45)",
+                color: "rgba(250,250,250,0.50)",
                 display: "flex",
                 justifyContent: "center",
                 gap: "6px",
@@ -252,10 +252,10 @@ export default function LoginPage() {
               }}>
                 Default password:
                 <code className="theme-mono" style={{
-                  background: "rgba(255,251,236,0.06)",
+                  background: "rgba(255,255,255,0.06)",
                   padding: "2px 8px",
                   borderRadius: "6px",
-                  color: "rgba(255,251,236,0.8)",
+                  color: "rgba(250,250,250,0.85)",
                   fontSize: "12px",
                   border: "1px solid rgba(255,251,236,0.08)",
                 }}>
@@ -267,7 +267,7 @@ export default function LoginPage() {
         </div>
 
         {/* Footer */}
-        <div style={{ display: "flex", justifyContent: "center", gap: "10px", fontSize: "11px", letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(255,251,236,0.28)" }} className="theme-mono">
+        <div style={{ display: "flex", justifyContent: "center", gap: "10px", fontSize: "11px", letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(250,250,250,0.32)" }} className="theme-mono">
           <span>9router</span>
           <span style={{ opacity: 0.4 }}>·</span>
           <span>secure access</span>
@@ -278,7 +278,7 @@ export default function LoginPage() {
 
       <style>{`
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        input::placeholder { color: rgba(255, 251, 236, 0.28); }
+        input::placeholder { color: rgba(250, 250, 250, 0.30); }
       `}</style>
     </div>
   );

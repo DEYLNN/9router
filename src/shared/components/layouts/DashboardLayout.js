@@ -33,7 +33,7 @@ export default function DashboardLayout({ children }) {
       {/* Ambient editorial glow — Cuties/Mahiru inspired */}
       <div aria-hidden="true" className="theme-ambient-bg" style={{
         position: "absolute", inset: 0, pointerEvents: "none",
-        opacity: 0.9, mixBlendMode: "screen", zIndex: 0,
+        opacity: 1, zIndex: 0,
       }} />
 
       {/* Toast notifications */}
@@ -99,7 +99,7 @@ export default function DashboardLayout({ children }) {
         {/* Subtle dot grid background */}
         <div aria-hidden="true" style={{
           position: "absolute", inset: 0, zIndex: 0, pointerEvents: "none",
-          backgroundImage: "radial-gradient(circle, rgba(255, 251, 236, 0.025) 1px, transparent 1px)",
+          backgroundImage: "radial-gradient(circle, rgba(255, 255, 255, 0.025) 1px, transparent 1px)",
           backgroundSize: "26px 26px",
           maskImage: "linear-gradient(to bottom, rgba(0,0,0,0.6), transparent 70%)",
         }} />
