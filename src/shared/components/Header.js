@@ -238,16 +238,19 @@ export default function Header({ onMenuClick, showMenuButton = true }) {
       alignItems: "center",
       justifyContent: "space-between",
       gap: "12px",
-      height: "58px",
-      padding: "0 clamp(10px, 2.5vw, 22px)",
+      height: "60px",
+      margin: "12px 12px 0",
+      padding: "0 clamp(12px, 2.5vw, 22px)",
       background: "var(--theme-shell-bg)",
-      backdropFilter: "blur(18px) saturate(140%)",
-      WebkitBackdropFilter: "blur(18px) saturate(140%)",
-      borderBottom: "1px solid var(--theme-shell-border)",
+      backdropFilter: "blur(20px) saturate(150%)",
+      WebkitBackdropFilter: "blur(20px) saturate(150%)",
+      border: "1px solid var(--theme-shell-border)",
+      borderRadius: "22px",
+      boxShadow: "var(--theme-glass-shadow)",
       flexShrink: 0,
       zIndex: 20,
       position: "sticky",
-      top: 0,
+      top: 12,
     }}>
 
       {/* Left */}
@@ -258,14 +261,14 @@ export default function Header({ onMenuClick, showMenuButton = true }) {
               onClick={onMenuClick}
               style={{
                 display: "flex", alignItems: "center", justifyContent: "center",
-                width: "36px", height: "36px", borderRadius: "8px",
+                width: "40px", height: "40px", borderRadius: "14px",
                 background: "transparent", border: "none",
                 color: "var(--theme-shell-text-muted)", cursor: "pointer",
                 transition: "all 150ms ease", flexShrink: 0,
               }}
               className="lg:hidden"
-              onMouseEnter={e => { e.currentTarget.style.background = "var(--theme-shell-hover)"; e.currentTarget.style.color = "rgba(255,255,255,0.8)"; }}
-              onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "rgba(255,255,255,0.4)"; }}
+              onMouseEnter={e => { e.currentTarget.style.background = "var(--theme-shell-hover)"; e.currentTarget.style.color = "var(--theme-shell-text)"; }}
+              onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--theme-shell-text-muted)"; }}
             >
               {I.menu}
             </button>

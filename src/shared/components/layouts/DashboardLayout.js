@@ -76,7 +76,7 @@ export default function DashboardLayout({ children }) {
       )}
 
       {/* Sidebar desktop */}
-      <div className="hidden lg:flex" style={{ flexShrink: 0 }}>
+      <div className="hidden lg:flex" style={{ flexShrink: 0, alignItems: "stretch" }}>
         <Sidebar />
       </div>
 
@@ -87,8 +87,9 @@ export default function DashboardLayout({ children }) {
           position: "fixed", inset: "0 auto 0 0", zIndex: 50,
           transform: sidebarOpen ? "translateX(0)" : "translateX(-100%)",
           transition: "transform 250ms cubic-bezier(0.4,0,0.2,1)",
-          maxWidth: "min(86vw, 300px)",
-          boxShadow: sidebarOpen ? "0 24px 60px rgba(0,0,0,0.6)" : "none",
+          width: "min(92vw, 360px)",
+          maxWidth: "min(92vw, 360px)",
+          boxShadow: sidebarOpen ? "0 24px 60px rgba(23,33,27,0.24)" : "none",
         }}
       >
         <Sidebar onClose={() => setSidebarOpen(false)} forceExpanded={true} />
@@ -111,7 +112,7 @@ export default function DashboardLayout({ children }) {
           overflowY: "auto",
           position: "relative",
           zIndex: 1,
-          padding: isChat ? "0" : "clamp(10px, 2.5vw, 24px)",
+          padding: isChat ? "0" : "clamp(10px, 2.5vw, 22px)",
           display: isChat ? "flex" : "block",
           flexDirection: isChat ? "column" : undefined,
         }}

@@ -75,18 +75,20 @@ function NavItem({ href, label, icon, onClose, collapsed }) {
       style={{
         display: "flex",
         alignItems: "center",
-        gap: collapsed ? 0 : "9px",
+        gap: collapsed ? 0 : "11px",
         justifyContent: collapsed ? "center" : "flex-start",
-        height: "34px",
-        padding: collapsed ? "0 10px" : "0 10px",
-        borderRadius: "8px",
+        height: "40px",
+        padding: collapsed ? "0 12px" : "0 13px",
+        borderRadius: "15px",
         fontSize: "13px",
-        fontWeight: active ? 500 : 400,
+        fontWeight: active ? 650 : 500,
         textDecoration: "none",
         color: active ? "var(--theme-shell-text)" : "var(--theme-shell-text-muted)",
-        background: active ? "var(--theme-shell-active-bg)" : "transparent",
-        transition: "all 120ms ease",
-        marginBottom: "2px",
+        background: active ? "linear-gradient(135deg, rgba(14,142,142,0.14), rgba(29,85,212,0.08))" : "transparent",
+        border: active ? "1px solid rgba(14,142,142,0.18)" : "1px solid transparent",
+        boxShadow: active ? "0 12px 24px -18px rgba(14,142,142,0.32)" : "none",
+        transition: "all 160ms ease",
+        marginBottom: "4px",
       }}
       onMouseEnter={e => {
         if (!active) {
@@ -195,7 +197,7 @@ export default function Sidebar({ onClose, forceExpanded }) {
     setIsDisconnected(true);
   };
 
-  const w = isCollapsed ? "56px" : "232px";
+  const w = isCollapsed ? "68px" : (forceExpanded ? "min(340px, calc(100vw - 28px))" : "248px");
 
   return (
     <>
@@ -203,12 +205,15 @@ export default function Sidebar({ onClose, forceExpanded }) {
         display: "flex",
         flexDirection: "column",
         width: w,
-        minHeight: "100%",
+        height: "calc(100% - 24px)",
+        margin: "12px",
         background: "var(--theme-shell-bg)",
-        backdropFilter: "blur(18px) saturate(140%)",
-        WebkitBackdropFilter: "blur(18px) saturate(140%)",
-        borderRight: "1px solid var(--theme-shell-border)",
-        transition: "width 200ms cubic-bezier(0.4,0,0.2,1)",
+        backdropFilter: "blur(20px) saturate(150%)",
+        WebkitBackdropFilter: "blur(20px) saturate(150%)",
+        border: "1px solid var(--theme-shell-border)",
+        borderRadius: "24px",
+        boxShadow: "var(--theme-glass-shadow)",
+        transition: "width 200ms cubic-bezier(0.4,0,0.2,1), border-radius 200ms ease",
         overflow: "hidden",
         flexShrink: 0,
       }}>
@@ -218,14 +223,14 @@ export default function Sidebar({ onClose, forceExpanded }) {
           display: "flex",
           alignItems: "center",
           justifyContent: isCollapsed ? "center" : "space-between",
-          padding: "16px 12px 12px",
+          padding: "18px 14px 14px",
           flexShrink: 0,
         }}>
           {!isCollapsed ? (
             <>
               <Link href="/dashboard" style={{ display: "flex", alignItems: "center", gap: "9px", textDecoration: "none" }}>
                 <div style={{
-                  width: "28px", height: "28px", borderRadius: "9px",
+                  width: "34px", height: "34px", borderRadius: "13px",
                   background: "linear-gradient(135deg, var(--theme-accent-teal) 0%, var(--theme-accent-blue) 100%)",
                   display: "flex", alignItems: "center", justifyContent: "center",
                   color: "var(--theme-shell-text)", flexShrink: 0,
@@ -264,7 +269,7 @@ export default function Sidebar({ onClose, forceExpanded }) {
               onClick={() => setCollapsed(false)}
               style={{
                 display: "flex", alignItems: "center", justifyContent: "center",
-                width: "28px", height: "28px", borderRadius: "9px",
+                width: "34px", height: "34px", borderRadius: "13px",
                 background: "linear-gradient(135deg, var(--theme-accent-teal) 0%, var(--theme-accent-blue) 100%)",
                 border: "none", color: "var(--theme-shell-text)", cursor: "pointer",
                 boxShadow: "0 6px 18px -6px rgba(17, 166, 166, 0.55)",
