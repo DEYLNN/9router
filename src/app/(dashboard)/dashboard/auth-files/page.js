@@ -84,6 +84,8 @@ export default function AuthFilesPage() {
   const [refreshingId, setRefreshingId] = useState(null);
   const [refreshMessage, setRefreshMessage] = useState({ fileId: null, type: null, text: "" });
   const [importing, setImporting] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
+  const [deleteMessage, setDeleteMessage] = useState(null);
   const [importMessage, setImportMessage] = useState(null);
   const [providerDropdownOpen, setProviderDropdownOpen] = useState(false);
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
@@ -156,6 +158,26 @@ export default function AuthFilesPage() {
     }
   };
 
+  const deleteAuthFile = async (file) => {
+    const label = file.email || file.name || file.filename || file.id;
+    const ok = window.confirm(`Delete ${label}?\n\nThis removes the provider account/credential from the database. This cannot be undone.`);
+    if (!ok) return;
+
+    setDeletingId(file.id);
+    setDeleteMessage(null);
+    try {
+      const res = await fetch(`/api/providers/${encodeURIComponent(file.id)}`, { method: "DELETE" });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "Failed to delete account");
+      setDeleteMessage({ type: "ok", text: `Deleted ${label}` });
+      await load();
+    } catch (error) {
+      setDeleteMessage({ type: "bad", text: error.message || "Failed to delete account" });
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   useEffect(() => { load(); }, []);
 
   const providerTypes = useMemo(() => {
@@ -210,6 +232,7 @@ export default function AuthFilesPage() {
           </div>
         </div>
         {importMessage && <p className={`mt-3 rounded-lg p-2 text-xs ${importMessage.type === "ok" ? "bg-emerald-500/10 text-emerald-500" : "bg-red-500/10 text-red-500"}`}>{importMessage.text}</p>}
+        {deleteMessage && <p className={`mt-3 rounded-lg p-2 text-xs ${deleteMessage.type === "ok" ? "bg-emerald-500/10 text-emerald-500" : "bg-red-500/10 text-red-500"}`}>{deleteMessage.text}</p>}
       </Card>
 
       <Card className="p-4">
@@ -361,14 +384,25 @@ export default function AuthFilesPage() {
               )) : <div className="rounded-lg bg-sidebar px-3 py-2 text-xs text-text-muted">No secret fields detected</div>}
             </div>
 
-            <button
-              type="button"
-              onClick={() => downloadJson(file.filename, file.exportJson)}
-              className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg border border-border px-3 py-2 text-xs font-semibold text-text-muted transition-colors hover:border-primary/40 hover:bg-primary/10 hover:text-primary"
-            >
-              <span className="material-symbols-outlined text-[16px]">download</span>
-              Download JSON
-            </button>
+            <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <button
+                type="button"
+                onClick={() => downloadJson(file.filename, file.exportJson)}
+                className="flex w-full items-center justify-center gap-2 rounded-lg border border-border px-3 py-2 text-xs font-semibold text-text-muted transition-colors hover:border-primary/40 hover:bg-primary/10 hover:text-primary"
+              >
+                <span className="material-symbols-outlined text-[16px]">download</span>
+                Download JSON
+              </button>
+              <button
+                type="button"
+                onClick={() => deleteAuthFile(file)}
+                disabled={deletingId === file.id}
+                className="flex w-full items-center justify-center gap-2 rounded-lg border border-red-500/25 px-3 py-2 text-xs font-semibold text-red-400 transition-colors hover:border-red-500/50 hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <span className="material-symbols-outlined text-[16px]">{deletingId === file.id ? "hourglass_empty" : "delete"}</span>
+                {deletingId === file.id ? "Deleting..." : "Delete account"}
+              </button>
+            </div>
 
             {file.lastError && <p className="mt-3 line-clamp-2 rounded-lg bg-red-500/10 p-2 text-xs text-red-500">{file.lastError}</p>}
           </Card>
