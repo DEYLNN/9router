@@ -148,21 +148,21 @@ export default function PublicModelsPage() {
   const enabledRatio = models.length ? Math.round((enabledIds.length / models.length) * 100) : 0;
 
   return (
-    <div style={{ padding: "26px", maxWidth: "1240px", margin: "0 auto" }}>
+    <div style={{ padding: "clamp(12px, 3vw, 26px)", maxWidth: "1240px", margin: "0 auto" }}>
       <section style={{
         position: "relative",
         overflow: "hidden",
         border: "1px solid rgba(255,255,255,.08)",
-        borderRadius: 24,
-        padding: "28px",
+        borderRadius: "clamp(16px, 4vw, 24px)",
+        padding: "clamp(16px, 4vw, 28px)",
         marginBottom: 18,
         background: "radial-gradient(circle at 12% 10%, rgba(59,130,246,.24), transparent 35%), radial-gradient(circle at 82% 0%, rgba(168,85,247,.22), transparent 30%), linear-gradient(135deg, rgba(255,255,255,.075), rgba(255,255,255,.025))",
         boxShadow: "0 28px 90px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.08)",
       }}>
         <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px)", backgroundSize: "34px 34px", maskImage: "linear-gradient(to bottom, black, transparent 80%)", pointerEvents: "none" }} />
-        <div style={{ position: "relative", display: "flex", justifyContent: "space-between", gap: 20, alignItems: "flex-start", flexWrap: "wrap" }}>
-          <div style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
-            <div style={{ width: 54, height: 54, borderRadius: 18, display: "grid", placeItems: "center", color: "#fff", background: "linear-gradient(135deg, #2563eb, #7c3aed 55%, #14b8a6)", boxShadow: "0 18px 42px rgba(37,99,235,.35)" }}>
+        <div style={{ position: "relative", display: "flex", justifyContent: "space-between", gap: 16, alignItems: "flex-start", flexWrap: "wrap" }}>
+          <div style={{ display: "flex", gap: 14, alignItems: "flex-start", flexWrap: "wrap", minWidth: 0 }}>
+            <div style={{ width: "clamp(44px, 12vw, 54px)", height: "clamp(44px, 12vw, 54px)", borderRadius: 16, display: "grid", placeItems: "center", color: "#fff", background: "linear-gradient(135deg, #2563eb, #7c3aed 55%, #14b8a6)", boxShadow: "0 18px 42px rgba(37,99,235,.35)", flex: "0 0 auto" }}>
               {Icons.models}
             </div>
             <div>
@@ -170,39 +170,39 @@ export default function PublicModelsPage() {
                 <Badge variant="primary" size="sm" dot>OpenAI compatible</Badge>
                 <Badge variant="success" size="sm">/v1/models</Badge>
               </div>
-              <h1 style={{ fontSize: 32, lineHeight: 1.05, fontWeight: 760, letterSpacing: "-.04em", margin: 0 }}>Models</h1>
+              <h1 style={{ fontSize: "clamp(26px, 8vw, 32px)", lineHeight: 1.05, fontWeight: 760, letterSpacing: "-.04em", margin: 0 }}>Models</h1>
               <p style={{ maxWidth: 680, color: "var(--color-text-muted)", fontSize: 14, lineHeight: 1.65, margin: "10px 0 0" }}>
                 Curate exactly which backend models are visible to public clients. Internal provider inventory stays private; only enabled models appear in the public model list.
               </p>
             </div>
           </div>
-          <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+          <div style={{ display: "flex", gap: 10, flexWrap: "wrap", width: "max-content", maxWidth: "100%" }}>
             <Button variant="secondary" size="sm" onClick={fetchModels} disabled={loading || saving}>Refresh</Button>
             <Button variant="primary" size="sm" onClick={() => window.open(publicUrl, "_blank")}>Open endpoint</Button>
           </div>
         </div>
       </section>
 
-      <section style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 14, marginBottom: 18 }}>
+      <section style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 190px), 1fr))", gap: 12, marginBottom: 18 }}>
         {[
           { icon: Icons.globe, label: "Exposed", value: enabledIds.length, hint: `${enabledRatio}% of inventory`, color: "#10b981" },
           { icon: Icons.shield, label: "Hidden", value: Math.max(models.length - enabledIds.length, 0), hint: "private by default", color: "#f59e0b" },
           { icon: Icons.spark, label: "Providers", value: providersCount, hint: `${models.length} total models`, color: "#60a5fa" },
         ].map((stat) => (
-          <div key={stat.label} style={{ border: "1px solid rgba(255,255,255,.08)", borderRadius: 18, padding: 18, background: "linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.025))", boxShadow: "inset 0 1px 0 rgba(255,255,255,.06)" }}>
+          <div key={stat.label} style={{ border: "1px solid rgba(255,255,255,.08)", borderRadius: 16, padding: "clamp(13px, 3vw, 18px)", background: "linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.025))", boxShadow: "inset 0 1px 0 rgba(255,255,255,.06)" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <span style={{ width: 34, height: 34, borderRadius: 12, display: "grid", placeItems: "center", color: stat.color, background: `${stat.color}18`, border: `1px solid ${stat.color}30` }}>{stat.icon}</span>
               <span style={{ fontSize: 12, color: "var(--color-text-muted)" }}>{stat.hint}</span>
             </div>
-            <div style={{ fontSize: 30, fontWeight: 760, letterSpacing: "-.03em", marginTop: 14 }}>{loading ? "—" : stat.value}</div>
+            <div style={{ fontSize: "clamp(24px, 7vw, 30px)", fontWeight: 760, letterSpacing: "-.03em", marginTop: 12 }}>{loading ? "—" : stat.value}</div>
             <div style={{ fontSize: 13, color: "var(--color-text-muted)", marginTop: 2 }}>{stat.label}</div>
           </div>
         ))}
       </section>
 
-      <section style={{ border: "1px solid rgba(255,255,255,.08)", borderRadius: 18, padding: 14, marginBottom: 18, background: "rgba(255,255,255,.035)", backdropFilter: "blur(14px)" }}>
+      <section style={{ border: "1px solid rgba(255,255,255,.08)", borderRadius: 16, padding: "clamp(10px, 3vw, 14px)", marginBottom: 18, background: "rgba(255,255,255,.035)", backdropFilter: "blur(14px)" }}>
         <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
-          <div style={{ position: "relative", flex: "1 1 360px", maxWidth: 520 }}>
+          <div style={{ position: "relative", flex: "1 1 260px", maxWidth: 520, minWidth: 0 }}>
             <span style={{ position: "absolute", left: 13, top: "50%", transform: "translateY(-50%)", color: "var(--color-text-muted)", pointerEvents: "none" }}>{Icons.search}</span>
             <Input
               placeholder="Search model ID or provider..."
@@ -240,11 +240,11 @@ export default function PublicModelsPage() {
                   </div>
                   <Badge variant={enabledCount ? "success" : "default"} size="sm">{enabledCount}/{items.length} enabled</Badge>
                 </div>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 10, padding: 14 }}>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 280px), 1fr))", gap: 10, padding: "clamp(10px, 3vw, 14px)" }}>
                   {items.map((model) => {
                     const enabled = enabledSet.has(model.id);
                     return (
-                      <div key={model.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, padding: 13, border: `1px solid ${enabled ? "rgba(16,185,129,.32)" : "rgba(255,255,255,.075)"}`, borderRadius: 14, background: enabled ? "linear-gradient(135deg, rgba(16,185,129,.12), rgba(20,184,166,.045))" : "rgba(255,255,255,.025)", boxShadow: enabled ? "inset 0 1px 0 rgba(255,255,255,.08), 0 10px 28px rgba(16,185,129,.08)" : "inset 0 1px 0 rgba(255,255,255,.04)" }}>
+                      <div key={model.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, padding: "clamp(10px, 3vw, 13px)", border: `1px solid ${enabled ? "rgba(16,185,129,.32)" : "rgba(255,255,255,.075)"}`, borderRadius: 14, background: enabled ? "linear-gradient(135deg, rgba(16,185,129,.12), rgba(20,184,166,.045))" : "rgba(255,255,255,.025)", boxShadow: enabled ? "inset 0 1px 0 rgba(255,255,255,.08), 0 10px 28px rgba(16,185,129,.08)" : "inset 0 1px 0 rgba(255,255,255,.04)" }}>
                         <div style={{ minWidth: 0 }}>
                           <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 6 }}>
                             <span style={{ width: 8, height: 8, borderRadius: 999, background: enabled ? "#10b981" : "rgba(255,255,255,.2)", boxShadow: enabled ? "0 0 0 4px rgba(16,185,129,.12)" : "none" }} />
