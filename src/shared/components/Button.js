@@ -3,18 +3,18 @@
 import { cn } from "@/shared/utils/cn";
 
 const variants = {
-  primary: "bg-[#3B82F6] hover:bg-[#2563EB] text-white disabled:opacity-40",
-  secondary: "bg-[var(--color-surface-2)] hover:bg-[var(--color-surface-3)] text-[var(--color-text-main)] border border-[rgba(255,255,255,0.08)] hover:border-[rgba(255,255,255,0.14)] disabled:opacity-40",
-  outline: "border border-[rgba(255,255,255,0.12)] text-[var(--color-text-main)] hover:bg-[var(--color-surface-2)] hover:border-[rgba(59,130,246,0.4)]",
-  ghost: "text-[var(--color-text-muted)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-text-main)]",
-  danger: "bg-[rgba(239,68,68,0.1)] hover:bg-[rgba(239,68,68,0.18)] text-[#ef4444] border border-[rgba(239,68,68,0.2)] disabled:opacity-40",
-  success: "bg-[rgba(16,185,129,0.1)] hover:bg-[rgba(16,185,129,0.18)] text-[#10B981] border border-[rgba(16,185,129,0.2)] disabled:opacity-40",
+  primary: "bg-[var(--theme-accent-teal)] hover:bg-[#0D8585] text-white shadow-[0_8px_22px_-10px_rgba(17,166,166,0.55)] disabled:opacity-40",
+  secondary: "bg-[rgba(255,251,236,0.04)] hover:bg-[rgba(255,251,236,0.08)] text-[var(--color-text-main)] border border-[rgba(255,251,236,0.10)] hover:border-[rgba(255,251,236,0.18)] disabled:opacity-40",
+  outline: "border border-[rgba(255,251,236,0.14)] text-[var(--color-text-main)] hover:bg-[rgba(255,251,236,0.04)] hover:border-[rgba(17,166,166,0.45)]",
+  ghost: "text-[var(--color-text-muted)] hover:bg-[rgba(255,251,236,0.04)] hover:text-[var(--color-text-main)]",
+  danger: "bg-[rgba(239,68,68,0.10)] hover:bg-[rgba(239,68,68,0.18)] text-[#F87171] border border-[rgba(239,68,68,0.22)] disabled:opacity-40",
+  success: "bg-[rgba(17,163,106,0.10)] hover:bg-[rgba(17,163,106,0.18)] text-[var(--theme-accent-green)] border border-[rgba(17,163,106,0.24)] disabled:opacity-40",
 };
 
 const sizes = {
-  sm: "h-7 px-3 text-xs rounded-[8px]",
-  md: "h-9 px-4 text-sm rounded-[10px]",
-  lg: "h-11 px-6 text-sm rounded-[10px]",
+  sm: "h-7 px-3 text-xs rounded-[10px]",
+  md: "h-9 px-4 text-sm rounded-[12px]",
+  lg: "h-11 px-6 text-sm rounded-[12px]",
 };
 
 export default function Button({
