@@ -722,24 +722,27 @@ function ApiKeyProviderCard({
       <div style={{
         display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px",
         padding: "12px 14px",
-        borderRadius: "10px",
-        background: "var(--color-surface)",
-        border: "1px solid var(--color-border)",
+        borderRadius: "var(--radius-editorial-md)",
+        background: "var(--theme-glass-bg)",
+        border: "1px solid var(--theme-glass-border)",
+        boxShadow: "var(--theme-glass-hi)",
+        backdropFilter: "blur(14px)",
+        WebkitBackdropFilter: "blur(14px)",
         cursor: "pointer",
         opacity: allDisabled ? 0.5 : 1,
-        transition: "border-color 150ms ease, background 150ms ease",
+        transition: "border-color 150ms ease, background 150ms ease, box-shadow 200ms ease",
         height: "100%",
         boxSizing: "border-box",
       }}
-        onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.14)"; e.currentTarget.style.background = "var(--color-surface-2)"; }}
-        onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--color-border)"; e.currentTarget.style.background = "var(--color-surface)"; }}
+        onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(23,33,27,0.18)"; e.currentTarget.style.boxShadow = "0 18px 36px -18px rgba(23,33,27,0.16)"; }}
+        onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--theme-glass-border)"; e.currentTarget.style.boxShadow = "var(--theme-glass-hi)"; }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "10px", minWidth: 0 }}>
           <div style={{
-            width: "34px", height: "34px", borderRadius: "8px", flexShrink: 0,
+            width: "34px", height: "34px", borderRadius: "10px", flexShrink: 0,
             display: "flex", alignItems: "center", justifyContent: "center",
-            background: provider.color ? `${provider.color}18` : "rgba(255,255,255,0.06)",
-            border: `1px solid ${provider.color ? `${provider.color}25` : "rgba(255,255,255,0.06)"}`,
+            background: provider.color ? `${provider.color}18` : "rgba(23,33,27,0.06)",
+            border: `1px solid ${provider.color ? `${provider.color}25` : "rgba(23,33,27,0.08)"}`,
           }}>
             <ProviderIcon
               src={getIconPath()}
@@ -756,7 +759,7 @@ function ApiKeyProviderCard({
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginTop: "2px" }}>
               {allDisabled ? (
-                <span style={{ fontSize: "11px", color: "var(--color-text-subtle)", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "4px", padding: "1px 6px" }}>Disabled</span>
+                <span style={{ fontSize: "11px", color: "var(--color-text-subtle)", background: "rgba(23,33,27,0.05)", border: "1px solid rgba(23,33,27,0.08)", borderRadius: "6px", padding: "1px 6px" }}>Disabled</span>
               ) : (
                 <>
                   {getStatusDisplay(connected, error, errorCode)}
