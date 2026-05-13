@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Button, Input, Toggle } from "@/shared/components";
+import ProviderIcon from "@/shared/components/ProviderIcon";
 import { useNotificationStore } from "@/store/notificationStore";
 
 const Icons = {
@@ -25,6 +26,50 @@ function shortProviderName(owner) {
   return owner.split(/[\/_-]/).filter(Boolean).slice(0, 2).join(" ") || owner;
 }
 
+function providerIconPath(provider) {
+  const raw = (provider || "").toLowerCase();
+  const map = {
+    cx: "codex", codex: "codex",
+    kr: "kiro", kiro: "kiro",
+    cwv: "canopywave", canopywave: "canopywave",
+    "mimo-sgp": "xiaomi-mimo-plan-sgp", mms: "xiaomi-mimo-plan-sgp", "xiaomi-mimo-plan-sgp": "xiaomi-mimo-plan-sgp",
+    gh: "github", github: "github",
+    or: "openrouter", openrouter: "openrouter",
+    gemini: "gemini", "gemini-cli": "gemini-cli",
+    cerebras: "cerebras", cloudflare: "cloudflare-ai", "cloudflare-ai": "cloudflare-ai",
+    anthropic: "anthropic", openai: "openai", minimax: "minimax",
+  };
+  return `/providers/${map[raw] || raw}.png`;
+}
+
+function defaultProviderMeta(owner) {
+  const raw = (owner || "").toLowerCase();
+  const map = {
+    kr: { label: "Kiro", icon: "kiro" },
+    cx: { label: "Codex", icon: "codex" },
+    cwv: { label: "CanopyWave", icon: "canopywave" },
+    "mimo-sgp": { label: "MIMO SGP", icon: "xiaomi-mimo-plan-sgp" },
+    mms: { label: "MIMO SGP", icon: "xiaomi-mimo-plan-sgp" },
+    openrouter: { label: "OpenRouter", icon: "openrouter" },
+    or: { label: "OpenRouter", icon: "openrouter" },
+  };
+  return map[raw] || { label: shortProviderName(owner), icon: raw };
+}
+
+function buildProviderMeta(connections = []) {
+  const meta = {};
+  for (const connection of connections) {
+    const prefix = connection?.providerSpecificData?.prefix;
+    const keys = [prefix, connection?.provider].filter(Boolean).map((x) => String(x).toLowerCase());
+    const label = connection?.providerSpecificData?.nodeName || connection?.name || defaultProviderMeta(prefix || connection?.provider).label;
+    const icon = connection?.provider || prefix;
+    for (const key of keys) {
+      if (!meta[key]) meta[key] = { label, icon };
+    }
+  }
+  return meta;
+}
+
 export default function PublicModelsPage() {
   const notify = useNotificationStore();
   const [models, setModels] = useState([]);
@@ -33,17 +78,25 @@ export default function PublicModelsPage() {
   const [saving, setSaving] = useState(false);
   const [query, setQuery] = useState("");
   const [onlyEnabled, setOnlyEnabled] = useState(false);
+  const [providerMeta, setProviderMeta] = useState({});
 
   const enabledSet = useMemo(() => new Set(enabledIds), [enabledIds]);
 
   const fetchModels = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/models/public", { cache: "no-store" });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to fetch models");
+      const [modelsRes, providersRes] = await Promise.all([
+        fetch("/api/models/public", { cache: "no-store" }),
+        fetch("/api/providers/client", { cache: "no-store" }).catch(() => null),
+      ]);
+      const data = await modelsRes.json();
+      if (!modelsRes.ok) throw new Error(data.error || "Failed to fetch models");
       setModels(data.models || []);
       setEnabledIds(data.enabledIds || []);
+      if (providersRes?.ok) {
+        const providerData = await providersRes.json();
+        setProviderMeta(buildProviderMeta(providerData.connections || []));
+      }
     } catch (error) {
       notify.error(error.message || "Failed to fetch models");
     } finally {
@@ -132,9 +185,21 @@ export default function PublicModelsPage() {
                   borderBottom: "1px solid rgba(23,33,27,0.08)",
                   background: "rgba(255,248,220,0.42)",
                 }}>
-                  <div style={{ minWidth: 0 }}>
-                    <h2 style={{ fontSize: 13.5, fontWeight: 760, margin: 0, textTransform: "capitalize", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", color: "var(--color-text-main)" }}>{shortProviderName(owner)}</h2>
-                    <div className="theme-mono" style={{ fontSize: 10.5, color: "var(--color-text-muted)", marginTop: 1, wordBreak: "break-all" }}>{owner}</div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
+                    {(() => {
+                      const meta = providerMeta[String(owner).toLowerCase()] || defaultProviderMeta(owner);
+                      return (
+                        <>
+                          <div style={{ width: 30, height: 30, borderRadius: 10, display: "grid", placeItems: "center", background: "rgba(255,251,236,0.58)", border: "1px solid rgba(23,33,27,0.08)", flexShrink: 0 }}>
+                            <ProviderIcon src={providerIconPath(meta.icon)} alt={meta.label} size={22} className="h-[22px] w-[22px] rounded-md object-contain" fallbackText={meta.label.slice(0, 2).toUpperCase()} />
+                          </div>
+                          <div style={{ minWidth: 0 }}>
+                            <h2 style={{ fontSize: 13.5, fontWeight: 760, margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", color: "var(--color-text-main)" }}>{meta.label}</h2>
+                            <div className="theme-mono" style={{ fontSize: 10.5, color: "var(--color-text-muted)", marginTop: 1, wordBreak: "break-all" }}>{owner}</div>
+                          </div>
+                        </>
+                      );
+                    })()}
                   </div>
                   <span className="theme-mono" style={{ fontSize: 11, color: "var(--color-text-muted)", flexShrink: 0 }}>{enabledCount}/{items.length}</span>
                 </div>
