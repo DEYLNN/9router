@@ -6,6 +6,7 @@ import {
   invalidateProjectId,
   removeConnection,
 } from "open-sse/services/projectId.js";
+import { mintNousAgentKey } from "../../lib/oauth/nous.js";
 import {
   TOKEN_EXPIRY_BUFFER_MS as BUFFER_MS,
   refreshAccessToken as _refreshAccessToken,
@@ -233,7 +234,20 @@ export async function checkAndRefreshToken(provider, credentials) {
     }
   }
 
-  // ── 2. GitHub Copilot token expiry ────────────────────────────────────────
+  // ── 2. Nous Portal agent-key expiry ───────────────────────────────────────
+  if (provider === "nous-portal") {
+    const specific = creds.providerSpecificData || {};
+    const agentKeyExpiresAt = Number(specific.agentKeyObtainedAt || 0) + Number(specific.agentKeyExpiresIn || 0) * 1000;
+    if (!specific.agentKey || Date.now() > agentKeyExpiresAt - 60_000) {
+      log.info("TOKEN_REFRESH", "Minting Nous Portal agent key");
+      const agent = await mintNousAgentKey(creds.accessToken);
+      const updatedSpecific = { ...specific, ...agent };
+      await updateProviderCredentials(creds.connectionId, { providerSpecificData: updatedSpecific });
+      creds.providerSpecificData = updatedSpecific;
+    }
+  }
+
+  // ── 3. GitHub Copilot token expiry ────────────────────────────────────────
   if (provider === "github" && creds.providerSpecificData?.copilotTokenExpiresAt) {
     const copilotExpiresAt = creds.providerSpecificData.copilotTokenExpiresAt * 1000;
     const now              = Date.now();

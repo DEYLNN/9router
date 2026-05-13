@@ -54,6 +54,16 @@ export const GEMINI_CONFIG = {
   ],
 };
 
+// Nous Portal OAuth Configuration (Device Code Flow)
+export const NOUS_CONFIG = {
+  clientId: process.env.NOUS_CLIENT_ID || "hermes-cli",
+  deviceCodeUrl: "https://portal.nousresearch.com/api/oauth/device/code",
+  tokenUrl: "https://portal.nousresearch.com/api/oauth/token",
+  agentKeyUrl: "https://portal.nousresearch.com/api/oauth/agent-key",
+  inferenceBaseUrl: "https://inference-api.nousresearch.com/v1",
+  scope: "inference:mint_agent_key",
+};
+
 // Qwen OAuth Configuration (Device Code Flow with PKCE)
 export const QWEN_CONFIG = {
   clientId: "f0304373b74a44d2b584a3fb70ca9e56",

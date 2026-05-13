@@ -66,6 +66,10 @@ export const PROVIDER_MODELS = {
     { id: "gemini-3-flash-preview", name: "Gemini 3 Flash Preview" },
     { id: "gemini-3-pro-preview", name: "Gemini 3 Pro Preview" },
   ],
+  nous: [  // Nous Portal
+    { id: "stepfun/step-3.5-flash", name: "StepFun Step 3.5 Flash" },
+    { id: "qwen/qwen3.6-plus", name: "Qwen 3.6 Plus" },
+  ],
   qw: [  // Qwen Code
     // { id: "qwen3-coder-next", name: "Qwen3 Coder Next" },
     { id: "qwen3-coder-plus", name: "Qwen3 Coder Plus" },

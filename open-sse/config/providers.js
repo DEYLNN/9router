@@ -74,6 +74,13 @@ export const PROVIDERS = {
     clientId: "app_EMoamEEZ73f0CkXaXp7hrann",
     tokenUrl: "https://auth.openai.com/oauth/token"
   },
+  "nous-portal": {
+    baseUrl: "https://inference-api.nousresearch.com/v1/chat/completions",
+    format: "openai",
+    headers: { "User-Agent": "HermesAgent/0.10.0 (hermes-agent; Node.js)" },
+    clientId: "hermes-cli",
+    tokenUrl: "https://portal.nousresearch.com/api/oauth/token"
+  },
   qwen: {
     baseUrl: "https://portal.qwen.ai/v1/chat/completions",
     format: "openai",

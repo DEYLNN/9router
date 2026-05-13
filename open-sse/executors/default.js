@@ -12,7 +12,13 @@ export class DefaultExecutor extends BaseExecutor {
   }
 
   transformRequest(model, body) {
-    return injectReasoningContent({ provider: this.provider, model, body });
+    const transformed = injectReasoningContent({ provider: this.provider, model, body });
+    if (this.provider === "nous-portal") {
+      const extra = { ...(transformed.extra_body || {}) };
+      if (!extra.tags) extra.tags = ["product=hermes-agent"];
+      transformed.extra_body = extra;
+    }
+    return transformed;
   }
 
   buildUrl(model, stream, urlIndex = 0, credentials = null) {
@@ -103,7 +109,9 @@ export class DefaultExecutor extends BaseExecutor {
         Object.assign(headers, buildKimiHeaders());
         break;
       default:
-        if (this.provider?.startsWith?.("anthropic-compatible-")) {
+        if (this.provider === "nous-portal") {
+          headers["Authorization"] = `Bearer ${credentials.providerSpecificData?.agentKey || credentials.apiKey || credentials.accessToken}`;
+        } else if (this.provider?.startsWith?.("anthropic-compatible-")) {
           if (credentials.apiKey) {
             headers["x-api-key"] = credentials.apiKey;
           } else if (credentials.accessToken) {

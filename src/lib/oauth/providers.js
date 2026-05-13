@@ -10,6 +10,7 @@ import { generatePKCE, generateState } from "./utils/pkce";
 import {
   CLAUDE_CONFIG,
   CODEX_CONFIG,
+  NOUS_CONFIG,
   GEMINI_CONFIG,
   QWEN_CONFIG,
   QODER_CONFIG,
@@ -24,6 +25,7 @@ import {
   GITLAB_CONFIG,
   CODEBUDDY_CONFIG,
 } from "./constants/oauth";
+import { requestNousDeviceCode, pollNousToken, mintNousAgentKey } from "./nous.js";
 
 const BASE64_BLOCK_SIZE = 4;
 
@@ -183,6 +185,50 @@ const PROVIDERS = {
       }
       return mapped;
     },
+  },
+
+  "nous-portal": {
+    config: NOUS_CONFIG,
+    flowType: "device_code",
+    requestDeviceCode: async () => {
+      const data = await requestNousDeviceCode();
+      return {
+        device_code: data.device_code,
+        user_code: data.user_code,
+        verification_uri: data.verification_uri,
+        verification_uri_complete: data.verification_uri_complete,
+        expires_in: data.expires_in,
+        interval: data.interval || 5,
+      };
+    },
+    pollToken: async (_config, deviceCode) => {
+      try {
+        const data = await pollNousToken(deviceCode);
+        return { ok: true, data };
+      } catch (error) {
+        const msg = error.message || "nous_oauth_error";
+        const err = msg.split(":")[0];
+        return { ok: true, data: { error: err, error_description: msg } };
+      }
+    },
+    postExchange: async (tokens) => {
+      try {
+        const agent = await mintNousAgentKey(tokens.access_token);
+        return { agent };
+      } catch {
+        return { agent: null };
+      }
+    },
+    mapTokens: (tokens, extra) => ({
+      accessToken: tokens.access_token,
+      refreshToken: tokens.refresh_token,
+      expiresIn: tokens.expires_in || 3600,
+      scope: tokens.scope,
+      providerSpecificData: {
+        inferenceBaseUrl: tokens.inference_base_url || NOUS_CONFIG.inferenceBaseUrl,
+        ...(extra?.agent || {}),
+      },
+    }),
   },
 
   "gemini-cli": {

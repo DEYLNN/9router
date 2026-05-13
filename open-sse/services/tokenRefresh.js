@@ -554,6 +554,22 @@ async function _getAccessTokenInternal(provider, credentials, log) {
     case "qwen":
       return await refreshQwenToken(credentials.refreshToken, log);
 
+    case "nous-portal": {
+      const response = await fetch("https://portal.nousresearch.com/api/oauth/token", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded", Accept: "application/json" },
+        body: new URLSearchParams({ grant_type: "refresh_token", client_id: "hermes-cli", refresh_token: credentials.refreshToken })
+      });
+      if (!response.ok) return null;
+      const tokens = await response.json();
+      return {
+        accessToken: tokens.access_token,
+        refreshToken: tokens.refresh_token || credentials.refreshToken,
+        expiresIn: tokens.expires_in || 3600,
+        providerSpecificData: tokens.inference_base_url ? { inferenceBaseUrl: tokens.inference_base_url } : undefined,
+      };
+    }
+
     case "iflow":
       return await refreshIflowToken(credentials.refreshToken, log);
 

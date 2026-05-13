@@ -26,6 +26,8 @@ const PROVIDER_ALIAS_TO_CANONICAL = {
   cf: "cloudflare-ai",
   cloudflare: "cloudflare-ai",
   "cloudflare-ai": "cloudflare-ai",
+  nous: "nous-portal",
+  "nous-portal": "nous-portal",
 };
 
 function canonicalProviderId(provider) {
