@@ -29,7 +29,12 @@ export default function DashboardLayout({ children }) {
   const isChat = pathname === "/dashboard/basic-chat";
 
   return (
-    <div style={{ display: "flex", height: "100vh", width: "100%", overflow: "hidden", background: "var(--color-bg)" }}>
+    <div style={{ display: "flex", height: "100vh", width: "100%", overflow: "hidden", background: "var(--color-bg)", position: "relative" }}>
+      {/* Ambient editorial glow — Cuties/Mahiru inspired */}
+      <div aria-hidden="true" className="theme-ambient-bg" style={{
+        position: "absolute", inset: 0, pointerEvents: "none",
+        opacity: 0.9, mixBlendMode: "screen", zIndex: 0,
+      }} />
 
       {/* Toast notifications */}
       <div style={{ position: "fixed", top: "16px", right: "16px", zIndex: 80, display: "flex", flexDirection: "column", gap: "8px", width: "min(92vw, 360px)" }}>
@@ -90,12 +95,13 @@ export default function DashboardLayout({ children }) {
       </div>
 
       {/* Main */}
-      <main style={{ display: "flex", flexDirection: "column", flex: 1, height: "100%", minWidth: 0, position: "relative", overflow: "hidden" }}>
+      <main style={{ display: "flex", flexDirection: "column", flex: 1, height: "100%", minWidth: 0, position: "relative", overflow: "hidden", zIndex: 1 }}>
         {/* Subtle dot grid background */}
         <div aria-hidden="true" style={{
           position: "absolute", inset: 0, zIndex: 0, pointerEvents: "none",
-          backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px)",
-          backgroundSize: "24px 24px",
+          backgroundImage: "radial-gradient(circle, rgba(255, 251, 236, 0.025) 1px, transparent 1px)",
+          backgroundSize: "26px 26px",
+          maskImage: "linear-gradient(to bottom, rgba(0,0,0,0.6), transparent 70%)",
         }} />
 
         <Header key={pathname} onMenuClick={() => setSidebarOpen(true)} />
