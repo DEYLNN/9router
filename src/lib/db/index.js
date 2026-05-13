@@ -49,6 +49,11 @@ export {
   getDisabledModels, getDisabledByProvider, disableModels, enableModels,
 } from "./repos/disabledModelsRepo.js";
 
+// Public model exposure allowlist
+export {
+  getPublicModelIds, setPublicModelIds, enablePublicModels, disablePublicModels,
+} from "./repos/publicModelsRepo.js";
+
 // Usage
 export {
   statsEmitter, trackPendingRequest, getActiveRequests,

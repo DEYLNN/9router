@@ -37,6 +37,7 @@ import { PUT as providerNodePut, DELETE as providerNodeDelete } from "../../src/
 import { POST as providerNodeValidatePost } from "../../src/app/api/provider-nodes/validate/route.js";
 import { GET as customModelsGet, POST as customModelsPost, DELETE as customModelsDelete } from "../../src/app/api/models/custom/route.js";
 import { GET as disabledModelsGet, POST as disabledModelsPost, DELETE as disabledModelsDelete } from "../../src/app/api/models/disabled/route.js";
+import { GET as publicModelsGet, POST as publicModelsPost, PUT as publicModelsPut, DELETE as publicModelsDelete } from "../../src/app/api/models/public/route.js";
 import { POST as modelTestPost } from "../../src/app/api/models/test/route.js";
 import { PUT as modelAliasPut, DELETE as modelAliasDelete } from "../../src/app/api/models/alias/route.js";
 import { POST as combosPost } from "../../src/app/api/combos/route.js";
@@ -388,6 +389,10 @@ app.delete("/api/models/custom", (c) => nextRouteHandler(c, customModelsDelete))
 app.get("/api/models/disabled", (c) => nextRouteHandler(c, disabledModelsGet));
 app.post("/api/models/disabled", (c) => nextRouteHandler(c, disabledModelsPost));
 app.delete("/api/models/disabled", (c) => nextRouteHandler(c, disabledModelsDelete));
+app.get("/api/models/public", (c) => nextRouteHandler(c, publicModelsGet));
+app.post("/api/models/public", (c) => nextRouteHandler(c, publicModelsPost));
+app.put("/api/models/public", (c) => nextRouteHandler(c, publicModelsPut));
+app.delete("/api/models/public", (c) => nextRouteHandler(c, publicModelsDelete));
 app.post("/api/models/test", (c) => nextRouteHandler(c, modelTestPost));
 app.put("/api/models/alias", (c) => nextRouteHandler(c, modelAliasPut));
 app.delete("/api/models/alias", (c) => nextRouteHandler(c, modelAliasDelete));

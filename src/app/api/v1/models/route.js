@@ -7,6 +7,7 @@ import {
 } from "@/shared/constants/providers";
 import { getProviderConnections, getCombos, getCustomModels, getModelAliases } from "@/lib/localDb";
 import { getDisabledModels } from "@/lib/disabledModelsDb";
+import { getPublicModelIds } from "@/lib/publicModelsDb";
 
 const parseOpenAIStyleModels = (data) => {
   if (Array.isArray(data)) return data;
@@ -122,7 +123,8 @@ function comboMatchesKinds(combo, kindFilter) {
  * Build OpenAI-format models list filtered by service kinds.
  * @param {string[]} kindFilter - List of service kinds to include (e.g. ["llm"], ["webSearch","webFetch"]).
  */
-export async function buildModelsList(kindFilter) {
+export async function buildModelsList(kindFilter, options = {}) {
+  const publicOnly = options?.publicOnly === true;
   let connections = [];
   try {
     connections = await getProviderConnections();
@@ -366,6 +368,17 @@ export async function buildModelsList(kindFilter) {
     dedupedModels.push(model);
   }
 
+  if (publicOnly) {
+    let publicIds = [];
+    try {
+      publicIds = await getPublicModelIds();
+    } catch (e) {
+      console.log("Could not fetch public models");
+    }
+    const allow = new Set(publicIds);
+    return dedupedModels.filter((model) => allow.has(model.id));
+  }
+
   return dedupedModels;
 }
 
@@ -388,7 +401,7 @@ export async function OPTIONS() {
  */
 export async function GET() {
   try {
-    const data = await buildModelsList([LLM_KIND]);
+    const data = await buildModelsList([LLM_KIND], { publicOnly: true });
     return Response.json({ object: "list", data }, {
       headers: { "Access-Control-Allow-Origin": "*" },
     });

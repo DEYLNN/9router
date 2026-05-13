@@ -42,6 +42,7 @@ const ICON_MAP = {
 const NAV_MAIN = [
   { href: "/dashboard/endpoint", label: "Endpoint", icon: "api" },
   { href: "/dashboard/providers", label: "Providers", icon: "dns" },
+  { href: "/dashboard/public-models", label: "Public Models", icon: "layers" },
   { href: "/dashboard/combos", label: "Combos", icon: "layers" },
 ];
 
