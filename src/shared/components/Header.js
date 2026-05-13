@@ -90,12 +90,12 @@ function ProfileMenu({ onLogout }) {
           display: "flex", alignItems: "center", justifyContent: "center",
           width: "32px", height: "32px", borderRadius: "50%",
           background: open ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.06)",
-          border: "1px solid rgba(255,255,255,0.1)",
-          color: "rgba(255,255,255,0.7)", cursor: "pointer",
+          border: "1px solid var(--theme-shell-border)",
+          color: "var(--theme-shell-text)", cursor: "pointer",
           transition: "all 150ms ease",
         }}
-        onMouseEnter={e => { if (!open) e.currentTarget.style.background = "rgba(255,255,255,0.1)"; }}
-        onMouseLeave={e => { if (!open) e.currentTarget.style.background = "rgba(255,255,255,0.06)"; }}
+        onMouseEnter={e => { if (!open) e.currentTarget.style.background = "var(--theme-shell-active-bg)"; }}
+        onMouseLeave={e => { if (!open) e.currentTarget.style.background = "var(--theme-shell-hover)"; }}
       >
         {I.user}
       </button>
@@ -104,15 +104,17 @@ function ProfileMenu({ onLogout }) {
         <div style={{
           position: "absolute", top: "calc(100% + 8px)", right: 0,
           width: "180px", borderRadius: "10px",
-          background: "#111113",
-          border: "1px solid rgba(255,255,255,0.1)",
-          boxShadow: "0 16px 48px rgba(0,0,0,0.6)",
+          background: "var(--theme-shell-bg)",
+          backdropFilter: "blur(18px) saturate(140%)",
+          WebkitBackdropFilter: "blur(18px) saturate(140%)",
+          border: "1px solid var(--theme-shell-border)",
+          boxShadow: "0 16px 48px rgba(23,33,27,0.18)",
           zIndex: 100, overflow: "hidden",
           animation: "fadeIn 100ms ease",
         }}>
           <div style={{ padding: "10px 12px", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-            <div style={{ fontSize: "12px", fontWeight: 600, color: "#fff" }}>9Router</div>
-            <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.35)", marginTop: "1px" }}>AI Gateway</div>
+            <div style={{ fontSize: "12px", fontWeight: 600, color: "var(--theme-shell-text)" }}>9Router</div>
+            <div style={{ fontSize: "11px", color: "var(--theme-shell-text-subtle)", marginTop: "1px" }}>AI Gateway</div>
           </div>
           <div style={{ padding: "6px" }}>
             <Link
@@ -121,11 +123,11 @@ function ProfileMenu({ onLogout }) {
               style={{
                 display: "flex", alignItems: "center", gap: "8px",
                 padding: "7px 8px", borderRadius: "6px",
-                fontSize: "13px", color: "rgba(255,255,255,0.6)",
+                fontSize: "13px", color: "var(--theme-shell-text-muted)",
                 textDecoration: "none", transition: "all 150ms ease",
               }}
-              onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.06)"; e.currentTarget.style.color = "#fff"; }}
-              onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "rgba(255,255,255,0.6)"; }}
+              onMouseEnter={e => { e.currentTarget.style.background = "var(--theme-shell-hover)"; e.currentTarget.style.color = "var(--theme-shell-text)"; }}
+              onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--theme-shell-text-muted)"; }}
             >
               {I.settings} Settings
             </Link>
@@ -182,9 +184,9 @@ function HeaderSearch() {
           width: "100%", boxSizing: "border-box",
           height: "34px", paddingLeft: "30px", paddingRight: query ? "28px" : "10px",
           borderRadius: "7px",
-          border: focused ? "1px solid rgba(59,130,246,0.4)" : "1px solid rgba(255,255,255,0.08)",
+          border: focused ? "1px solid rgba(59,130,246,0.4)" : "1px solid var(--theme-shell-border)",
           background: focused ? "rgba(59,130,246,0.05)" : "rgba(255,255,255,0.04)",
-          color: "#fff",
+          color: "var(--theme-shell-text)",
           fontSize: "12px", outline: "none",
           transition: "all 150ms ease",
         }}
@@ -196,7 +198,7 @@ function HeaderSearch() {
           style={{
             position: "absolute", right: "7px", top: "50%", transform: "translateY(-50%)",
             background: "none", border: "none", cursor: "pointer",
-            color: "rgba(255,255,255,0.3)", display: "flex", padding: "2px",
+            color: "var(--theme-shell-text-subtle)", display: "flex", padding: "2px",
           }}
         >
           {I.close}
@@ -211,7 +213,7 @@ function StatusDot() {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "5px" }} title="Gateway online">
       {I.dot}
-      <span style={{ fontSize: "11px", color: "rgba(255,255,255,0.3)", fontWeight: 500 }}>Live</span>
+      <span style={{ fontSize: "11px", color: "var(--theme-shell-text-subtle)", fontWeight: 500 }}>Live</span>
     </div>
   );
 }
@@ -258,11 +260,11 @@ export default function Header({ onMenuClick, showMenuButton = true }) {
                 display: "flex", alignItems: "center", justifyContent: "center",
                 width: "36px", height: "36px", borderRadius: "8px",
                 background: "transparent", border: "none",
-                color: "rgba(255,255,255,0.4)", cursor: "pointer",
+                color: "var(--theme-shell-text-muted)", cursor: "pointer",
                 transition: "all 150ms ease", flexShrink: 0,
               }}
               className="lg:hidden"
-              onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.06)"; e.currentTarget.style.color = "rgba(255,255,255,0.8)"; }}
+              onMouseEnter={e => { e.currentTarget.style.background = "var(--theme-shell-hover)"; e.currentTarget.style.color = "rgba(255,255,255,0.8)"; }}
               onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "rgba(255,255,255,0.4)"; }}
             >
               {I.menu}
@@ -278,16 +280,16 @@ export default function Header({ onMenuClick, showMenuButton = true }) {
           return (
             <div style={{ display: "flex", alignItems: "center", gap: "10px", minWidth: 0 }}>
               {current.image && (
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "36px", height: "36px", borderRadius: "12px", flexShrink: 0, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "36px", height: "36px", borderRadius: "12px", flexShrink: 0, background: "var(--theme-shell-hover)", border: "1px solid var(--theme-shell-border)" }}>
                   <ProviderIcon src={current.image} alt={current.label} size={30} className="object-contain rounded-lg max-w-[30px] max-h-[30px]" fallbackText={current.label.slice(0, 2).toUpperCase()} />
                 </div>
               )}
               <div style={{ minWidth: 0 }}>
-                <div style={{ fontSize: "14px", fontWeight: 600, color: "#fff", letterSpacing: "-0.02em", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                <div style={{ fontSize: "14px", fontWeight: 600, color: "var(--theme-shell-text)", letterSpacing: "-0.02em", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                   {translate(current.label)}
                 </div>
                 {parent && (
-                  <div className="hidden lg:block" style={{ fontSize: "12px", color: "rgba(255,255,255,0.3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  <div className="hidden lg:block" style={{ fontSize: "12px", color: "var(--theme-shell-text-subtle)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                     {translate(parent.label)} settings
                   </div>
                 )}
@@ -296,11 +298,11 @@ export default function Header({ onMenuClick, showMenuButton = true }) {
           );
         })() : title ? (
           <div style={{ display: "flex", alignItems: "center", gap: "8px", minWidth: 0 }}>
-            <span style={{ fontSize: "14px", fontWeight: 600, color: "#fff", letterSpacing: "-0.02em", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            <span style={{ fontSize: "14px", fontWeight: 600, color: "var(--theme-shell-text)", letterSpacing: "-0.02em", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
               {translate(title)}
             </span>
             {description && (
-              <span className="hidden lg:block" style={{ fontSize: "12px", color: "rgba(255,255,255,0.3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              <span className="hidden lg:block" style={{ fontSize: "12px", color: "var(--theme-shell-text-subtle)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                 {translate(description)}
               </span>
             )}

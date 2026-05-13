@@ -90,13 +90,13 @@ function NavItem({ href, label, icon, onClose, collapsed }) {
       }}
       onMouseEnter={e => {
         if (!active) {
-          e.currentTarget.style.color = "rgba(255,255,255,0.85)";
-          e.currentTarget.style.background = "rgba(255,255,255,0.07)";
+          e.currentTarget.style.color = "var(--theme-shell-text)";
+          e.currentTarget.style.background = "var(--theme-shell-hover)";
         }
       }}
       onMouseLeave={e => {
         if (!active) {
-          e.currentTarget.style.color = "rgba(255,255,255,0.5)";
+          e.currentTarget.style.color = "var(--theme-shell-text-muted)";
           e.currentTarget.style.background = "transparent";
         }
       }}
@@ -120,12 +120,12 @@ function NavItem({ href, label, icon, onClose, collapsed }) {
 
 // ─── section label ────────────────────────────────────────────────────────────
 function SectionLabel({ label, collapsed }) {
-  if (collapsed) return <div style={{ height: "1px", background: "rgba(255,255,255,0.06)", margin: "8px 6px" }} />;
+  if (collapsed) return <div style={{ height: "1px", background: "var(--theme-shell-hover)", margin: "8px 6px" }} />;
   return (
     <div style={{ padding: "0 10px", marginTop: "18px", marginBottom: "4px" }}>
       <span style={{
         fontSize: "10px", fontWeight: 600,
-        color: "rgba(255,255,255,0.22)",
+        color: "var(--theme-shell-text-subtle)",
         textTransform: "uppercase", letterSpacing: "0.09em",
       }}>
         {label}
@@ -228,16 +228,16 @@ export default function Sidebar({ onClose, forceExpanded }) {
                   width: "28px", height: "28px", borderRadius: "9px",
                   background: "linear-gradient(135deg, var(--theme-accent-teal) 0%, var(--theme-accent-blue) 100%)",
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  color: "#fff", flexShrink: 0,
+                  color: "var(--theme-shell-text)", flexShrink: 0,
                   boxShadow: "0 6px 18px -6px rgba(17, 166, 166, 0.55)",
                 }}>
                   {I.logo}
                 </div>
                 <div>
-                  <div style={{ fontSize: "14px", fontWeight: 700, color: "#fff", letterSpacing: "-0.03em", lineHeight: 1.1 }}>
+                  <div style={{ fontSize: "14px", fontWeight: 700, color: "var(--theme-shell-text)", letterSpacing: "-0.03em", lineHeight: 1.1 }}>
                     {APP_CONFIG.name}
                   </div>
-                  <div style={{ fontSize: "10px", color: "rgba(255,255,255,0.28)", marginTop: "1px" }}>
+                  <div style={{ fontSize: "10px", color: "var(--theme-shell-text-subtle)", marginTop: "1px" }}>
                     v{APP_CONFIG.version}
                   </div>
                 </div>
@@ -249,11 +249,11 @@ export default function Sidebar({ onClose, forceExpanded }) {
                     display: "flex", alignItems: "center", justifyContent: "center",
                     width: "24px", height: "24px", borderRadius: "6px",
                     background: "transparent", border: "none",
-                    color: "rgba(255,255,255,0.2)", cursor: "pointer",
+                    color: "var(--theme-shell-text-subtle)", cursor: "pointer",
                     transition: "all 150ms ease", flexShrink: 0,
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.07)"; e.currentTarget.style.color = "rgba(255,255,255,0.6)"; }}
-                  onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "rgba(255,255,255,0.2)"; }}
+                  onMouseEnter={e => { e.currentTarget.style.background = "var(--theme-shell-hover)"; e.currentTarget.style.color = "var(--theme-shell-text-muted)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--theme-shell-text-subtle)"; }}
                 >
                   {I.chevronLeft}
                 </button>
@@ -266,7 +266,7 @@ export default function Sidebar({ onClose, forceExpanded }) {
                 display: "flex", alignItems: "center", justifyContent: "center",
                 width: "28px", height: "28px", borderRadius: "9px",
                 background: "linear-gradient(135deg, var(--theme-accent-teal) 0%, var(--theme-accent-blue) 100%)",
-                border: "none", color: "#fff", cursor: "pointer",
+                border: "none", color: "var(--theme-shell-text)", cursor: "pointer",
                 boxShadow: "0 6px 18px -6px rgba(17, 166, 166, 0.55)",
               }}
               title="Expand sidebar"
@@ -316,7 +316,7 @@ export default function Sidebar({ onClose, forceExpanded }) {
         {/* Footer */}
         <div style={{
           padding: "10px 8px 14px",
-          borderTop: "1px solid rgba(255,255,255,0.06)",
+          borderTop: "1px solid var(--theme-shell-border)",
           flexShrink: 0,
         }}>
           {!isCollapsed ? (
@@ -326,15 +326,15 @@ export default function Sidebar({ onClose, forceExpanded }) {
                   width: "26px", height: "26px", borderRadius: "50%",
                   background: "linear-gradient(135deg, #3B82F6, #A855F7)",
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  color: "#fff", fontSize: "11px", fontWeight: 700, flexShrink: 0,
+                  color: "var(--theme-shell-text)", fontSize: "11px", fontWeight: 700, flexShrink: 0,
                 }}>
                   A
                 </div>
                 <div style={{ minWidth: 0 }}>
-                  <div style={{ fontSize: "12px", fontWeight: 600, color: "rgba(255,255,255,0.8)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  <div style={{ fontSize: "12px", fontWeight: 600, color: "var(--theme-shell-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                     Admin
                   </div>
-                  <div style={{ fontSize: "10px", color: "rgba(255,255,255,0.3)" }}>
+                  <div style={{ fontSize: "10px", color: "var(--theme-shell-text-subtle)" }}>
                     Gateway
                   </div>
                 </div>
@@ -415,8 +415,8 @@ export default function Sidebar({ onClose, forceExpanded }) {
               <div style={{ width: "48px", height: "48px", borderRadius: "50%", background: "rgba(239,68,68,0.12)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", color: "#ef4444" }}>
                 {I.power}
               </div>
-              <h2 style={{ fontSize: "16px", fontWeight: 600, color: "#fff", marginBottom: "8px" }}>Server Disconnected</h2>
-              <p style={{ color: "rgba(255,255,255,0.4)", marginBottom: "20px", fontSize: "13px" }}>The proxy server has been stopped.</p>
+              <h2 style={{ fontSize: "16px", fontWeight: 600, color: "var(--theme-shell-text)", marginBottom: "8px" }}>Server Disconnected</h2>
+              <p style={{ color: "var(--theme-shell-text-muted)", marginBottom: "20px", fontSize: "13px" }}>The proxy server has been stopped.</p>
               <Button variant="secondary" onClick={() => globalThis.location.reload()}>Reload Page</Button>
             </div>
           )}
@@ -431,19 +431,19 @@ Sidebar.propTypes = { onClose: PropTypes.func, forceExpanded: PropTypes.bool };
 function ManualUpdatePanel({ latestVersion, installCmd, copied, onCopyAndShutdown, onCancel, countdown, isDisconnected }) {
   const isCountingDown = countdown > 0;
   return (
-    <div style={{ width: "100%", maxWidth: "460px", borderRadius: "12px", background: "#111113", border: "1px solid rgba(255,255,255,0.08)", padding: "24px", color: "#fff" }}>
+    <div style={{ width: "100%", maxWidth: "460px", borderRadius: "12px", background: "#111113", border: "1px solid var(--theme-shell-border)", padding: "24px", color: "var(--theme-shell-text)" }}>
       <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
         <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "rgba(245,158,11,0.12)", display: "flex", alignItems: "center", justifyContent: "center", color: "#F59E0B", flexShrink: 0 }}>
           {I.update}
         </div>
         <div>
           <h2 style={{ fontSize: "15px", fontWeight: 600, marginBottom: "2px" }}>Update 9Router{latestVersion ? ` to v${latestVersion}` : ""}</h2>
-          <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.4)" }}>
+          <p style={{ fontSize: "12px", color: "var(--theme-shell-text-muted)" }}>
             {isDisconnected ? "Server stopped. Paste the command into a terminal." : isCountingDown ? `Shutting down in ${countdown}s...` : "Copy the install command and shutdown to update."}
           </p>
         </div>
       </div>
-      <div style={{ background: "rgba(255,255,255,0.04)", borderRadius: "7px", padding: "10px 12px", marginBottom: "16px" }}>
+      <div style={{ background: "var(--theme-shell-hover)", borderRadius: "7px", padding: "10px 12px", marginBottom: "16px" }}>
         <code style={{ fontSize: "12px", fontFamily: "monospace", color: "#F59E0B", wordBreak: "break-all" }}>{installCmd}</code>
       </div>
       {isDisconnected ? (
