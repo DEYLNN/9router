@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { getProviderConnectionById } from "@/models";
 import { updateProviderConnection } from "@/lib/localDb";
 import { getExecutor } from "open-sse/executors/index.js";
+import { CODEX_CONFIG } from "@/lib/oauth/constants/oauth";
+import { extractCodexAccountInfo } from "@/lib/oauth/providers";
 
 function decodeJwtExp(token) {
   if (!token || typeof token !== "string") return null;
@@ -36,6 +38,75 @@ export async function POST(request, { params }) {
 
     if (!connection.refreshToken) {
       return NextResponse.json({ error: "No refresh token stored for this account. Re-authorize the connection." }, { status: 400 });
+    }
+
+    // Codex uses a provider-specific OAuth refresh flow. The Auth Files page
+    // already uses this logic successfully; keep Quota Tracker / provider
+    // detail refresh in sync instead of falling through to generic open-sse
+    // executor refreshCredentials.
+    if (connection.provider === "codex") {
+      const response = await fetch(CODEX_CONFIG.tokenUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Accept: "application/json",
+        },
+        body: new URLSearchParams({
+          grant_type: "refresh_token",
+          client_id: CODEX_CONFIG.clientId,
+          refresh_token: connection.refreshToken,
+          scope: CODEX_CONFIG.scope,
+        }),
+      });
+
+      const text = await response.text();
+      const tokens = text ? JSON.parse(text) : {};
+
+      if (!response.ok || !tokens.access_token) {
+        return NextResponse.json({
+          error: tokens.error_description || tokens.error || text || "Failed to refresh access token. Re-authorize the connection if the refresh token is expired or revoked.",
+        }, { status: response.status || 401 });
+      }
+
+      const patch = {
+        accessToken: tokens.access_token,
+        refreshToken: tokens.refresh_token || connection.refreshToken,
+        idToken: tokens.id_token || connection.idToken,
+        expiresIn: tokens.expires_in,
+        expiresAt: tokens.expires_in ? new Date(Date.now() + tokens.expires_in * 1000).toISOString() : connection.expiresAt,
+        tokenType: tokens.token_type || connection.tokenType,
+        scope: tokens.scope || connection.scope,
+        testStatus: "active",
+        isActive: true,
+        lastError: null,
+        lastErrorAt: null,
+        updatedAt: new Date().toISOString(),
+      };
+
+      const info = extractCodexAccountInfo(patch.idToken);
+      if (info.email) patch.email = info.email;
+      if (info.chatgptAccountId || info.chatgptPlanType) {
+        patch.providerSpecificData = {
+          ...(connection.providerSpecificData || {}),
+          chatgptAccountId: info.chatgptAccountId,
+          chatgptPlanType: info.chatgptPlanType,
+        };
+      }
+
+      const updated = await updateProviderConnection(connection.id, patch);
+
+      return NextResponse.json({
+        success: true,
+        id: connection.id,
+        provider: connection.provider,
+        accessToken: updated?.accessToken,
+        hasRefreshToken: !!updated?.refreshToken,
+        refreshToken: updated?.refreshToken,
+        expiresAt: updated?.expiresAt,
+        accessTokenExpiresAt: updated?.expiresAt,
+        accessTokenExpired: false,
+        updatedAt: updated?.updatedAt,
+      });
     }
 
     const executor = getExecutor(connection.provider);
