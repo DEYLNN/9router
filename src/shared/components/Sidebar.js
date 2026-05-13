@@ -83,8 +83,8 @@ function NavItem({ href, label, icon, onClose, collapsed }) {
         fontSize: "13px",
         fontWeight: active ? 500 : 400,
         textDecoration: "none",
-        color: active ? "#fff" : "rgba(255,255,255,0.5)",
-        background: active ? "rgba(255,255,255,0.1)" : "transparent",
+        color: active ? "var(--theme-shell-text)" : "var(--theme-shell-text-muted)",
+        background: active ? "var(--theme-shell-active-bg)" : "transparent",
         transition: "all 120ms ease",
         marginBottom: "2px",
       }}
