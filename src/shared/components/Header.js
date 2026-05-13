@@ -58,6 +58,7 @@ function getPageInfo(pathname) {
       ],
     };
   }
+  if (pathname.includes("/public-models")) return { title: "Models", description: "Control which models are exposed by /v1/models", icon: "models", breadcrumbs: [] };
   if (pathname.includes("/providers")) return { title: "Providers", description: "Manage AI provider connections", icon: "dns", breadcrumbs: [] };
   if (pathname.includes("/combos")) return { title: "Combos", description: "Model combos with fallback routing", icon: "layers", breadcrumbs: [] };
   if (pathname.includes("/usage")) return { title: "Usage", description: "Monitor API usage and token consumption", icon: "bar_chart", breadcrumbs: [] };
