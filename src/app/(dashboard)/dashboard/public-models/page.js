@@ -148,13 +148,13 @@ export default function PublicModelsPage() {
   const enabledRatio = models.length ? Math.round((enabledIds.length / models.length) * 100) : 0;
 
   return (
-    <div style={{ padding: "clamp(12px, 3vw, 26px)", maxWidth: "1240px", margin: "0 auto" }}>
+    <div style={{ padding: "clamp(6px, 2vw, 22px)", maxWidth: "1360px", margin: "0 auto" }}>
       <section style={{
         position: "relative",
         overflow: "hidden",
         border: "1px solid rgba(255,255,255,.08)",
         borderRadius: "clamp(16px, 4vw, 24px)",
-        padding: "clamp(16px, 4vw, 28px)",
+        padding: "clamp(13px, 3vw, 26px)",
         marginBottom: 18,
         background: "radial-gradient(circle at 12% 10%, rgba(59,130,246,.24), transparent 35%), radial-gradient(circle at 82% 0%, rgba(168,85,247,.22), transparent 30%), linear-gradient(135deg, rgba(255,255,255,.075), rgba(255,255,255,.025))",
         boxShadow: "0 28px 90px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.08)",
@@ -183,13 +183,13 @@ export default function PublicModelsPage() {
         </div>
       </section>
 
-      <section style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 190px), 1fr))", gap: 12, marginBottom: 18 }}>
+      <section style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 160px), 1fr))", gap: 12, marginBottom: 18 }}>
         {[
           { icon: Icons.globe, label: "Exposed", value: enabledIds.length, hint: `${enabledRatio}% of inventory`, color: "#10b981" },
           { icon: Icons.shield, label: "Hidden", value: Math.max(models.length - enabledIds.length, 0), hint: "private by default", color: "#f59e0b" },
           { icon: Icons.spark, label: "Providers", value: providersCount, hint: `${models.length} total models`, color: "#60a5fa" },
         ].map((stat) => (
-          <div key={stat.label} style={{ border: "1px solid rgba(255,255,255,.08)", borderRadius: 16, padding: "clamp(13px, 3vw, 18px)", background: "linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.025))", boxShadow: "inset 0 1px 0 rgba(255,255,255,.06)" }}>
+          <div key={stat.label} style={{ border: "1px solid rgba(255,255,255,.08)", borderRadius: 16, padding: "clamp(11px, 2.5vw, 17px)", background: "linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.025))", boxShadow: "inset 0 1px 0 rgba(255,255,255,.06)" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <span style={{ width: 34, height: 34, borderRadius: 12, display: "grid", placeItems: "center", color: stat.color, background: `${stat.color}18`, border: `1px solid ${stat.color}30` }}>{stat.icon}</span>
               <span style={{ fontSize: 12, color: "var(--color-text-muted)" }}>{stat.hint}</span>
@@ -200,7 +200,7 @@ export default function PublicModelsPage() {
         ))}
       </section>
 
-      <section style={{ border: "1px solid rgba(255,255,255,.08)", borderRadius: 16, padding: "clamp(10px, 3vw, 14px)", marginBottom: 18, background: "rgba(255,255,255,.035)", backdropFilter: "blur(14px)" }}>
+      <section style={{ border: "1px solid rgba(255,255,255,.08)", borderRadius: 16, padding: "clamp(8px, 2vw, 14px)", marginBottom: 18, background: "rgba(255,255,255,.035)", backdropFilter: "blur(14px)" }}>
         <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
           <div style={{ position: "relative", flex: "1 1 260px", maxWidth: 520, minWidth: 0 }}>
             <span style={{ position: "absolute", left: 13, top: "50%", transform: "translateY(-50%)", color: "var(--color-text-muted)", pointerEvents: "none" }}>{Icons.search}</span>
@@ -230,7 +230,7 @@ export default function PublicModelsPage() {
             const enabledCount = items.filter((m) => enabledSet.has(m.id)).length;
             return (
               <div key={owner} style={{ border: "1px solid rgba(255,255,255,.08)", borderRadius: 20, overflow: "hidden", background: "linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.025))", boxShadow: "0 18px 45px rgba(0,0,0,.14)" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 14, padding: "16px 18px", borderBottom: "1px solid rgba(255,255,255,.07)" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 14, padding: "14px clamp(12px, 2vw, 18px)", borderBottom: "1px solid rgba(255,255,255,.07)" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 12, minWidth: 0 }}>
                     <ProviderAvatar owner={owner} />
                     <div style={{ minWidth: 0 }}>
@@ -240,11 +240,11 @@ export default function PublicModelsPage() {
                   </div>
                   <Badge variant={enabledCount ? "success" : "default"} size="sm">{enabledCount}/{items.length} enabled</Badge>
                 </div>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 280px), 1fr))", gap: 10, padding: "clamp(10px, 3vw, 14px)" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 245px), 1fr))", gap: 10, padding: "clamp(8px, 2vw, 14px)" }}>
                   {items.map((model) => {
                     const enabled = enabledSet.has(model.id);
                     return (
-                      <div key={model.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, padding: "clamp(10px, 3vw, 13px)", border: `1px solid ${enabled ? "rgba(16,185,129,.32)" : "rgba(255,255,255,.075)"}`, borderRadius: 14, background: enabled ? "linear-gradient(135deg, rgba(16,185,129,.12), rgba(20,184,166,.045))" : "rgba(255,255,255,.025)", boxShadow: enabled ? "inset 0 1px 0 rgba(255,255,255,.08), 0 10px 28px rgba(16,185,129,.08)" : "inset 0 1px 0 rgba(255,255,255,.04)" }}>
+                      <div key={model.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, padding: "clamp(9px, 2vw, 13px)", border: `1px solid ${enabled ? "rgba(16,185,129,.32)" : "rgba(255,255,255,.075)"}`, borderRadius: 14, background: enabled ? "linear-gradient(135deg, rgba(16,185,129,.12), rgba(20,184,166,.045))" : "rgba(255,255,255,.025)", boxShadow: enabled ? "inset 0 1px 0 rgba(255,255,255,.08), 0 10px 28px rgba(16,185,129,.08)" : "inset 0 1px 0 rgba(255,255,255,.04)" }}>
                         <div style={{ minWidth: 0 }}>
                           <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 6 }}>
                             <span style={{ width: 8, height: 8, borderRadius: 999, background: enabled ? "#10b981" : "rgba(255,255,255,.2)", boxShadow: enabled ? "0 0 0 4px rgba(16,185,129,.12)" : "none" }} />
