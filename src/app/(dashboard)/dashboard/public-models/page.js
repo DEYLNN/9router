@@ -31,40 +31,78 @@ function providerIconPath(provider) {
   const map = {
     cx: "codex", codex: "codex",
     kr: "kiro", kiro: "kiro",
+    kc: "kilocode", kilocode: "kilocode",
+    gh: "github", github: "github",
+    cf: "cloudflare-ai", cloudflare: "cloudflare-ai", "cloudflare-ai": "cloudflare-ai",
     cwv: "canopywave", canopywave: "canopywave",
     "mimo-sgp": "xiaomi-mimo-plan-sgp", mms: "xiaomi-mimo-plan-sgp", "xiaomi-mimo-plan-sgp": "xiaomi-mimo-plan-sgp",
-    gh: "github", github: "github",
-    or: "openrouter", openrouter: "openrouter",
-    gemini: "gemini", "gemini-cli": "gemini-cli",
-    cerebras: "cerebras", cloudflare: "cloudflare-ai", "cloudflare-ai": "cloudflare-ai",
-    anthropic: "anthropic", openai: "openai", minimax: "minimax",
+    openrouter: "openrouter", or: "openrouter",
+    pp: "perplexity", perplexity: "perplexity",
+    sr: "swiftrouter", swiftrouter: "swiftrouter",
+    bai: "bai",
+    cerebras: "cerebras",
+    morph: "morph",
+    ollama: "ollama",
+    combo: "openclaw",
+    aim: "routeway",
+    qwen: "qwen",
+    iflow: "iflow",
+    nt: "openai",
+    dv: "openai",
+    wn: "openai",
+    anthropic: "anthropic", openai: "openai", minimax: "minimax", gemini: "gemini", "gemini-cli": "gemini-cli",
   };
   return `/providers/${map[raw] || raw}.png`;
 }
 
-function defaultProviderMeta(owner) {
+function canonicalProviderMeta(owner) {
   const raw = (owner || "").toLowerCase();
   const map = {
     kr: { label: "Kiro", icon: "kiro" },
     cx: { label: "Codex", icon: "codex" },
+    kc: { label: "Kilo Code", icon: "kilocode" },
+    gh: { label: "GitHub Copilot", icon: "github" },
+    cf: { label: "Cloudflare AI", icon: "cloudflare-ai" },
     cwv: { label: "CanopyWave", icon: "canopywave" },
     "mimo-sgp": { label: "MIMO SGP", icon: "xiaomi-mimo-plan-sgp" },
     mms: { label: "MIMO SGP", icon: "xiaomi-mimo-plan-sgp" },
     openrouter: { label: "OpenRouter", icon: "openrouter" },
     or: { label: "OpenRouter", icon: "openrouter" },
+    pp: { label: "Perplexity", icon: "perplexity" },
+    sr: { label: "SwiftRouter", icon: "swiftrouter" },
+    bai: { label: "BAI", icon: "bai" },
+    aim: { label: "AIMurah", icon: "routeway" },
+    cerebras: { label: "Cerebras", icon: "cerebras" },
+    morph: { label: "Morph", icon: "morph" },
+    ollama: { label: "Ollama", icon: "ollama" },
+    combo: { label: "Combos", icon: "openclaw" },
   };
-  return map[raw] || { label: shortProviderName(owner), icon: raw };
+  return map[raw] || null;
+}
+
+function defaultProviderMeta(owner) {
+  return canonicalProviderMeta(owner) || { label: shortProviderName(owner), icon: owner };
 }
 
 function buildProviderMeta(connections = []) {
   const meta = {};
   for (const connection of connections) {
     const prefix = connection?.providerSpecificData?.prefix;
-    const keys = [prefix, connection?.provider].filter(Boolean).map((x) => String(x).toLowerCase());
-    const label = connection?.providerSpecificData?.nodeName || connection?.name || defaultProviderMeta(prefix || connection?.provider).label;
-    const icon = connection?.provider || prefix;
+    const rawProvider = connection?.provider;
+    const keys = [prefix, rawProvider].filter(Boolean).map((x) => String(x).toLowerCase());
     for (const key of keys) {
-      if (!meta[key]) meta[key] = { label, icon };
+      // Official aliases must use brand names/icons, not account names/API key aliases.
+      const canonical = canonicalProviderMeta(key);
+      if (canonical) {
+        meta[key] = canonical;
+        continue;
+      }
+      if (!meta[key]) {
+        meta[key] = {
+          label: connection?.providerSpecificData?.nodeName || connection?.name || shortProviderName(key),
+          icon: prefix || rawProvider || key,
+        };
+      }
     }
   }
   return meta;
