@@ -1,8 +1,5 @@
 import os from "os";
-import { fileURLToPath } from "url";
-import { dirname, join } from "path";
-import { existsSync } from "fs";
-import { cleanupProviderConnections, getSettings, updateSettings, getApiKeys } from "@/lib/localDb";
+import { cleanupProviderConnections, getSettings } from "@/lib/localDb";
 import {
   enableTunnel, enableTailscale,
   isTunnelManuallyDisabled, isTunnelReconnecting, isTailscaleReconnecting,
@@ -16,21 +13,6 @@ import {
   RESTART_COOLDOWN_MS, NETWORK_SETTLE_MS,
   WATCHDOG_INTERVAL_MS, NETWORK_CHECK_INTERVAL_MS,
 } from "@/lib/tunnel/tunnelConfig";
-import { getMitmStatus, startMitm, loadEncryptedPassword, initDbHooks, restoreToolDNS, removeAllDNSEntriesSync } from "@/mitm/manager";
-import { syncToJson as syncMitmAliasCache } from "@/lib/mitmAliasCache";
-
-// Inject correct paths and DB hooks into manager.js (CJS) from ESM context
-(function bootstrapMitm() {
-  if (!process.env.MITM_SERVER_PATH) {
-    try {
-      const thisFile = fileURLToPath(import.meta.url);
-      const appSrc = dirname(dirname(thisFile));
-      const candidate = join(appSrc, "mitm", "server.js");
-      if (existsSync(candidate)) process.env.MITM_SERVER_PATH = candidate;
-    } catch { /* ignore */ }
-  }
-  try { initDbHooks(getSettings, updateSettings); } catch { /* ignore */ }
-})();
 
 process.setMaxListeners(20);
 
@@ -41,7 +23,6 @@ const g = global.__appSingleton ??= {
   networkMonitorInterval: null,
   lastNetworkFingerprint: null,
   lastWatchdogTick: Date.now(),
-  mitmStartInProgress: false,
   tunnelAutoResumed: false,
   tailscaleAutoResumed: false,
 };
@@ -67,62 +48,24 @@ export async function initializeApp() {
 
     if (!g.signalHandlersRegistered) {
       const cleanup = () => {
-        try { removeAllDNSEntriesSync(); } catch { /* best effort */ }
         killCloudflared();
         process.exit();
       };
       process.on("SIGINT", cleanup);
       process.on("SIGTERM", cleanup);
-      process.on("exit", () => { try { removeAllDNSEntriesSync(); } catch { /* ignore */ } });
       g.signalHandlersRegistered = true;
     }
 
     ensureCloudflared().catch(() => {});
 
-    // Sync mitmAlias DB → JSON cache so standalone MITM server can read it
-    syncMitmAliasCache().catch(() => {});
 
     startWatchdog();
     startNetworkMonitor();
-    autoStartMitm();
   } catch (error) {
     console.error("[InitApp] Error:", error);
   }
 }
 
-async function autoStartMitm() {
-  if (g.mitmStartInProgress) return;
-  g.mitmStartInProgress = true;
-  try {
-    const settings = await getSettings();
-    if (!settings.mitmEnabled) return;
-    const mitmStatus = await getMitmStatus();
-    if (mitmStatus.running) return;
-
-    const password = await loadEncryptedPassword();
-    if (!password && process.platform !== "win32") {
-      console.log("[InitApp] MITM was enabled but no saved password found, skipping auto-start");
-      return;
-    }
-
-    const keys = await getApiKeys();
-    const activeKey = keys.find(k => k.isActive !== false);
-
-    console.log("[InitApp] MITM was enabled, auto-starting...");
-    await startMitm(activeKey?.key || "sk_9router", password);
-    console.log("[InitApp] MITM auto-started");
-    try {
-      await restoreToolDNS(password);
-      console.log("[InitApp] DNS restored from saved state");
-    } catch (e) {
-      console.log("[InitApp] DNS restore failed:", e.message);
-    }
-  } catch (err) {
-    console.log("[InitApp] MITM auto-start failed:", err.message);
-  } finally {
-    g.mitmStartInProgress = false;
-  }
-}
 
 // ─── Safe restart (4 guards: spawn / cooldown / alive / internet) ────────────
 

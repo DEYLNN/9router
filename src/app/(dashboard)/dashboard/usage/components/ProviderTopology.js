@@ -304,7 +304,23 @@ export default function ProviderTopology({ providers = [], activeRequests = [], 
           nodesConnectable={false}
           elementsSelectable={false}
         >
-          <Controls showInteractive={false} />
+          <Controls showInteractive={false} className="provider-topology-controls" />
+          <style jsx global>{`
+            .provider-topology-controls button {
+              background: #18181b !important;
+              border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+              color: rgba(255,255,255,0.82) !important;
+              fill: rgba(255,255,255,0.82) !important;
+            }
+            .provider-topology-controls button:hover {
+              background: #232329 !important;
+              color: #fff !important;
+              fill: #fff !important;
+            }
+            .provider-topology-controls button svg {
+              fill: currentColor !important;
+            }
+          `}</style>
         </ReactFlow>
       )}
     </div>

@@ -40,6 +40,7 @@ export default function ProviderLimits() {
   const [expiringFirst, setExpiringFirst] = useState(false);
   const [providerMenuOpen, setProviderMenuOpen] = useState(false);
   const [bulkToggling, setBulkToggling] = useState(false);
+  const [refreshingTokenId, setRefreshingTokenId] = useState(null);
 
   const intervalRef = useRef(null);
   const countdownRef = useRef(null);
@@ -96,6 +97,7 @@ export default function ProviderLimits() {
             [connectionId]: {
               quotas: [],
               message: errorMsg,
+              authExpired: true,
             },
           }));
           return;
@@ -106,6 +108,7 @@ export default function ProviderLimits() {
 
       const data = await response.json();
       console.log(`[ProviderLimits] Got quota for ${provider}:`, data);
+      const authExpired = provider === "codex" && /401|unauthorized|expired|temporary unavailable/i.test(data?.message || "");
 
       // Parse quota data using provider-specific parser
       const parsedQuotas = parseQuotaData(provider, data);
@@ -117,6 +120,7 @@ export default function ProviderLimits() {
           plan: data.plan || null,
           message: data.message || null,
           raw: data,
+          authExpired,
         },
       }));
     } catch (error) {
@@ -418,6 +422,47 @@ export default function ProviderLimits() {
     bulkSetActive(ids, true);
   };
 
+  const handleRefreshAccessToken = useCallback(async (conn) => {
+    if (!conn?.id) return;
+    setRefreshingTokenId(conn.id);
+    try {
+      const res = await fetch(`/api/providers/${conn.id}/refresh-token`, { method: "POST" });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "Failed to refresh access token");
+
+      setConnections((prev) =>
+        prev.map((item) =>
+          item.id === conn.id
+            ? {
+                ...item,
+                accessToken: data.accessToken || item.accessToken,
+                hasRefreshToken: data.hasRefreshToken ?? item.hasRefreshToken,
+                refreshToken: data.refreshToken || item.refreshToken,
+                expiresAt: data.expiresAt || item.expiresAt,
+                accessTokenExpiresAt: data.accessTokenExpiresAt || data.expiresAt || item.accessTokenExpiresAt,
+                accessTokenExpired: data.accessTokenExpired ?? false,
+                updatedAt: data.updatedAt || item.updatedAt,
+              }
+            : item,
+        ),
+      );
+
+      setQuotaData((prev) => ({
+        ...prev,
+        [conn.id]: {
+          ...(prev[conn.id] || {}),
+          message: "Access token refreshed. Fetching quota...",
+        },
+      }));
+      await fetchQuota(conn.id, conn.provider);
+      setLastUpdated(new Date());
+    } catch (error) {
+      setErrors((prev) => ({ ...prev, [conn.id]: error.message || "Failed to refresh access token" }));
+    } finally {
+      setRefreshingTokenId(null);
+    }
+  }, [fetchQuota]);
+
   const providerOptions = Array.from(new Set(filteredConnections.map((conn) => conn.provider))).sort();
   const selectedProviderLabel = providerFilter === "all" ? "All providers" : providerFilter;
 
@@ -547,30 +592,6 @@ export default function ProviderLimits() {
           >
             <span className="material-symbols-outlined text-[14px]">hourglass_top</span>
             <span className="hidden sm:inline">Expiring first</span>
-          </button>
-
-          {/* Bulk: disable depleted */}
-          <button
-            type="button"
-            onClick={handleDisableDepleted}
-            disabled={bulkToggling}
-            className="flex h-8 shrink-0 items-center gap-1 rounded-lg border border-red-500/30 px-2 text-xs text-red-500 transition-colors hover:bg-red-500/10 disabled:opacity-50"
-            title="Disable connections with depleted quota (within current filter)"
-          >
-            <span className="material-symbols-outlined text-[14px]">block</span>
-            <span className="hidden sm:inline">Turn off Empty</span>
-          </button>
-
-          {/* Bulk: enable available */}
-          <button
-            type="button"
-            onClick={handleEnableAvailable}
-            disabled={bulkToggling}
-            className="flex h-8 shrink-0 items-center gap-1 rounded-lg border border-emerald-500/30 px-2 text-xs text-emerald-500 transition-colors hover:bg-emerald-500/10 disabled:opacity-50"
-            title="Enable connections that still have quota (within current filter)"
-          >
-            <span className="material-symbols-outlined text-[14px]">check_circle</span>
-            <span className="hidden sm:inline">Turn on Available</span>
           </button>
 
           {/* Auto-refresh toggle */}
@@ -729,6 +750,17 @@ export default function ProviderLimits() {
                 ) : quota?.message ? (
                   <div className="text-center py-5">
                     <p className="text-xs text-text-muted">{quota.message}</p>
+                    {conn.provider === "codex" && (conn.hasRefreshToken || conn.refreshToken) && conn.accessTokenExpired && (
+                      <button
+                        type="button"
+                        onClick={() => handleRefreshAccessToken(conn)}
+                        disabled={refreshingTokenId === conn.id}
+                        className="mt-3 inline-flex h-8 items-center justify-center rounded-lg border border-blue-500/30 px-3 text-xs font-medium text-blue-400 transition-colors hover:bg-blue-500/10 disabled:opacity-50"
+                      >
+                        <span className={`material-symbols-outlined mr-1 text-[15px] ${refreshingTokenId === conn.id ? "animate-spin" : ""}`}>refresh</span>
+                        {refreshingTokenId === conn.id ? "Refreshing..." : "Refresh access token"}
+                      </button>
+                    )}
                   </div>
                 ) : (
                   <QuotaTable quotas={quota?.quotas} compact />

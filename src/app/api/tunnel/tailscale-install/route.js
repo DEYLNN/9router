@@ -3,11 +3,7 @@
 import os from "os";
 import { execSync } from "child_process";
 import { installTailscale } from "@/lib/tunnel/tailscale";
-import { getCachedPassword, loadEncryptedPassword, initDbHooks } from "@/mitm/manager";
-import { getSettings, updateSettings } from "@/lib/localDb";
 import { loadState, generateShortId } from "@/lib/tunnel/state.js";
-
-initDbHooks(getSettings, updateSettings);
 
 const EXTENDED_PATH = `/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:${process.env.PATH || ""}`;
 
@@ -22,7 +18,7 @@ export async function POST(request) {
   const isBrew = platform === "darwin" && hasBrew();
   const needsPassword = !isWindows && !isBrew;
 
-  const sudoPassword = body.sudoPassword || getCachedPassword() || await loadEncryptedPassword() || "";
+  const sudoPassword = body.sudoPassword || "";
 
   if (needsPassword && !sudoPassword.trim()) {
     return new Response(JSON.stringify({ error: "Sudo password is required" }), {

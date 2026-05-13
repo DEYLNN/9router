@@ -7,6 +7,7 @@ import PropTypes from "prop-types";
 import ProviderIcon from "@/shared/components/ProviderIcon";
 import { useHeaderSearchStore } from "@/store/headerSearchStore";
 import { OAUTH_PROVIDERS, APIKEY_PROVIDERS } from "@/shared/constants/config";
+import { AI_PROVIDERS } from "@/shared/constants/providers";
 import { translate } from "@/i18n/runtime";
 
 // ─── icons ────────────────────────────────────────────────────────────────────
@@ -49,7 +50,7 @@ function getPageInfo(pathname) {
   const providerMatch = pathname.match(/\/providers\/([^/]+)$/);
   if (providerMatch) {
     const id = providerMatch[1];
-    const info = OAUTH_PROVIDERS[id] || APIKEY_PROVIDERS[id];
+    const info = OAUTH_PROVIDERS[id] || APIKEY_PROVIDERS[id] || AI_PROVIDERS[id];
     if (info) return {
       title: info.name, description: "", breadcrumbs: [
         { label: "Providers", href: "/dashboard/providers" },
@@ -229,8 +230,6 @@ export default function Header({ onMenuClick, showMenuButton = true }) {
     } catch (err) { console.error("Failed to logout:", err); }
   };
 
-  const PageIcon = icon ? PAGE_ICON_MAP[icon] : null;
-
   return (
     <header style={{
       display: "flex",
@@ -271,44 +270,30 @@ export default function Header({ onMenuClick, showMenuButton = true }) {
         )}
 
         {/* Breadcrumbs */}
-        {breadcrumbs.length > 0 ? (
-          <div style={{ display: "flex", alignItems: "center", gap: "4px", minWidth: 0 }}>
-            {breadcrumbs.map((crumb, index) => (
-              <div key={`${crumb.label}-${crumb.href || "cur"}`} style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                {index > 0 && <span style={{ color: "rgba(255,255,255,0.2)", display: "flex" }}>{I.chevron}</span>}
-                {crumb.href ? (
-                  <Link href={crumb.href} style={{
-                    fontSize: "13px", color: "rgba(255,255,255,0.4)", textDecoration: "none",
-                    transition: "color 150ms ease",
-                  }}
-                    onMouseEnter={e => e.currentTarget.style.color = "rgba(255,255,255,0.8)"}
-                    onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.4)"}
-                  >
-                    {crumb.label}
-                  </Link>
-                ) : (
-                  <div style={{ display: "flex", alignItems: "center", gap: "7px" }}>
-                    {crumb.image && (
-                      <ProviderIcon src={crumb.image} alt={crumb.label} size={20}
-                        className="object-contain rounded"
-                        fallbackText={crumb.label.slice(0, 2).toUpperCase()}
-                      />
-                    )}
-                    <span style={{ fontSize: "14px", fontWeight: 600, color: "#fff", letterSpacing: "-0.02em", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                      {translate(crumb.label)}
-                    </span>
+        {breadcrumbs.length > 0 ? (() => {
+          const current = breadcrumbs[breadcrumbs.length - 1];
+          const parent = [...breadcrumbs].reverse().find((crumb) => crumb.href);
+          return (
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", minWidth: 0 }}>
+              {current.image && (
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "36px", height: "36px", borderRadius: "12px", flexShrink: 0, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
+                  <ProviderIcon src={current.image} alt={current.label} size={30} className="object-contain rounded-lg max-w-[30px] max-h-[30px]" fallbackText={current.label.slice(0, 2).toUpperCase()} />
+                </div>
+              )}
+              <div style={{ minWidth: 0 }}>
+                <div style={{ fontSize: "14px", fontWeight: 600, color: "#fff", letterSpacing: "-0.02em", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  {translate(current.label)}
+                </div>
+                {parent && (
+                  <div className="hidden lg:block" style={{ fontSize: "12px", color: "rgba(255,255,255,0.3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {translate(parent.label)} settings
                   </div>
                 )}
               </div>
-            ))}
-          </div>
-        ) : title ? (
+            </div>
+          );
+        })() : title ? (
           <div style={{ display: "flex", alignItems: "center", gap: "8px", minWidth: 0 }}>
-            {PageIcon && (
-              <span style={{ color: "rgba(59,130,246,0.7)", display: "flex", flexShrink: 0 }}>
-                {PageIcon}
-              </span>
-            )}
             <span style={{ fontSize: "14px", fontWeight: 600, color: "#fff", letterSpacing: "-0.02em", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
               {translate(title)}
             </span>

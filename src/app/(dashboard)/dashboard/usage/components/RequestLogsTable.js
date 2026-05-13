@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import ProviderIcon from "@/shared/components/ProviderIcon";
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 const fmt = (n) => new Intl.NumberFormat().format(n || 0);
@@ -23,13 +24,9 @@ function parseLogLine(line) {
 
 function relativeTime(str) {
   if (!str) return "—";
-  // format: "09-05-2026 20:31:30"
-  const [datePart, timePart] = str.split(" ");
-  if (!datePart || !timePart) return str;
-  const [dd, mm, yyyy] = datePart.split("-");
-  const d = new Date(`${yyyy}-${mm}-${dd}T${timePart}Z`);
+  const d = new Date(str);
   if (isNaN(d)) return str;
-  const diff = Math.floor((Date.now() - d) / 1000);
+  const diff = Math.max(0, Math.floor((Date.now() - d.getTime()) / 1000));
   if (diff < 60) return `${diff}s ago`;
   if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
   if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
@@ -48,6 +45,45 @@ function providerColor(provider) {
     MINIMAX: "#7C3AED",
   };
   return map[provider?.toUpperCase()] || "#6B7280";
+}
+
+
+function providerIconPath(provider) {
+  const raw = (provider || "").toLowerCase();
+  const map = {
+    codex: "codex", cx: "codex",
+    kiro: "kiro", kr: "kiro",
+    canopywave: "canopywave", cwv: "canopywave",
+    github: "github", gh: "github",
+    "xiaomi-mimo-plan-sgp": "xiaomi-mimo-plan-sgp", mms: "xiaomi-mimo-plan-sgp", "mimo-sgp": "xiaomi-mimo-plan-sgp",
+    "openai-compatible-chat-5b54ddd1-0b0e-4452-9056-7a5e232672f9": "xiaomi-mimo-plan-sgp",
+    openai: "openai", anthropic: "anthropic", xai: "xai", minimax: "minimax", fireworks: "fireworks", cerebras: "cerebras", chutes: "chutes",
+  };
+  return `/providers/${map[raw] || raw}.png`;
+}
+
+function providerLabel(provider) {
+  const raw = (provider || "").trim();
+  const map = {
+    "XIAOMI-MIMO-PLAN-SGP": "MIMO Plan SGP",
+    "OPENAI-COMPATIBLE-CHAT-5B54DDD1-0B0E-4452-9056-7A5E232672F9": "MimoSubs",
+    CODEX: "Codex",
+    KIRO: "Kiro",
+    CANOPYWAVE: "CanopyWave",
+  };
+  return map[raw.toUpperCase()] || raw;
+}
+
+function ProviderPill({ provider, color }) {
+  const label = providerLabel(provider);
+  return (
+    <span className="inline-flex max-w-[220px] items-center gap-1.5 rounded-full border px-2 py-1 text-[11px] font-semibold" style={{ color, background: `${color}14`, borderColor: `${color}35` }}>
+      <span className="flex h-5 w-5 items-center justify-center rounded-full bg-black/20 ring-1 ring-white/10">
+        <ProviderIcon src={providerIconPath(provider)} alt={label} size={16} className="h-4 w-4 rounded-full object-cover" fallbackText={label.slice(0, 2).toUpperCase()} />
+      </span>
+      <span className="truncate">{label}</span>
+    </span>
+  );
 }
 
 // ─── icons (inline SVG, no emoji) ───────────────────────────────────────────
@@ -131,96 +167,41 @@ function StatCard({ label, value, sub, icon: Icon, accent }) {
 }
 
 // ─── log row ─────────────────────────────────────────────────────────────────
-function LogRow({ entry, index }) {
+function LogRow({ entry }) {
   const color = providerColor(entry.provider);
   const isOk = entry.status === "ok";
   const total = entry.inputTokens + entry.outputTokens;
+  const label = providerLabel(entry.provider);
 
   return (
-    <div style={{
-      display: "grid",
-      gridTemplateColumns: "1fr auto auto auto auto",
-      gap: "0 16px",
-      alignItems: "center",
-      padding: "10px 16px",
-      borderBottom: "1px solid var(--color-border-subtle)",
-      transition: "background 150ms ease",
-      cursor: "default",
-    }}
-    onMouseEnter={e => e.currentTarget.style.background = "var(--color-surface-2)"}
-    onMouseLeave={e => e.currentTarget.style.background = "transparent"}
-    >
-      {/* model + account */}
-      <div style={{ minWidth: 0 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "2px" }}>
-          <span style={{
-            display: "inline-block",
-            width: "6px", height: "6px",
-            borderRadius: "50%",
-            background: color,
-            flexShrink: 0,
-          }} />
-          <span style={{ fontSize: "13px", fontWeight: 500, color: "var(--color-text-main)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-            {entry.model}
-          </span>
-          <span style={{
-            fontSize: "10px",
-            fontWeight: 600,
-            color: color,
-            background: `${color}18`,
-            border: `1px solid ${color}30`,
-            borderRadius: "4px",
-            padding: "1px 5px",
-            flexShrink: 0,
-          }}>
-            {entry.provider}
-          </span>
+    <div className="grid grid-cols-[minmax(0,1fr)_auto_auto_auto] items-center gap-3 rounded-xl border border-white/8 bg-[#141418]/75 px-3 py-2.5 transition-colors hover:border-white/15 hover:bg-[#18181d] sm:grid-cols-[minmax(0,1fr)_auto_auto_auto_auto]">
+      <div className="flex min-w-0 items-center gap-3">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/[0.04] ring-1 ring-white/10">
+          <ProviderIcon src={providerIconPath(entry.provider)} alt={label} size={22} className="h-[22px] w-[22px] rounded-md object-cover" fallbackText={label.slice(0, 2).toUpperCase()} />
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "4px", color: "var(--color-text-subtle)", fontSize: "11px" }}>
-          <IconUser />
-          <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{entry.account}</span>
+        <div className="min-w-0">
+          <div className="truncate font-mono text-[13px] font-semibold leading-5 text-text-main">{entry.model}</div>
+          <div className="truncate text-[11px] text-text-subtle">{label} · {entry.account}</div>
         </div>
       </div>
 
-      {/* input tokens */}
-      <div style={{ textAlign: "right", minWidth: "64px" }}>
-        <div style={{ fontSize: "12px", color: "var(--color-text-muted)", fontVariantNumeric: "tabular-nums" }}>{fmt(entry.inputTokens)}</div>
-        <div style={{ fontSize: "10px", color: "var(--color-text-subtle)" }}>in</div>
+      <div className="hidden text-right sm:block">
+        <div className="font-mono text-[12px] font-semibold text-text-main">{fmt(entry.inputTokens)}</div>
+        <div className="text-[10px] uppercase tracking-[0.1em] text-text-subtle">in</div>
       </div>
-
-      {/* output tokens */}
-      <div style={{ textAlign: "right", minWidth: "64px" }}>
-        <div style={{ fontSize: "12px", color: "var(--color-text-muted)", fontVariantNumeric: "tabular-nums" }}>{fmt(entry.outputTokens)}</div>
-        <div style={{ fontSize: "10px", color: "var(--color-text-subtle)" }}>out</div>
+      <div className="hidden text-right sm:block">
+        <div className="font-mono text-[12px] font-semibold text-text-main">{fmt(entry.outputTokens)}</div>
+        <div className="text-[10px] uppercase tracking-[0.1em] text-text-subtle">out</div>
       </div>
-
-      {/* total */}
-      <div style={{ textAlign: "right", minWidth: "72px" }}>
-        <div style={{ fontSize: "12px", fontWeight: 600, color: "var(--color-text-main)", fontVariantNumeric: "tabular-nums" }}>{fmt(total)}</div>
-        <div style={{ fontSize: "10px", color: "var(--color-text-subtle)" }}>total</div>
+      <div className="text-right">
+        <div className="font-mono text-[12px] font-semibold" style={{ color }}>{fmt(total)}</div>
+        <div className="text-[10px] uppercase tracking-[0.1em] text-text-subtle">tok</div>
       </div>
-
-      {/* status + time */}
-      <div style={{ textAlign: "right", minWidth: "72px" }}>
-        <div style={{
-          display: "inline-flex",
-          alignItems: "center",
-          gap: "3px",
-          fontSize: "10px",
-          fontWeight: 600,
-          color: isOk ? "#10B981" : "#ef4444",
-          background: isOk ? "rgba(16,185,129,0.1)" : "rgba(239,68,68,0.1)",
-          border: `1px solid ${isOk ? "rgba(16,185,129,0.25)" : "rgba(239,68,68,0.25)"}`,
-          borderRadius: "4px",
-          padding: "2px 6px",
-          marginBottom: "2px",
-        }}>
-          {isOk ? "ok" : "err"}
+      <div className="text-right">
+        <div className={`inline-flex rounded-full border px-2 py-0.5 text-[10px] font-semibold ${isOk ? "border-emerald-500/25 bg-emerald-500/10 text-emerald-400" : "border-red-500/25 bg-red-500/10 text-red-400"}`}>
+          {isOk ? "OK" : "ERR"}
         </div>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "3px", color: "var(--color-text-subtle)", fontSize: "10px" }}>
-          <IconClock />
-          {relativeTime(entry.timestamp)}
-        </div>
+        <div className="mt-0.5 text-[10px] text-text-subtle">{relativeTime(entry.timestamp)}</div>
       </div>
     </div>
   );
@@ -228,35 +209,7 @@ function LogRow({ entry, index }) {
 
 // ─── mobile log row ───────────────────────────────────────────────────────────
 function LogRowMobile({ entry }) {
-  const color = providerColor(entry.provider);
-  const isOk = entry.status === "ok";
-  const total = entry.inputTokens + entry.outputTokens;
-
-  return (
-    <div style={{
-      padding: "12px 16px",
-      borderBottom: "1px solid var(--color-border-subtle)",
-    }}>
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "8px", marginBottom: "6px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "6px", minWidth: 0 }}>
-          <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: color, flexShrink: 0, display: "inline-block" }} />
-          <span style={{ fontSize: "13px", fontWeight: 500, color: "var(--color-text-main)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{entry.model}</span>
-        </div>
-        <span style={{
-          fontSize: "10px", fontWeight: 600, color: isOk ? "#10B981" : "#ef4444",
-          background: isOk ? "rgba(16,185,129,0.1)" : "rgba(239,68,68,0.1)",
-          border: `1px solid ${isOk ? "rgba(16,185,129,0.25)" : "rgba(239,68,68,0.25)"}`,
-          borderRadius: "4px", padding: "2px 6px", flexShrink: 0,
-        }}>{isOk ? "ok" : "err"}</span>
-      </div>
-      <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
-        <span style={{ fontSize: "10px", fontWeight: 600, color, background: `${color}18`, border: `1px solid ${color}30`, borderRadius: "4px", padding: "1px 5px" }}>{entry.provider}</span>
-        <span style={{ fontSize: "11px", color: "var(--color-text-subtle)" }}>{entry.account}</span>
-        <span style={{ fontSize: "11px", color: "var(--color-text-muted)", marginLeft: "auto", fontVariantNumeric: "tabular-nums" }}>{fmt(total)} tok</span>
-        <span style={{ fontSize: "10px", color: "var(--color-text-subtle)" }}>{relativeTime(entry.timestamp)}</span>
-      </div>
-    </div>
-  );
+  return <LogRow entry={entry} />;
 }
 
 // ─── main component ───────────────────────────────────────────────────────────
@@ -267,6 +220,8 @@ export default function RequestLogsTable() {
   const [search, setSearch] = useState("");
   const [filterProvider, setFilterProvider] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
+  const [providerDropdownOpen, setProviderDropdownOpen] = useState(false);
+  const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
   const [sortField, setSortField] = useState("timestamp");
   const [sortDir, setSortDir] = useState("desc");
   const [page, setPage] = useState(0);
@@ -360,16 +315,7 @@ export default function RequestLogsTable() {
       </div>
 
       {/* toolbar */}
-      <div style={{
-        background: "var(--color-surface)",
-        border: "1px solid var(--color-border)",
-        borderRadius: "10px",
-        padding: "12px 14px",
-        display: "flex",
-        flexWrap: "wrap",
-        gap: "8px",
-        alignItems: "center",
-      }}>
+      <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-white/10 bg-[#151519]/80 p-3 shadow-[0_18px_60px_rgba(0,0,0,0.18)] backdrop-blur">
         {/* search */}
         <div style={{ position: "relative", flex: "1 1 180px", minWidth: "140px" }}>
           <span style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)", color: "var(--color-text-subtle)", pointerEvents: "none" }}>
@@ -381,7 +327,7 @@ export default function RequestLogsTable() {
             placeholder="Search model, account..."
             style={{
               width: "100%", boxSizing: "border-box",
-              background: "var(--color-surface-2)",
+              background: "rgba(255,255,255,0.035)",
               border: "1px solid var(--color-border)",
               borderRadius: "7px",
               padding: "7px 10px 7px 30px",
@@ -398,46 +344,62 @@ export default function RequestLogsTable() {
         </div>
 
         {/* provider filter */}
-        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-          <span style={{ color: "var(--color-text-subtle)" }}><IconFilter /></span>
-          <select
-            value={filterProvider}
-            onChange={e => { setFilterProvider(e.target.value); setPage(0); }}
-            style={{
-              background: "var(--color-surface-2)",
-              border: "1px solid var(--color-border)",
-              borderRadius: "7px",
-              padding: "7px 10px",
-              fontSize: "12px",
-              color: "var(--color-text-main)",
-              outline: "none",
-              cursor: "pointer",
-            }}
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => setProviderDropdownOpen((v) => !v)}
+            className="flex h-9 min-w-[190px] items-center justify-between gap-3 rounded-xl border border-white/10 bg-[#0f0f12] px-3 text-left text-[12px] text-text-main transition-colors hover:border-primary/40 hover:bg-white/[0.04]"
           >
-            <option value="">All providers</option>
-            {providers.map(p => <option key={p} value={p}>{p}</option>)}
-          </select>
+            <span className="flex min-w-0 items-center gap-2">
+              {filterProvider ? (
+                <ProviderIcon src={providerIconPath(filterProvider)} alt={providerLabel(filterProvider)} size={18} className="h-[18px] w-[18px] rounded object-cover" fallbackText={providerLabel(filterProvider).slice(0, 2).toUpperCase()} />
+              ) : (
+                <span className="material-symbols-outlined text-[18px] text-text-muted">apps</span>
+              )}
+              <span className="truncate">{filterProvider ? providerLabel(filterProvider) : "All providers"}</span>
+            </span>
+            <span className="material-symbols-outlined text-[18px] text-text-muted">expand_more</span>
+          </button>
+          {providerDropdownOpen && (
+            <>
+              <button type="button" className="fixed inset-0 z-30 bg-transparent" onClick={() => setProviderDropdownOpen(false)} aria-label="Close provider filter" />
+              <div className="fixed left-3 right-3 z-40 mt-2 max-h-80 overflow-y-auto rounded-2xl border border-white/10 bg-[#151519]/95 p-1.5 shadow-2xl shadow-black/40 backdrop-blur sm:absolute sm:left-auto sm:right-0 sm:w-[260px]">
+                {["", ...providers].map((p) => {
+                  const active = filterProvider === p;
+                  const label = p ? providerLabel(p) : "All providers";
+                  return (
+                    <button key={p || "all"} type="button" onClick={() => { setFilterProvider(p); setProviderDropdownOpen(false); setPage(0); }} className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-colors ${active ? "bg-primary/10 text-primary" : "text-text-main hover:bg-white/10"}`}>
+                      {p ? <ProviderIcon src={providerIconPath(p)} alt={label} size={22} className="h-[22px] w-[22px] rounded object-cover" fallbackText={label.slice(0, 2).toUpperCase()} /> : <span className="material-symbols-outlined text-[20px]">apps</span>}
+                      <span className="min-w-0 flex-1 truncate">{label}</span>
+                      {active && <span className="material-symbols-outlined text-[18px]">check</span>}
+                    </button>
+                  );
+                })}
+              </div>
+            </>
+          )}
         </div>
 
         {/* status filter */}
-        <select
-          value={filterStatus}
-          onChange={e => { setFilterStatus(e.target.value); setPage(0); }}
-          style={{
-            background: "var(--color-surface-2)",
-            border: "1px solid var(--color-border)",
-            borderRadius: "7px",
-            padding: "7px 10px",
-            fontSize: "12px",
-            color: "var(--color-text-main)",
-            outline: "none",
-            cursor: "pointer",
-          }}
-        >
-          <option value="">All status</option>
-          <option value="ok">OK</option>
-          <option value="error">Error</option>
-        </select>
+        <div className="relative">
+          <button type="button" onClick={() => setStatusDropdownOpen((v) => !v)} className="flex h-9 min-w-[120px] items-center justify-between gap-2 rounded-xl border border-white/10 bg-[#0f0f12] px-3 text-[12px] text-text-main transition-colors hover:border-primary/40 hover:bg-white/[0.04]">
+            <span>{filterStatus ? (filterStatus === "ok" ? "OK only" : "Error only") : "All status"}</span>
+            <span className="material-symbols-outlined text-[18px] text-text-muted">expand_more</span>
+          </button>
+          {statusDropdownOpen && (
+            <>
+              <button type="button" className="fixed inset-0 z-30 bg-transparent" onClick={() => setStatusDropdownOpen(false)} aria-label="Close status filter" />
+              <div className="fixed left-3 right-3 z-40 mt-2 rounded-2xl border border-white/10 bg-[#151519]/95 p-1.5 shadow-2xl shadow-black/40 backdrop-blur sm:absolute sm:left-auto sm:right-0 sm:w-[160px]">
+                {[{id:"",label:"All status"},{id:"ok",label:"OK only"},{id:"error",label:"Error only"}].map((item) => (
+                  <button key={item.id || "all"} type="button" onClick={() => { setFilterStatus(item.id); setStatusDropdownOpen(false); setPage(0); }} className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm transition-colors ${filterStatus === item.id ? "bg-primary/10 text-primary" : "text-text-main hover:bg-white/10"}`}>
+                    {item.label}
+                    {filterStatus === item.id && <span className="material-symbols-outlined text-[18px]">check</span>}
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
 
         {/* refresh */}
         <button
@@ -445,7 +407,7 @@ export default function RequestLogsTable() {
           disabled={loading}
           style={{
             display: "flex", alignItems: "center", gap: "5px",
-            background: "var(--color-surface-2)",
+            background: "rgba(255,255,255,0.035)",
             border: "1px solid var(--color-border)",
             borderRadius: "7px",
             padding: "7px 12px",
@@ -466,32 +428,15 @@ export default function RequestLogsTable() {
         </span>
       </div>
 
-      {/* table */}
-      <div style={{
-        background: "var(--color-surface)",
-        border: "1px solid var(--color-border)",
-        borderRadius: "10px",
-        overflow: "hidden",
-      }}>
-        {/* desktop header */}
-        {!isMobile && (
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "1fr auto auto auto auto",
-            gap: "0 16px",
-            padding: "10px 16px",
-            borderBottom: "1px solid var(--color-border)",
-            background: "var(--color-surface-2)",
-          }}>
-            <div style={{ fontSize: "11px", fontWeight: 600, color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.06em" }}>
-              Model / Account
-            </div>
-            <div style={{ textAlign: "right", minWidth: "64px" }}><SortBtn field="inputTokens" label="In" /></div>
-            <div style={{ textAlign: "right", minWidth: "64px" }}><SortBtn field="outputTokens" label="Out" /></div>
-            <div style={{ textAlign: "right", minWidth: "72px" }}><SortBtn field="total" label="Total" /></div>
-            <div style={{ textAlign: "right", minWidth: "72px" }}><SortBtn field="timestamp" label="Time" /></div>
-          </div>
-        )}
+      {/* logs */}
+      <div className="rounded-2xl border border-white/10 bg-[#101014]/70 p-3 shadow-[0_22px_70px_rgba(0,0,0,0.24)]">
+        <div className="mb-3 flex flex-wrap items-center gap-3 border-b border-white/8 px-1 pb-3">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-text-muted">Sort</span>
+          <SortBtn field="timestamp" label="Time" />
+          <SortBtn field="total" label="Total" />
+          <SortBtn field="inputTokens" label="Input" />
+          <SortBtn field="outputTokens" label="Output" />
+        </div>
 
         {/* rows */}
         {loading ? (
@@ -503,11 +448,13 @@ export default function RequestLogsTable() {
             No entries found
           </div>
         ) : (
-          paginated.map((entry, i) =>
-            isMobile
-              ? <LogRowMobile key={i} entry={entry} />
-              : <LogRow key={i} entry={entry} index={i} />
-          )
+          <div className="space-y-3">
+            {paginated.map((entry, i) => (
+              isMobile
+                ? <LogRowMobile key={i} entry={entry} />
+                : <LogRow key={i} entry={entry} index={i} />
+            ))}
+          </div>
         )}
 
         {/* pagination */}
@@ -516,7 +463,7 @@ export default function RequestLogsTable() {
             display: "flex", alignItems: "center", justifyContent: "space-between",
             padding: "10px 16px",
             borderTop: "1px solid var(--color-border)",
-            background: "var(--color-surface-2)",
+            background: "rgba(255,255,255,0.035)",
           }}>
             <span style={{ fontSize: "12px", color: "var(--color-text-subtle)" }}>
               Page {page + 1} of {totalPages}

@@ -3,10 +3,8 @@ import { loadState, saveState, generateShortId } from "./state.js";
 import { spawnQuickTunnel, killCloudflared, isCloudflaredRunning, setUnexpectedExitHandler } from "./cloudflared.js";
 import { startFunnel, stopFunnel, isTailscaleRunning, isTailscaleRunningStrict, isTailscaleLoggedIn, startLogin, startDaemonWithPassword, provisionCert } from "./tailscale.js";
 import { getSettings, updateSettings } from "@/lib/localDb";
-import { getCachedPassword, loadEncryptedPassword, initDbHooks } from "@/mitm/manager";
 import { waitForHealth, probeUrlAlive } from "./networkProbe.js";
 
-initDbHooks(getSettings, updateSettings);
 
 const WORKER_URL = process.env.TUNNEL_WORKER_URL || "https://9router.com";
 const MACHINE_ID_SALT = "9router-tunnel-salt";
@@ -197,7 +195,6 @@ export async function enableTailscale(localPort = 20128) {
   const token = tailscaleSvc.cancelToken;
 
   try {
-    const sudoPass = getCachedPassword() || await loadEncryptedPassword() || "";
     await startDaemonWithPassword(sudoPass);
     console.log("[Tailscale] daemon ready");
     throwIfCancelled(token, "tailscale");

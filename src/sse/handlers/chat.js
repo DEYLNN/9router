@@ -159,11 +159,12 @@ async function handleSingleModelChat(body, modelStr, clientRawRequest = null, re
     return errorResponse(HTTP_STATUS.BAD_REQUEST, "Invalid model format");
   }
 
-  const { provider, model } = modelInfo;
+  const { provider: rawProvider, model } = modelInfo;
+  const provider = canonicalProviderId(rawProvider);
 
-  // Log model routing (alias → actual model)
-  if (modelStr !== `${provider}/${model}`) {
-    log.info("ROUTING", `${modelStr} → ${provider}/${model}`);
+  // Log model routing (alias → canonical provider/model)
+  if (modelStr !== `${provider}/${model}` || rawProvider !== provider) {
+    log.info("ROUTING", `${modelStr} → ${provider}/${model}${rawProvider !== provider ? ` (from ${rawProvider})` : ""}`);
   } else {
     log.info("ROUTING", `Provider: ${provider}, Model: ${model}`);
   }

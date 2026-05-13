@@ -105,13 +105,6 @@ function importLegacyMain(adapter, data) {
       [id, type || null, name || null, stringifyJson(rest), createdAt || new Date().toISOString(), updatedAt || new Date().toISOString()]
     );
   }
-  for (const p of data.proxyPools || []) {
-    const { id, isActive, testStatus, createdAt, updatedAt, ...rest } = p;
-    adapter.run(
-      `INSERT OR REPLACE INTO proxyPools(id, isActive, testStatus, data, createdAt, updatedAt) VALUES(?, ?, ?, ?, ?, ?)`,
-      [id, isActive === false ? 0 : 1, testStatus || "unknown", stringifyJson(rest), createdAt || new Date().toISOString(), updatedAt || new Date().toISOString()]
-    );
-  }
   for (const k of data.apiKeys || []) {
     adapter.run(
       `INSERT OR REPLACE INTO apiKeys(id, key, name, machineId, isActive, createdAt) VALUES(?, ?, ?, ?, ?, ?)`,
@@ -130,9 +123,6 @@ function importLegacyMain(adapter, data) {
   for (const m of data.customModels || []) {
     const k = `${m.providerAlias}|${m.id}|${m.type || "llm"}`;
     adapter.run(`INSERT OR REPLACE INTO kv(scope, key, value) VALUES('customModels', ?, ?)`, [k, stringifyJson(m)]);
-  }
-  for (const [tool, mappings] of Object.entries(data.mitmAlias || {})) {
-    adapter.run(`INSERT OR REPLACE INTO kv(scope, key, value) VALUES('mitmAlias', ?, ?)`, [tool, stringifyJson(mappings || {})]);
   }
   for (const [provider, models] of Object.entries(data.pricing || {})) {
     adapter.run(`INSERT OR REPLACE INTO kv(scope, key, value) VALUES('pricing', ?, ?)`, [provider, stringifyJson(models || {})]);

@@ -1,8 +1,27 @@
 import { getConsoleLogs, getConsoleEmitter, initConsoleLogCapture } from "@/lib/consoleLogBuffer";
+import { getRecentLogs } from "@/lib/usageDb";
 
 export const dynamic = "force-dynamic";
 
 initConsoleLogCapture();
+
+function formatUsageLine(line) {
+  if (typeof line === "string") return line;
+  const [ts = "", model = "", provider = "", account = "", input = "0", output = "0", status = "ok"] = line || [];
+  const displayTs = ts ? new Date(ts).toLocaleString() : "";
+  return `[USAGE] ${displayTs} | ${provider} | ${model} | account=${account} | in=${input} | out=${output} | ${status}`;
+}
+
+async function getInitialConsoleLogs() {
+  const runtimeLogs = getConsoleLogs();
+  let usageLogs = [];
+  try {
+    usageLogs = (await getRecentLogs(120)).reverse().map(formatUsageLine);
+  } catch (error) {
+    usageLogs = [`[WARN] Failed to load SQLite usage logs: ${error.message}`];
+  }
+  return [...usageLogs, ...runtimeLogs].slice(-300);
+}
 
 export async function GET(request) {
   const encoder = new TextEncoder();
@@ -24,11 +43,15 @@ export async function GET(request) {
 
   const stream = new ReadableStream({
     start(controller) {
-      // Send all buffered logs immediately on connect
-      const buffered = getConsoleLogs();
-      if (buffered.length > 0) {
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "init", logs: buffered })}\n\n`));
-      }
+      // Send SQLite usage history + buffered runtime logs immediately on connect.
+      getInitialConsoleLogs().then((buffered) => {
+        if (state.closed || buffered.length === 0) return;
+        try {
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "init", logs: buffered })}\n\n`));
+        } catch {
+          cleanup();
+        }
+      });
 
       // Push new lines as they arrive
       state.send = (line) => {

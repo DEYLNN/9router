@@ -374,19 +374,43 @@ export async function POST(request) {
         case "swiftrouter":
         case "routeway":
         case "morph": {
-          const morphRes = await fetch("https://api.morphllm.com/v1/chat/completions", {
-            method: "POST",
+          const validationConfigs = {
+            "xiaomi-mimo-plan-sgp": {
+              url: "https://token-plan-sgp.xiaomimimo.com/v1/models",
+              method: "GET",
+            },
+            canopywave: {
+              url: "https://inference.canopywave.io/v1/models",
+              method: "GET",
+            },
+            swiftrouter: {
+              url: "https://api.swiftrouter.com/v1/models",
+              method: "GET",
+            },
+            routeway: {
+              url: "https://api.routeway.ai/v1/models",
+              method: "GET",
+            },
+            morph: {
+              url: "https://api.morphllm.com/v1/chat/completions",
+              method: "POST",
+              body: {
+                model: "morph-v3-fast",
+                messages: [{ role: "user", content: "test" }],
+                max_tokens: 1,
+              },
+            },
+          };
+          const cfg = validationConfigs[provider];
+          const res = await fetch(cfg.url, {
+            method: cfg.method,
             headers: {
               "Authorization": `Bearer ${apiKey}`,
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({
-              model: "morph-v3-fast",
-              messages: [{ role: "user", content: "test" }],
-              max_tokens: 1,
-            }),
+            body: cfg.body ? JSON.stringify(cfg.body) : undefined,
           });
-          isValid = morphRes.status !== 401 && morphRes.status !== 403;
+          isValid = res.status !== 401 && res.status !== 403;
           break;
         }
 

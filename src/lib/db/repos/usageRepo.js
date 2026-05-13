@@ -667,7 +667,7 @@ export async function appendRequestLog() {}
 
 export async function getRecentLogs(limit = 200) {
   try {
-    const db = getAdapter();
+    const db = await getAdapter();
     const rows = db.all(
       `SELECT timestamp, provider, model, connectionId, promptTokens, completionTokens, status, tokens FROM usageHistory ORDER BY id DESC LIMIT ?`,
       [limit],
@@ -682,7 +682,7 @@ export async function getRecentLogs(limit = 200) {
     } catch {}
 
     return rows.map((r) => {
-      const ts = formatLogDate(new Date(r.timestamp));
+      const ts = r.timestamp || new Date().toISOString();
       const p = r.provider?.toUpperCase() || "-";
       const m = r.model || "-";
       const account = connMap[r.connectionId] || (r.connectionId ? r.connectionId.slice(0, 8) : "-");

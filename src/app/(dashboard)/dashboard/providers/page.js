@@ -24,7 +24,6 @@ import {
 import Link from "next/link";
 import { getErrorCode, getRelativeTime } from "@/shared/utils";
 import { useNotificationStore } from "@/store/notificationStore";
-import { useHeaderSearchStore } from "@/store/headerSearchStore";
 import ModelAvailabilityBadge from "./components/ModelAvailabilityBadge";
 
 function getStatusDisplay(connected, error, errorCode) {
@@ -107,14 +106,7 @@ export default function ProvidersPage() {
   const [testingMode, setTestingMode] = useState(null);
   const [testResults, setTestResults] = useState(null);
   const notify = useNotificationStore();
-  const searchQuery = useHeaderSearchStore((s) => s.query);
-  const registerSearch = useHeaderSearchStore((s) => s.register);
-  const unregisterSearch = useHeaderSearchStore((s) => s.unregister);
-
-  useEffect(() => {
-    registerSearch("Search providers...");
-    return () => unregisterSearch();
-  }, [registerSearch, unregisterSearch]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const matchSearch = (name) =>
     !searchQuery.trim() ||
@@ -292,48 +284,53 @@ export default function ProvidersPage() {
     );
   }
 
-  const hasAnyResult =
-    oauthEntries.length > 0 ||
-    freeEntries.length > 0 ||
-    freeTierEntries.length > 0 ||
-    apikeyEntries.length > 0 ||
-    compatibleProviders.length > 0 ||
-    anthropicCompatibleProviders.length > 0;
-
   return (
     <div className="flex min-w-0 flex-col gap-6 px-1 sm:px-0">
-      {!hasAnyResult && (
-        <div className="text-center py-8 border border-dashed border-border rounded-xl">
-          <span className="material-symbols-outlined text-[32px] text-text-muted mb-2">
-            search_off
-          </span>
-          <p style={{ fontSize: "12px", color: "var(--color-text-subtle)", margin: 0 }}>No providers match your search</p>
-        </div>
-      )}
+      <div className="relative max-w-xl">
+        <span className="material-symbols-outlined pointer-events-none absolute left-3 top-1/2 z-10 -translate-y-1/2 text-[19px] leading-none text-text-muted">
+          search
+        </span>
+        <input
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search providers..."
+          className="h-10 w-full rounded-xl border border-white/10 bg-[#0f0f12] py-2 pl-10 pr-10 text-[16px] text-text-main outline-none transition-all placeholder:text-text-subtle focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/30 sm:text-sm"
+        />
+        {searchQuery.trim() && (
+          <button
+            type="button"
+            onClick={() => setSearchQuery("")}
+            className="absolute right-2.5 top-1/2 z-10 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-lg text-text-muted transition-colors hover:bg-white/10 hover:text-text-main"
+            aria-label="Clear search"
+          >
+            <span className="material-symbols-outlined text-[18px] leading-none">close</span>
+          </button>
+        )}
+      </div>
 
-      {/* Custom Providers (OpenAI/Anthropic Compatible) — dynamic */}
+      {/* Custom Providers — dynamic */}
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-lg sm:text-xl font-semibold flex items-center gap-2 leading-tight">
-            Custom Providers (OpenAI/Anthropic Compatible){" "}
+            Custom Providers
           </h2>
-          <div className="grid grid-cols-1 gap-2 sm:flex sm:w-auto">
+          <div className="grid grid-cols-2 gap-2 sm:flex sm:w-auto">
             <Button
               size="sm"
-              icon="add"
+              icon={<span className="material-symbols-outlined text-[16px] leading-none">add</span>}
               onClick={() => setShowAddAnthropicCompatibleModal(true)}
-              className="w-full sm:w-auto"
+              className="w-full px-3 sm:w-auto"
             >
-              Add Anthropic Compatible
+              Anthropic
             </Button>
             <Button
               size="sm"
               variant="secondary"
-              icon="add"
+              icon={<span className="material-symbols-outlined text-[16px] leading-none">add</span>}
               onClick={() => setShowAddCompatibleModal(true)}
-              className="w-full !bg-white !text-black hover:!bg-gray-100 sm:w-auto"
+              className="w-full px-3 !bg-white !text-black hover:!bg-gray-100 sm:w-auto"
             >
-              Add OpenAI Compatible
+              OpenAI
             </Button>
           </div>
         </div>
@@ -549,7 +546,7 @@ export default function ProvidersPage() {
       {/* Test Results Modal */}
       {testResults && (
         <div
-          className="fixed inset-0 z-50 flex items-start justify-center px-3 pt-[6vh] sm:pt-[10vh]"
+          className="fixed inset-0 z-[9999] flex items-start justify-center px-3 pt-[6vh] sm:pt-[10vh]"
           onClick={() => setTestResults(null)}
         >
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
@@ -620,7 +617,7 @@ function ProviderCard({ providerId, provider, stats, authType, onToggle }) {
               />
             </div>
             <div className="min-w-0">
-              <h3 className="truncate font-semibold">{provider.name}</h3>
+              <h3 className="truncate text-[13px] font-semibold leading-5 tracking-[-0.01em] text-text-main">{provider.name}</h3>
               <div className="flex min-w-0 items-center gap-1.5 text-xs flex-wrap">
                 {allDisabled ? (
                   <Badge variant="default" size="sm">
@@ -715,10 +712,8 @@ function ApiKeyProviderCard({
 
   const getIconPath = () => {
     if (isCompatible)
-      return provider.apiType === "responses"
-        ? "/providers/oai-r.png"
-        : "/providers/oai-cc.png";
-    if (isAnthropicCompatible) return "/providers/anthropic-m.png";
+      return "/providers/openai.png";
+    if (isAnthropicCompatible) return "/providers/anthropic.png";
     return `/providers/${provider.id}.png`;
   };
 
@@ -756,7 +751,7 @@ function ApiKeyProviderCard({
             />
           </div>
           <div style={{ minWidth: 0 }}>
-            <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--color-text-main)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", letterSpacing: "-0.01em" }}>
+            <div style={{ fontSize: "13px", lineHeight: "20px", fontWeight: 600, color: "var(--color-text-main)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", letterSpacing: "-0.01em" }}>
               {provider.name}
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginTop: "2px" }}>
@@ -765,14 +760,6 @@ function ApiKeyProviderCard({
               ) : (
                 <>
                   {getStatusDisplay(connected, error, errorCode)}
-                  {isCompatible && (
-                    <span style={{ fontSize: "10px", color: "#F59E0B", background: "rgba(245,158,11,0.1)", border: "1px solid rgba(245,158,11,0.2)", borderRadius: "4px", padding: "1px 5px", fontWeight: 600 }}>
-                      {provider.apiType === "responses" ? "Responses" : "Chat"}
-                    </span>
-                  )}
-                  {isAnthropicCompatible && (
-                    <span style={{ fontSize: "10px", color: "#A855F7", background: "rgba(168,85,247,0.1)", border: "1px solid rgba(168,85,247,0.2)", borderRadius: "4px", padding: "1px 5px", fontWeight: 600 }}>Messages</span>
-                  )}
                   {errorTime && <span style={{ fontSize: "11px", color: "var(--color-text-subtle)" }}>{errorTime}</span>}
                 </>
               )}
@@ -820,10 +807,6 @@ function AddOpenAICompatibleModal({ isOpen, onClose, onCreated }) {
     baseUrl: "https://api.openai.com/v1",
   });
   const [submitting, setSubmitting] = useState(false);
-  const [checkKey, setCheckKey] = useState("");
-  const [checkModelId, setCheckModelId] = useState("");
-  const [validating, setValidating] = useState(false);
-  const [validationResult, setValidationResult] = useState(null);
 
   const apiTypeOptions = [
     { value: "chat", label: "Chat Completions" },
@@ -864,8 +847,6 @@ function AddOpenAICompatibleModal({ isOpen, onClose, onCreated }) {
           apiType: "chat",
           baseUrl: "https://api.openai.com/v1",
         });
-        setCheckKey("");
-        setValidationResult(null);
       }
     } catch (error) {
       console.log("Error creating OpenAI Compatible node:", error);
@@ -874,55 +855,8 @@ function AddOpenAICompatibleModal({ isOpen, onClose, onCreated }) {
     }
   };
 
-  const handleValidate = async () => {
-    setValidating(true);
-    try {
-      const res = await fetch("/api/provider-nodes/validate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          baseUrl: formData.baseUrl,
-          apiKey: checkKey,
-          type: "openai-compatible",
-          modelId: checkModelId.trim() || undefined,
-        }),
-      });
-      const data = await res.json();
-      setValidationResult(data);
-    } catch {
-      setValidationResult({ valid: false, error: "Network error" });
-    } finally {
-      setValidating(false);
-    }
-  };
-
-  // Helper to render validation result
-  const renderValidationResult = () => {
-    if (!validationResult) return null;
-    const { valid, error, method } = validationResult;
-
-    if (valid) {
-      return (
-        <>
-          <Badge variant="success">Valid</Badge>
-          {method === "chat" && (
-            <span className="text-sm text-text-muted">
-              (via inference test)
-            </span>
-          )}
-        </>
-      );
-    }
-    return (
-      <div className="flex flex-col gap-1">
-        <Badge variant="error">Invalid</Badge>
-        {error && <span className="text-sm text-red-500">{error}</span>}
-      </div>
-    );
-  };
-
   return (
-    <Modal isOpen={isOpen} title="Add OpenAI Compatible" onClose={onClose}>
+    <Modal isOpen={isOpen} title="OpenAI" onClose={onClose}>
       <div className="flex flex-col gap-4">
         <Input
           label="Name"
@@ -955,30 +889,6 @@ function AddOpenAICompatibleModal({ isOpen, onClose, onCreated }) {
           placeholder="https://api.openai.com/v1"
           hint="Use the base URL (ending in /v1) for your OpenAI-compatible API."
         />
-        <Input
-          label="API Key (for Check)"
-          type="password"
-          value={checkKey}
-          onChange={(e) => setCheckKey(e.target.value)}
-        />
-        <Input
-          label="Model ID (optional)"
-          value={checkModelId}
-          onChange={(e) => setCheckModelId(e.target.value)}
-          placeholder="e.g. gpt-4, claude-3-opus"
-          hint="If provider lacks /models endpoint, enter a model ID to validate via chat/completions instead."
-        />
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <Button
-            onClick={handleValidate}
-            disabled={!checkKey || validating || !formData.baseUrl.trim()}
-            variant="secondary"
-            className="w-full sm:w-auto"
-          >
-            {validating ? "Checking..." : "Check"}
-          </Button>
-          {renderValidationResult()}
-        </div>
         <div className="flex flex-col gap-2 sm:flex-row">
           <Button
             onClick={handleSubmit}
@@ -1014,18 +924,6 @@ function AddAnthropicCompatibleModal({ isOpen, onClose, onCreated }) {
     baseUrl: "https://api.anthropic.com/v1",
   });
   const [submitting, setSubmitting] = useState(false);
-  const [checkKey, setCheckKey] = useState("");
-  const [checkModelId, setCheckModelId] = useState("");
-  const [validating, setValidating] = useState(false);
-  const [validationResult, setValidationResult] = useState(null); // { valid, error, method }
-
-  useEffect(() => {
-    if (isOpen) {
-      setValidationResult(null);
-      setCheckKey("");
-      setCheckModelId("");
-    }
-  }, [isOpen]);
 
   const handleSubmit = async () => {
     if (
@@ -1054,8 +952,6 @@ function AddAnthropicCompatibleModal({ isOpen, onClose, onCreated }) {
           prefix: "",
           baseUrl: "https://api.anthropic.com/v1",
         });
-        setCheckKey("");
-        setValidationResult(null);
       }
     } catch (error) {
       console.log("Error creating Anthropic Compatible node:", error);
@@ -1064,55 +960,8 @@ function AddAnthropicCompatibleModal({ isOpen, onClose, onCreated }) {
     }
   };
 
-  const handleValidate = async () => {
-    setValidating(true);
-    try {
-      const res = await fetch("/api/provider-nodes/validate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          baseUrl: formData.baseUrl,
-          apiKey: checkKey,
-          type: "anthropic-compatible",
-          modelId: checkModelId.trim() || undefined,
-        }),
-      });
-      const data = await res.json();
-      setValidationResult(data);
-    } catch {
-      setValidationResult({ valid: false, error: "Network error" });
-    } finally {
-      setValidating(false);
-    }
-  };
-
-  // Helper to render validation result
-  const renderValidationResult = () => {
-    if (!validationResult) return null;
-    const { valid, error, method } = validationResult;
-
-    if (valid) {
-      return (
-        <>
-          <Badge variant="success">Valid</Badge>
-          {method === "chat" && (
-            <span className="text-sm text-text-muted">
-              (via inference test)
-            </span>
-          )}
-        </>
-      );
-    }
-    return (
-      <div className="flex flex-col gap-1">
-        <Badge variant="error">Invalid</Badge>
-        {error && <span className="text-sm text-red-500">{error}</span>}
-      </div>
-    );
-  };
-
   return (
-    <Modal isOpen={isOpen} title="Add Anthropic Compatible" onClose={onClose}>
+    <Modal isOpen={isOpen} title="Anthropic" onClose={onClose}>
       <div className="flex flex-col gap-4">
         <Input
           label="Name"
@@ -1137,30 +986,6 @@ function AddAnthropicCompatibleModal({ isOpen, onClose, onCreated }) {
           placeholder="https://api.anthropic.com/v1"
           hint="Use the base URL (ending in /v1) for your Anthropic-compatible API. The system will append /messages."
         />
-        <Input
-          label="API Key (for Check)"
-          type="password"
-          value={checkKey}
-          onChange={(e) => setCheckKey(e.target.value)}
-        />
-        <Input
-          label="Model ID (optional)"
-          value={checkModelId}
-          onChange={(e) => setCheckModelId(e.target.value)}
-          placeholder="e.g. claude-3-opus"
-          hint="If provider lacks /models endpoint, enter a model ID to validate via chat/completions instead."
-        />
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <Button
-            onClick={handleValidate}
-            disabled={!checkKey || validating || !formData.baseUrl.trim()}
-            variant="secondary"
-            className="w-full sm:w-auto"
-          >
-            {validating ? "Checking..." : "Check"}
-          </Button>
-          {renderValidationResult()}
-        </div>
         <div className="flex flex-col gap-2 sm:flex-row">
           <Button
             onClick={handleSubmit}

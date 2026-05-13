@@ -45,7 +45,11 @@ export default function Button({
       {loading ? (
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ animation: "spin 0.8s linear infinite" }}><path d="M21 12a9 9 0 11-6.219-8.56"/></svg>
       ) : icon ? (
-        <span style={{ display: "flex", alignItems: "center" }}>{icon}</span>
+        typeof icon === "string" ? (
+          <span className="material-symbols-outlined text-[16px] leading-none">{icon}</span>
+        ) : (
+          <span style={{ display: "flex", alignItems: "center" }}>{icon}</span>
+        )
       ) : null}
       {children}
       {iconRight && !loading && (

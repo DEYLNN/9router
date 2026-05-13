@@ -26,6 +26,7 @@ import { POST as embeddingsPost } from "../../src/app/api/v1/embeddings/route.js
 import { GET as keysGet, POST as keysPost } from "../../src/app/api/keys/route.js";
 import { GET as keyGet, PUT as keyPut, DELETE as keyDelete } from "../../src/app/api/keys/[id]/route.js";
 import { GET as providerGet, PUT as providerPut, DELETE as providerDelete } from "../../src/app/api/providers/[id]/route.js";
+import { POST as providerRefreshTokenPost } from "../../src/app/api/providers/[id]/refresh-token/route.js";
 import { POST as providersPost } from "../../src/app/api/providers/route.js";
 import { POST as providerValidatePost } from "../../src/app/api/providers/validate/route.js";
 import { GET as providerModelsGet } from "../../src/app/api/providers/[id]/models/route.js";
@@ -42,6 +43,8 @@ import { POST as combosPost } from "../../src/app/api/combos/route.js";
 import { GET as comboGet, PUT as comboPut, DELETE as comboDelete } from "../../src/app/api/combos/[id]/route.js";
 import { GET as pricingGet, PATCH as pricingPatch, DELETE as pricingDelete } from "../../src/app/api/pricing/route.js";
 import { PATCH as settingsPatch } from "../../src/app/api/settings/route.js";
+import { GET as authFilesGet, POST as authFilesPost } from "../../src/app/api/auth-files/route.js";
+import { POST as authFilesRefreshCodexPost } from "../../src/app/api/auth-files/refresh-codex/route.js";
 
 import { GET as usageConnectionGet } from "../../src/app/api/usage/[connectionId]/route.js";
 import { GET as usageChartGet } from "../../src/app/api/usage/chart/route.js";
@@ -64,6 +67,19 @@ const app = new Hono();
 const port = Number(process.env.PORT || process.env.HONO_PORT || 8323);
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "9router-default-secret-change-me");
+
+
+function decodeJwtExp(token) {
+  if (!token || typeof token !== "string") return null;
+  const parts = token.split(".");
+  if (parts.length < 2) return null;
+  try {
+    const payload = JSON.parse(Buffer.from(parts[1].replace(/-/g, "+").replace(/_/g, "/"), "base64").toString("utf8"));
+    return typeof payload.exp === "number" ? payload.exp : null;
+  } catch {
+    return null;
+  }
+}
 
 function isTunnelRequestHono(c, settings) {
   const host = (c.req.header("host") || "").split(":")[0].toLowerCase();
@@ -185,9 +201,17 @@ async function providersHandler(c) {
       const name = isCompatible
         ? (nodeNameMap[conn.provider] || conn.providerSpecificData?.nodeName || conn.provider)
         : conn.name;
+      const jwtExp = decodeJwtExp(conn.accessToken);
+      const jwtExpiresAt = jwtExp ? new Date(jwtExp * 1000).toISOString() : null;
+      const storedExpiresAt = conn.expiresAt || conn.tokenExpiresAt || null;
+      const effectiveExpiresAt = jwtExpiresAt || storedExpiresAt;
+      const expiresMs = effectiveExpiresAt ? new Date(effectiveExpiresAt).getTime() : null;
       return {
         ...conn,
         name,
+        hasRefreshToken: !!conn.refreshToken,
+        accessTokenExpiresAt: effectiveExpiresAt,
+        accessTokenExpired: typeof expiresMs === "number" && Number.isFinite(expiresMs) ? expiresMs <= Date.now() : false,
         apiKey: undefined,
         accessToken: undefined,
         refreshToken: undefined,
@@ -204,6 +228,10 @@ async function providersHandler(c) {
 
 app.get("/api/providers", providersHandler);
 app.get("/api/providers/client", providersHandler);
+
+app.get("/api/auth-files", (c) => nextRouteHandler(c, authFilesGet));
+app.post("/api/auth-files", (c) => nextRoutePostHandler(c, authFilesPost));
+app.post("/api/auth-files/refresh-codex", (c) => nextRoutePostHandler(c, authFilesRefreshCodexPost));
 
 app.options("/v1/chat/completions", corsOptions);
 app.options("/api/v1/chat/completions", corsOptions);
@@ -344,6 +372,7 @@ app.get("/api/providers/:id", (c) => nextRouteHandler(c, providerGet, { id: c.re
 app.put("/api/providers/:id", (c) => nextRouteHandler(c, providerPut, { id: c.req.param("id") }));
 app.delete("/api/providers/:id", (c) => nextRouteHandler(c, providerDelete, { id: c.req.param("id") }));
 app.post("/api/providers/validate", (c) => nextRouteHandler(c, providerValidatePost));
+app.post("/api/providers/:id/refresh-token", (c) => nextRouteHandler(c, providerRefreshTokenPost, { id: c.req.param("id") }));
 app.get("/api/providers/:id/models", (c) => nextRouteHandler(c, providerModelsGet, { id: c.req.param("id") }));
 app.post("/api/providers/:id/test", (c) => nextRouteHandler(c, providerTestPost, { id: c.req.param("id") }));
 app.post("/api/providers/:id/test-models", (c) => nextRouteHandler(c, providerTestModelsPost, { id: c.req.param("id") }));
