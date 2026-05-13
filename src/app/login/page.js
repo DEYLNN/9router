@@ -5,19 +5,19 @@ import { useRouter } from "next/navigation";
 
 // ─── icons ────────────────────────────────────────────────────────────────────
 const IcoLogo = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
     <circle cx="12" cy="12" r="3"/>
     <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/>
   </svg>
 );
 const IcoLock = () => (
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
     <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
     <path d="M7 11V7a5 5 0 0110 0v4"/>
   </svg>
 );
 const IcoArrow = () => (
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
     <path d="M5 12h14M12 5l7 7-7 7"/>
   </svg>
 );
@@ -74,7 +74,7 @@ export default function LoginPage() {
       <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#09090B" }}>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "12px" }}>
           <IcoSpinner />
-          <span style={{ fontSize: "13px", color: "#71717A" }}>Initializing...</span>
+          <span style={{ fontSize: "13px", color: "rgba(255,251,236,0.35)" }}>Initializing...</span>
         </div>
         <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
       </div>
@@ -88,73 +88,82 @@ export default function LoginPage() {
       alignItems: "center",
       justifyContent: "center",
       background: "#09090B",
-      padding: "24px",
+      padding: "clamp(12px, 4vw, 24px)",
       position: "relative",
       overflow: "hidden",
     }}>
-      {/* dot grid */}
+      {/* Ambient editorial glow (Cuties/Mahiru inspired) */}
+      <div
+        aria-hidden="true"
+        className="theme-ambient-bg"
+        style={{
+          position: "absolute", inset: 0, pointerEvents: "none",
+          opacity: 0.9, mixBlendMode: "screen",
+        }}
+      />
+      {/* soft dot grid with mask */}
       <div aria-hidden="true" style={{
         position: "absolute", inset: 0, pointerEvents: "none",
-        backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)",
+        backgroundImage: "radial-gradient(circle, rgba(255,251,236,0.04) 1px, transparent 1px)",
         backgroundSize: "28px 28px",
-      }} />
-      {/* radial glow */}
-      <div aria-hidden="true" style={{
-        position: "absolute", top: "30%", left: "50%", transform: "translate(-50%,-50%)",
-        width: "600px", height: "400px", pointerEvents: "none",
-        background: "radial-gradient(ellipse at center, rgba(59,130,246,0.06) 0%, transparent 70%)",
+        maskImage: "linear-gradient(to bottom, rgba(0,0,0,0.55), transparent 80%)",
+        WebkitMaskImage: "linear-gradient(to bottom, rgba(0,0,0,0.55), transparent 80%)",
       }} />
 
-      <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: "380px" }}>
+      <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: "440px", display: "flex", flexDirection: "column", gap: "clamp(18px, 3vw, 28px)" }}>
 
-        {/* Logo */}
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "40px", gap: "12px" }}>
+        {/* Brand block */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "14px" }}>
           <div style={{
-            width: "48px", height: "48px", borderRadius: "12px",
-            background: "linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)",
+            width: "58px", height: "58px",
+            borderRadius: "18px",
+            background: "linear-gradient(135deg, var(--theme-accent-teal) 0%, var(--theme-accent-blue) 100%)",
             display: "flex", alignItems: "center", justifyContent: "center",
             color: "#fff",
-            boxShadow: "0 0 0 1px rgba(59,130,246,0.3), 0 8px 32px rgba(59,130,246,0.2)",
+            boxShadow:
+              "0 0 0 1px rgba(255,251,236,0.08) inset, 0 12px 36px -8px rgba(17,166,166,0.55)",
           }}>
             <IcoLogo />
           </div>
           <div style={{ textAlign: "center" }}>
-            <h1 style={{ fontSize: "20px", fontWeight: 700, color: "#FAFAFA", letterSpacing: "-0.03em", margin: 0 }}>
+            <h1 className="theme-display" style={{ fontSize: "clamp(28px, 6vw, 34px)", margin: 0, color: "#FAF6E7" }}>
               9Router
             </h1>
-            <p style={{ fontSize: "13px", color: "#71717A", marginTop: "4px" }}>
-              AI Gateway Platform
+            <p className="theme-mono" style={{ fontSize: "12px", letterSpacing: "0.12em", textTransform: "uppercase", marginTop: "6px", color: "rgba(255,251,236,0.42)" }}>
+              AI Gateway · Editorial Console
             </p>
           </div>
         </div>
 
-        {/* Card */}
-        <div style={{
-          background: "#111113",
-          border: "1px solid rgba(255,255,255,0.08)",
-          borderRadius: "14px",
-          padding: "28px",
-          boxShadow: "0 0 0 1px rgba(255,255,255,0.02), 0 32px 64px rgba(0,0,0,0.6)",
-        }}>
-          <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-
-            <div>
-              <p style={{ fontSize: "15px", fontWeight: 600, color: "#FAFAFA", marginBottom: "4px" }}>
-                Sign in
-              </p>
-              <p style={{ fontSize: "13px", color: "#71717A" }}>
-                Enter your password to continue
+        {/* Glass card */}
+        <div
+          className="theme-glass-lg"
+          style={{
+            padding: "clamp(20px, 5vw, 32px)",
+            width: "100%",
+          }}
+        >
+          <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: "22px" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <span className="theme-chip theme-chip--teal" style={{ alignSelf: "flex-start" }}>
+                Secure access
+              </span>
+              <h2 className="theme-display" style={{ fontSize: "22px", color: "#FAF6E7", margin: 0, marginTop: "6px" }}>
+                Welcome back
+              </h2>
+              <p style={{ fontSize: "13px", color: "rgba(255,251,236,0.55)", margin: 0, lineHeight: 1.55 }}>
+                Sign in to continue to your AI gateway dashboard.
               </p>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={{ fontSize: "12px", fontWeight: 500, color: "#A1A1AA", letterSpacing: "0.02em" }}>
-                PASSWORD
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <label className="theme-mono" style={{ fontSize: "11px", color: "rgba(255,251,236,0.55)", letterSpacing: "0.16em", textTransform: "uppercase" }}>
+                Password
               </label>
               <div style={{ position: "relative" }}>
                 <span style={{
-                  position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)",
-                  color: focused ? "#3B82F6" : "#52525B",
+                  position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)",
+                  color: focused ? "var(--theme-accent-teal)" : "rgba(255,251,236,0.35)",
                   display: "flex", pointerEvents: "none",
                   transition: "color 150ms ease",
                 }}>
@@ -162,7 +171,7 @@ export default function LoginPage() {
                 </span>
                 <input
                   type="password"
-                  placeholder="Enter password"
+                  placeholder="Enter your password"
                   value={password}
                   onChange={(e) => { setPassword(e.target.value); setError(""); }}
                   onFocus={() => setFocused(true)}
@@ -170,21 +179,32 @@ export default function LoginPage() {
                   required
                   autoFocus
                   style={{
-                    width: "100%", boxSizing: "border-box",
-                    height: "42px",
-                    paddingLeft: "38px", paddingRight: "14px",
-                    borderRadius: "8px",
-                    border: error ? "1px solid rgba(239,68,68,0.5)" : focused ? "1px solid rgba(59,130,246,0.5)" : "1px solid rgba(255,255,255,0.08)",
-                    background: "#18181B",
-                    color: "#FAFAFA",
+                    width: "100%",
+                    boxSizing: "border-box",
+                    height: "46px",
+                    paddingLeft: "40px",
+                    paddingRight: "14px",
+                    borderRadius: "12px",
+                    border: error
+                      ? "1px solid rgba(239,68,68,0.55)"
+                      : focused
+                        ? "1px solid rgba(17,166,166,0.55)"
+                        : "1px solid rgba(255,251,236,0.12)",
+                    background: "rgba(9,9,11,0.45)",
+                    color: "#FAF6E7",
                     fontSize: "14px",
                     outline: "none",
-                    transition: "border-color 150ms ease",
+                    transition: "border-color 150ms ease, box-shadow 150ms ease",
+                    boxShadow: focused
+                      ? "0 0 0 4px rgba(17,166,166,0.10)"
+                      : error
+                        ? "0 0 0 4px rgba(239,68,68,0.08)"
+                        : "none",
                   }}
                 />
               </div>
               {error && (
-                <p style={{ fontSize: "12px", color: "#ef4444", display: "flex", alignItems: "center", gap: "4px" }}>
+                <p style={{ fontSize: "12px", color: "#F87171", display: "flex", alignItems: "center", gap: "6px", margin: 0 }}>
                   {error}
                 </p>
               )}
@@ -195,17 +215,23 @@ export default function LoginPage() {
               disabled={loading || !password}
               style={{
                 display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
-                height: "42px", borderRadius: "8px",
-                background: loading || !password ? "rgba(59,130,246,0.4)" : "#3B82F6",
+                width: "100%",
+                height: "48px",
+                borderRadius: "14px",
+                background: loading || !password
+                  ? "linear-gradient(135deg, rgba(17,166,166,0.35), rgba(36,107,254,0.35))"
+                  : "linear-gradient(135deg, var(--theme-accent-teal), var(--theme-accent-blue))",
                 border: "none",
                 color: "#fff",
-                fontSize: "14px", fontWeight: 600,
-                cursor: loading || !password ? "not-allowed" : "pointer",
-                transition: "background 150ms ease, transform 100ms ease",
+                fontSize: "14px",
+                fontWeight: 600,
                 letterSpacing: "-0.01em",
+                cursor: loading || !password ? "not-allowed" : "pointer",
+                transition: "transform 120ms ease, filter 120ms ease",
+                boxShadow: "0 12px 32px -10px rgba(17,166,166,0.55)",
               }}
-              onMouseEnter={e => { if (!loading && password) e.currentTarget.style.background = "#2563EB"; }}
-              onMouseLeave={e => { if (!loading && password) e.currentTarget.style.background = "#3B82F6"; }}
+              onMouseEnter={e => { if (!loading && password) e.currentTarget.style.filter = "brightness(1.08)"; }}
+              onMouseLeave={e => { e.currentTarget.style.filter = "brightness(1)"; }}
               onMouseDown={e => { if (!loading && password) e.currentTarget.style.transform = "scale(0.99)"; }}
               onMouseUp={e => { e.currentTarget.style.transform = "scale(1)"; }}
             >
@@ -214,25 +240,45 @@ export default function LoginPage() {
             </button>
 
             {!hasPassword && (
-              <p style={{ fontSize: "12px", textAlign: "center", color: "#52525B" }}>
-                Default password:{" "}
-                <code style={{ background: "rgba(255,255,255,0.06)", padding: "2px 6px", borderRadius: "4px", color: "#A1A1AA", fontFamily: "monospace" }}>
+              <div style={{
+                fontSize: "12px",
+                textAlign: "center",
+                color: "rgba(255,251,236,0.45)",
+                display: "flex",
+                justifyContent: "center",
+                gap: "6px",
+                alignItems: "center",
+                flexWrap: "wrap",
+              }}>
+                Default password:
+                <code className="theme-mono" style={{
+                  background: "rgba(255,251,236,0.06)",
+                  padding: "2px 8px",
+                  borderRadius: "6px",
+                  color: "rgba(255,251,236,0.8)",
+                  fontSize: "12px",
+                  border: "1px solid rgba(255,251,236,0.08)",
+                }}>
                   123456
                 </code>
-              </p>
+              </div>
             )}
           </form>
         </div>
 
         {/* Footer */}
-        <p style={{ textAlign: "center", fontSize: "12px", color: "#3F3F46", marginTop: "24px" }}>
-          AI Gateway · Secure Access
-        </p>
+        <div style={{ display: "flex", justifyContent: "center", gap: "10px", fontSize: "11px", letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(255,251,236,0.28)" }} className="theme-mono">
+          <span>9router</span>
+          <span style={{ opacity: 0.4 }}>·</span>
+          <span>secure access</span>
+          <span style={{ opacity: 0.4 }}>·</span>
+          <span style={{ color: "var(--theme-accent-teal)" }}>live</span>
+        </div>
       </div>
 
       <style>{`
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        input::placeholder { color: #3F3F46; }
+        input::placeholder { color: rgba(255, 251, 236, 0.28); }
       `}</style>
     </div>
   );
