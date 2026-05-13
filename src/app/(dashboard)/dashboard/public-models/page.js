@@ -184,18 +184,27 @@ export default function PublicModelsPage() {
 
   return (
     <div style={{ padding: "clamp(4px, 1.5vw, 14px)", maxWidth: "1180px", margin: "0 auto" }}>
-      <section className="theme-glass" style={{ borderRadius: 16, padding: "clamp(8px, 2vw, 12px)", marginBottom: 12 }}>
+      <section className="theme-glass" style={{ borderRadius: 18, padding: "clamp(9px, 2vw, 12px)", marginBottom: 12 }}>
         <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
-          <div style={{ position: "relative", flex: "1 1 260px", maxWidth: 520, minWidth: 0 }}>
-            <span style={{ position: "absolute", left: 13, top: "50%", transform: "translateY(-50%)", color: "var(--color-text-muted)", pointerEvents: "none" }}>{Icons.search}</span>
+          <div style={{ position: "relative", flex: "1 1 280px", maxWidth: 560, minWidth: 0 }}>
+            <span style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", color: query ? "var(--theme-accent-teal)" : "var(--color-text-muted)", pointerEvents: "none", display: "flex" }}>{Icons.search}</span>
             <Input
-              placeholder="Search model ID or provider..."
+              placeholder="Search models or providers..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              style={{ paddingLeft: 38, width: "100%" }}
+              style={{
+                paddingLeft: 40,
+                paddingRight: 12,
+                width: "100%",
+                height: 40,
+                borderRadius: 14,
+                background: "rgba(255,248,220,0.72)",
+                border: "1px solid rgba(23,33,27,0.10)",
+                boxShadow: query ? "0 0 0 4px rgba(14,142,142,0.10)" : "inset 0 1px 0 rgba(255,255,255,0.55)",
+              }}
             />
           </div>
-          <button onClick={() => setOnlyEnabled(!onlyEnabled)} style={{ height: 36, border: "1px solid var(--theme-glass-border)", borderRadius: 12, padding: "0 12px", color: onlyEnabled ? "var(--theme-accent-teal)" : "var(--color-text-muted)", background: onlyEnabled ? "rgba(14,142,142,.10)" : "rgba(255,251,236,.36)", cursor: "pointer", fontSize: 13, fontWeight: 600 }}>
+          <button onClick={() => setOnlyEnabled(!onlyEnabled)} style={{ height: 38, border: `1px solid ${onlyEnabled ? "rgba(14,142,142,.30)" : "rgba(23,33,27,.10)"}`, borderRadius: 999, padding: "0 14px", color: onlyEnabled ? "var(--theme-accent-teal)" : "var(--color-text-muted)", background: onlyEnabled ? "linear-gradient(135deg, rgba(14,142,142,.16), rgba(29,85,212,.08))" : "rgba(255,248,220,.62)", cursor: "pointer", fontSize: 13, fontWeight: 700, boxShadow: onlyEnabled ? "0 8px 18px -14px rgba(14,142,142,.45)" : "none" }}>
             Enabled only
           </button>
           <Button variant="secondary" size="sm" onClick={() => save(filtered.map((m) => m.id))} disabled={loading || saving}>Enable shown</Button>
@@ -266,9 +275,26 @@ export default function PublicModelsPage() {
                           }} />
                           <div style={{ minWidth: 0 }}>
                             <div className="theme-mono" style={{ fontSize: 12.5, fontWeight: 650, color: "var(--color-text-main)", wordBreak: "break-word", lineHeight: 1.35 }}>{model.id}</div>
-                            <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 3, flexWrap: "wrap" }}>
-                              <span style={{ fontSize: 10.5, color: enabled ? "var(--theme-accent-teal)" : "var(--color-text-muted)", fontWeight: 750, textTransform: "uppercase", letterSpacing: ".08em" }}>{enabled ? "Exposed" : "Private"}</span>
-                              <span className="theme-mono" style={{ fontSize: 10.5, color: "var(--color-text-subtle)" }}>owned_by: {model.owned_by}</span>
+                            <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 5, flexWrap: "wrap" }}>
+                              <span style={{
+                                fontSize: 10,
+                                color: enabled ? "var(--theme-accent-teal)" : "rgba(31,42,36,.62)",
+                                fontWeight: 800,
+                                textTransform: "uppercase",
+                                letterSpacing: ".08em",
+                                padding: "2px 7px",
+                                borderRadius: 999,
+                                background: enabled ? "rgba(14,142,142,.13)" : "rgba(31,42,36,.055)",
+                                border: `1px solid ${enabled ? "rgba(14,142,142,.25)" : "rgba(31,42,36,.08)"}`,
+                              }}>{enabled ? "Exposed" : "Private"}</span>
+                              <span className="theme-mono" style={{
+                                fontSize: 10,
+                                color: "var(--color-text-muted)",
+                                padding: "2px 7px",
+                                borderRadius: 999,
+                                background: "rgba(255,248,220,.58)",
+                                border: "1px solid rgba(23,33,27,.07)",
+                              }}>owner: {model.owned_by}</span>
                             </div>
                           </div>
                         </div>
