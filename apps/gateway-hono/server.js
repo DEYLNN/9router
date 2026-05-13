@@ -64,6 +64,7 @@ import { POST as localePost } from "../../src/app/api/locale/route.js";
 import { GET as modelsGet, PUT as modelsPut } from "../../src/app/api/models/route.js";
 import { GET as modelAvailabilityGet, POST as modelAvailabilityPost } from "../../src/app/api/models/availability/route.js";
 import { GET as initGet } from "../../src/app/api/init/route.js";
+import { GET as oauthGet, POST as oauthPost } from "../../src/app/api/oauth/[provider]/[action]/route.js";
 
 const app = new Hono();
 const port = Number(process.env.PORT || process.env.HONO_PORT || 8323);
@@ -348,6 +349,16 @@ app.put("/api/models", (c) => nextRouteHandler(c, modelsPut));
 app.get("/api/models/availability", (c) => nextRouteHandler(c, modelAvailabilityGet));
 app.post("/api/models/availability", (c) => nextRouteHandler(c, modelAvailabilityPost));
 app.get("/api/init", (c) => nextRouteHandler(c, initGet));
+
+// OAuth endpoints (needed when Next/Vercel UI proxies dashboard API calls to Hono)
+app.get("/api/oauth/:provider/:action", (c) => nextRouteHandler(c, oauthGet, {
+  provider: c.req.param("provider"),
+  action: c.req.param("action"),
+}));
+app.post("/api/oauth/:provider/:action", (c) => nextRouteHandler(c, oauthPost, {
+  provider: c.req.param("provider"),
+  action: c.req.param("action"),
+}));
 
 // P2 usage/observability endpoints
 app.get("/api/usage/chart", (c) => nextRouteHandler(c, usageChartGet));
