@@ -25,9 +25,8 @@ export default function Card({
   return (
     <div
       className={cn(
-        "bg-surface border border-border rounded-[10px]",
-        elev ? "shadow-[var(--shadow-elev)]" : "shadow-[var(--shadow-soft)]",
-        hover && "hover:border-[rgba(255,255,255,0.14)] hover:bg-surface-2 transition-all cursor-pointer",
+        "theme-glass rounded-[var(--radius-editorial-md)]",
+        hover && "hover:border-[rgba(255,251,236,0.16)] hover:bg-[rgba(255,251,236,0.06)] transition-all cursor-pointer",
         paddings[padding],
         className
       )}
