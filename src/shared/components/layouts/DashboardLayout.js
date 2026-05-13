@@ -103,7 +103,7 @@ export default function DashboardLayout({ children }) {
           overflowY: "auto",
           position: "relative",
           zIndex: 1,
-          padding: isChat ? "0" : "24px",
+          padding: isChat ? "0" : "clamp(10px, 2.5vw, 24px)",
           display: isChat ? "flex" : "block",
           flexDirection: isChat ? "column" : undefined,
         }}

@@ -166,7 +166,7 @@ function StatCard({ label, value, sub, icon: Icon, accent }) {
   );
 }
 
-// ─── log row ─────────────────────────────────────────────────────────────────
+// ─── log row (message bubble style) ─────────────────────────────────────────
 function LogRow({ entry }) {
   const color = providerColor(entry.provider);
   const isOk = entry.status === "ok";
@@ -174,34 +174,59 @@ function LogRow({ entry }) {
   const label = providerLabel(entry.provider);
 
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)_auto_auto_auto] items-center gap-3 rounded-xl border border-white/8 bg-[#141418]/75 px-3 py-2.5 transition-colors hover:border-white/15 hover:bg-[#18181d] sm:grid-cols-[minmax(0,1fr)_auto_auto_auto_auto]">
-      <div className="flex min-w-0 items-center gap-3">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/[0.04] ring-1 ring-white/10">
-          <ProviderIcon src={providerIconPath(entry.provider)} alt={label} size={22} className="h-[22px] w-[22px] rounded-md object-cover" fallbackText={label.slice(0, 2).toUpperCase()} />
+    <div className="group relative flex items-start gap-3 rounded-2xl border border-white/8 bg-gradient-to-br from-[#15151a] to-[#101013] px-3 py-3 shadow-[0_2px_8px_rgba(0,0,0,0.15)] transition-all duration-200 hover:border-white/18 hover:from-[#18181f] hover:shadow-[0_4px_20px_rgba(0,0,0,0.25)] sm:px-4 sm:py-3.5">
+      {/* Provider avatar */}
+      <div className="relative flex-shrink-0">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl shadow-sm" style={{ background: `linear-gradient(135deg, ${color}22, ${color}0a)`, border: `1px solid ${color}30` }}>
+          <ProviderIcon src={providerIconPath(entry.provider)} alt={label} size={24} className="h-6 w-6 rounded-lg object-cover" fallbackText={label.slice(0, 2).toUpperCase()} />
         </div>
-        <div className="min-w-0">
-          <div className="truncate font-mono text-[13px] font-semibold leading-5 text-text-main">{entry.model}</div>
-          <div className="truncate text-[11px] text-text-subtle">{label} · {entry.account}</div>
-        </div>
+        <span className={`absolute -bottom-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full ring-2 ring-[#15151a] ${isOk ? "bg-emerald-500" : "bg-red-500"}`} aria-hidden="true">
+          <span className="h-1.5 w-1.5 rounded-full bg-white/90" />
+        </span>
       </div>
 
-      <div className="hidden text-right sm:block">
-        <div className="font-mono text-[12px] font-semibold text-text-main">{fmt(entry.inputTokens)}</div>
-        <div className="text-[10px] uppercase tracking-[0.1em] text-text-subtle">in</div>
-      </div>
-      <div className="hidden text-right sm:block">
-        <div className="font-mono text-[12px] font-semibold text-text-main">{fmt(entry.outputTokens)}</div>
-        <div className="text-[10px] uppercase tracking-[0.1em] text-text-subtle">out</div>
-      </div>
-      <div className="text-right">
-        <div className="font-mono text-[12px] font-semibold" style={{ color }}>{fmt(total)}</div>
-        <div className="text-[10px] uppercase tracking-[0.1em] text-text-subtle">tok</div>
-      </div>
-      <div className="text-right">
-        <div className={`inline-flex rounded-full border px-2 py-0.5 text-[10px] font-semibold ${isOk ? "border-emerald-500/25 bg-emerald-500/10 text-emerald-400" : "border-red-500/25 bg-red-500/10 text-red-400"}`}>
-          {isOk ? "OK" : "ERR"}
+      {/* Body */}
+      <div className="min-w-0 flex-1">
+        {/* Top row: model + time */}
+        <div className="mb-1.5 flex items-center justify-between gap-2">
+          <div className="min-w-0 flex-1">
+            <div className="truncate font-mono text-[13px] font-semibold text-text-main">{entry.model}</div>
+          </div>
+          <div className="flex flex-shrink-0 items-center gap-1.5 text-[11px] text-text-subtle">
+            <IconClock />
+            <span>{relativeTime(entry.timestamp)}</span>
+          </div>
         </div>
-        <div className="mt-0.5 text-[10px] text-text-subtle">{relativeTime(entry.timestamp)}</div>
+
+        {/* Second row: provider + account */}
+        <div className="mb-2 flex flex-wrap items-center gap-1.5">
+          <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider" style={{ color, background: `${color}14` }}>
+            {label}
+          </span>
+          <span className="inline-flex items-center gap-1 text-[11px] text-text-subtle">
+            <IconUser />
+            <span className="truncate">{entry.account}</span>
+          </span>
+        </div>
+
+        {/* Token stats row */}
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="inline-flex items-center gap-1.5 rounded-md border border-white/6 bg-white/[0.02] px-2 py-1">
+            <span className="text-[9px] font-bold uppercase tracking-wider text-purple-400">In</span>
+            <span className="font-mono text-[11px] font-semibold text-text-main">{fmt(entry.inputTokens)}</span>
+          </div>
+          <div className="inline-flex items-center gap-1.5 rounded-md border border-white/6 bg-white/[0.02] px-2 py-1">
+            <span className="text-[9px] font-bold uppercase tracking-wider text-emerald-400">Out</span>
+            <span className="font-mono text-[11px] font-semibold text-text-main">{fmt(entry.outputTokens)}</span>
+          </div>
+          <div className="inline-flex items-center gap-1.5 rounded-md border px-2 py-1" style={{ borderColor: `${color}25`, background: `${color}0d` }}>
+            <span className="text-[9px] font-bold uppercase tracking-wider" style={{ color }}>Total</span>
+            <span className="font-mono text-[11px] font-semibold" style={{ color }}>{fmt(total)}</span>
+          </div>
+          <div className={`ml-auto inline-flex rounded-full border px-2 py-0.5 text-[10px] font-semibold ${isOk ? "border-emerald-500/25 bg-emerald-500/10 text-emerald-400" : "border-red-500/25 bg-red-500/10 text-red-400"}`}>
+            {isOk ? "OK" : "ERR"}
+          </div>
+        </div>
       </div>
     </div>
   );
