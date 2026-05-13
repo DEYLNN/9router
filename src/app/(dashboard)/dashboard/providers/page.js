@@ -294,13 +294,13 @@ export default function ProvidersPage() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search providers..."
-          className="h-10 w-full rounded-xl border border-white/10 bg-[#0f0f12] py-2 pl-10 pr-10 text-[16px] text-text-main outline-none transition-all placeholder:text-text-subtle focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/30 sm:text-sm"
+          className="h-10 w-full rounded-xl border border-[var(--color-border)] bg-[var(--theme-paper-glass)] py-2 pl-10 pr-10 text-[16px] text-[var(--color-text-main)] outline-none transition-all placeholder:text-[var(--color-text-subtle)] focus:border-[var(--theme-accent-teal)] focus:ring-2 focus:ring-[var(--theme-accent-teal)]/20 sm:text-sm"
         />
         {searchQuery.trim() && (
           <button
             type="button"
             onClick={() => setSearchQuery("")}
-            className="absolute right-2.5 top-1/2 z-10 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-lg text-text-muted transition-colors hover:bg-white/10 hover:text-text-main"
+            className="absolute right-2.5 top-1/2 z-10 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-lg text-text-muted transition-colors hover:bg-[var(--color-surface-2)] hover:text-text-main"
             aria-label="Clear search"
           >
             <span className="material-symbols-outlined text-[18px] leading-none">close</span>
@@ -328,7 +328,7 @@ export default function ProvidersPage() {
               variant="secondary"
               icon={<span className="material-symbols-outlined text-[16px] leading-none">add</span>}
               onClick={() => setShowAddCompatibleModal(true)}
-              className="w-full px-3 !bg-white !text-black hover:!bg-gray-100 sm:w-auto"
+              className="w-full px-3 !bg-[var(--theme-accent-teal)] !text-white hover:!bg-[#0D8585] sm:w-auto"
             >
               OpenAI
             </Button>
@@ -595,7 +595,7 @@ function ProviderCard({ providerId, provider, stats, authType, onToggle }) {
     <Link href={`/dashboard/providers/${providerId}`} className="group min-w-0">
       <Card
         padding="xs"
-        className={`h-full hover:bg-black/[0.01] dark:hover:bg-white/[0.01] transition-colors cursor-pointer ${allDisabled ? "opacity-50" : ""}`}
+        className={`h-full transition-all cursor-pointer hover:border-[rgba(23,33,27,0.18)] hover:shadow-[0_18px_36px_-18px_rgba(23,33,27,0.14)] ${allDisabled ? "opacity-50" : ""}`}
       >
         <div className="flex min-w-0 items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-3">
