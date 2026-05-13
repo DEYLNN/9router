@@ -86,7 +86,8 @@ export default function HeaderMenu({ onLogout }) {
   const [remoteOpen, setRemoteOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const [locale, setLocale] = useState("en");
-  const { toggleTheme, isDark } = useTheme();
+  const toggleTheme = () => {};
+  const isDark = false;
   const menuRef = useRef(null);
 
   useEffect(() => {
@@ -130,11 +131,6 @@ export default function HeaderMenu({ onLogout }) {
               label={LOCALE_INFO[locale]?.name || locale}
               trailing={LOCALE_INFO[locale]?.flag || "🌐"}
               onClick={() => { close(); setLangOpen(true); }}
-            />
-            <MenuItem
-              icon={isDark ? "light_mode" : "dark_mode"}
-              label="Theme"
-              onClick={() => { toggleTheme(); close(); }}
             />
             <MenuItem
               icon="computer"
