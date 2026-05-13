@@ -61,7 +61,7 @@ function canonicalProviderMeta(owner) {
     kr: { label: "Kiro", icon: "kiro" },
     cx: { label: "Codex", icon: "codex" },
     kc: { label: "Kilo Code", icon: "kilocode" },
-    gh: { label: "GitHub Copilot", icon: "github" },
+    gh: { label: "GitHub", icon: "github" },
     cf: { label: "Cloudflare AI", icon: "cloudflare-ai" },
     cwv: { label: "CanopyWave", icon: "canopywave" },
     "mimo-sgp": { label: "MIMO SGP", icon: "xiaomi-mimo-plan-sgp" },
@@ -233,7 +233,7 @@ export default function PublicModelsPage() {
                           </div>
                           <div style={{ minWidth: 0 }}>
                             <h2 style={{ fontSize: 13.5, fontWeight: 760, margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", color: "var(--color-text-main)" }}>{meta.label}</h2>
-                            <div className="theme-mono" style={{ fontSize: 10.5, color: "var(--color-text-muted)", marginTop: 1, wordBreak: "break-all" }}>{owner}</div>
+                            <div className="theme-mono" style={{ fontSize: 10.5, color: "var(--color-text-muted)", marginTop: 1, wordBreak: "break-all" }}>alias: {owner}</div>
                           </div>
                         </>
                       );
