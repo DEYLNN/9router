@@ -785,6 +785,7 @@ const OAUTH_ALIASES = {
   codex: "cx",
   "gemini-cli": "gc",
   qwen: "qw",
+  "nous-portal": "nous",
   iflow: "if",
   antigravity: "ag",
   github: "gh",
