@@ -621,3 +621,55 @@ button {
   border-color: rgba(17, 163, 106, 0.24);
   color: var(--theme-accent-green);
 }
+
+/* ============================================================
+   Step 2: Typography system
+   Apply Space Grotesk to headings and display elements, and
+   JetBrains Mono to numeric/data/code elements globally without
+   breaking existing tailwind font utilities.
+   ============================================================ */
+
+/* Base body is already var(--font-sans) -> Space Grotesk */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-sans);
+  letter-spacing: -0.025em;
+}
+
+h1 {
+  letter-spacing: -0.035em;
+  font-weight: 700;
+}
+h2 {
+  letter-spacing: -0.03em;
+  font-weight: 700;
+}
+
+code, kbd, pre, samp,
+.font-mono {
+  font-family: var(--font-mono) !important;
+  font-feature-settings: "zero", "ss01";
+}
+
+.data-num {
+  font-family: var(--font-mono);
+  font-feature-settings: "tnum", "zero";
+  letter-spacing: 0;
+}
+
+/* Model IDs, endpoints, keys — common in 9router UI */
+.mono-strong {
+  font-family: var(--font-mono);
+  font-feature-settings: "zero";
+  color: var(--theme-mono-color);
+  font-weight: 500;
+}
+
+/* Subtle tightening for tabular data so monospace looks editorial */
+table td, table th {
+  letter-spacing: 0;
+}
+
+/* Friendlier rendering for Space Grotesk */
+html, body {
+  font-feature-settings: "ss01", "ss02";
+}
