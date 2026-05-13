@@ -3,7 +3,6 @@
 import { Suspense, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { UsageStats, RequestLogger, CardSkeleton, SegmentedControl } from "@/shared/components";
-import RequestDetailsTab from "./components/RequestDetailsTab";
 import RequestLogsTable from "./components/RequestLogsTable";
 
 const PERIODS = [
@@ -29,7 +28,7 @@ function UsageContent() {
   const [period, setPeriod] = useState("7d");
 
   const tabFromUrl = searchParams.get("tab");
-  const activeTab = tabFromUrl && ["overview", "logs", "details"].includes(tabFromUrl)
+  const activeTab = tabFromUrl && ["overview", "logs"].includes(tabFromUrl)
     ? tabFromUrl
     : "overview";
 
@@ -50,7 +49,6 @@ function UsageContent() {
           options={[
             { value: "overview", label: "Overview" },
             { value: "logs", label: "Logs" },
-            { value: "details", label: "Details" },
           ]}
           value={activeTab}
           onChange={handleTabChange}
@@ -81,7 +79,6 @@ function UsageContent() {
               <RequestLogsTable />
             </Suspense>
           )}
-          {activeTab === "details" && <RequestDetailsTab />}
         </>
       )}
     </div>
