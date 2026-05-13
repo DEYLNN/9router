@@ -44,6 +44,7 @@ import { POST as combosPost } from "../../src/app/api/combos/route.js";
 import { GET as comboGet, PUT as comboPut, DELETE as comboDelete } from "../../src/app/api/combos/[id]/route.js";
 import { GET as pricingGet, PATCH as pricingPatch, DELETE as pricingDelete } from "../../src/app/api/pricing/route.js";
 import { PATCH as settingsPatch } from "../../src/app/api/settings/route.js";
+import { GET as settingsDatabaseGet, POST as settingsDatabasePost } from "../../src/app/api/settings/database/route.js";
 import { GET as authFilesGet, POST as authFilesPost } from "../../src/app/api/auth-files/route.js";
 import { POST as authFilesRefreshCodexPost } from "../../src/app/api/auth-files/refresh-codex/route.js";
 
@@ -367,6 +368,8 @@ app.put("/api/keys/:id", (c) => nextRouteHandler(c, keyPut, { id: c.req.param("i
 app.delete("/api/keys/:id", (c) => nextRouteHandler(c, keyDelete, { id: c.req.param("id") }));
 
 app.patch("/api/settings", (c) => nextRouteHandler(c, settingsPatch));
+app.get("/api/settings/database", (c) => nextRouteHandler(c, settingsDatabaseGet));
+app.post("/api/settings/database", (c) => nextRouteHandler(c, settingsDatabasePost));
 
 app.post("/api/providers", (c) => nextRouteHandler(c, providersPost));
 app.get("/api/providers/:id", (c) => nextRouteHandler(c, providerGet, { id: c.req.param("id") }));
