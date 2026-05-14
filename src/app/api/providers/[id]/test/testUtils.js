@@ -1,5 +1,6 @@
 import { getProviderConnectionById, updateProviderConnection } from "@/lib/localDb";
 import { testProxyUrl } from "@/lib/network/proxyTest";
+import { resolveConnectionProxyConfig } from "@/lib/network/connectionProxy";
 import { isOpenAICompatibleProvider, isAnthropicCompatibleProvider } from "@/shared/constants/providers";
 import { PROVIDER_ENDPOINTS } from "@/shared/constants/config";
 import { getDefaultModel } from "open-sse/config/providerModels.js";
@@ -604,6 +605,11 @@ export async function testSingleConnection(id) {
 
   const start = Date.now();
   let result;
+  const globalProxy = await resolveConnectionProxyConfig().catch(() => null);
+  const effectiveProxy = {
+    ...(globalProxy || {}),
+    ...(connection.providerSpecificData || {}),
+  };
 
   if (connection.authType === "apikey" || connection.authType === "cookie") {
     result = await testApiKeyConnection(connection, effectiveProxy);
