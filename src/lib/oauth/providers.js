@@ -181,6 +181,7 @@ const PROVIDERS = {
         mapped.providerSpecificData = {
           chatgptAccountId: info.chatgptAccountId,
           chatgptPlanType: info.chatgptPlanType,
+          codexPlan: info.chatgptPlanType === "free" ? "free" : "paid",
         };
       }
       return mapped;

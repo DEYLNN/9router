@@ -183,7 +183,10 @@ async function handleSingleModelChat(body, modelStr, clientRawRequest = null, re
     const credentials = await getProviderCredentials(provider, excludeConnectionIds, model);
 
     // All accounts unavailable
-    if (!credentials || credentials.allRateLimited) {
+    if (!credentials || credentials.allRateLimited || credentials.noEligiblePlan) {
+      if (credentials?.noEligiblePlan) {
+        return errorResponse(HTTP_STATUS.BAD_REQUEST, `${credentials.message}. Add a paid Codex account or set custom allowedModels on a suitable connection.`);
+      }
       if (credentials?.allRateLimited) {
         const errorMsg = lastError || credentials.lastError || "Unavailable";
         const status = lastStatus || Number(credentials.lastErrorCode) || HTTP_STATUS.SERVICE_UNAVAILABLE;

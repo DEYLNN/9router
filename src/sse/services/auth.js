@@ -3,6 +3,7 @@ import { formatRetryAfter, checkFallbackError, isModelLockActive, buildModelLock
 import { MAX_RATE_LIMIT_COOLDOWN_MS } from "open-sse/config/errorConfig.js";
 import { resolveProviderId, FREE_PROVIDERS } from "@/shared/constants/providers.js";
 import * as log from "../utils/logger.js";
+import { isCodexConnectionEligibleForModel, normalizeCodexPlan } from "@/lib/codexPlanRules.js";
 
 // Mutex to prevent race conditions during account selection
 let selectionMutex = Promise.resolve();
@@ -55,6 +56,7 @@ export async function getProviderCredentials(provider, excludeConnectionIds = nu
     const availableConnections = connections.filter(c => {
       if (excludeSet.has(c.id)) return false;
       if (isModelLockActive(c, model)) return false;
+      if (!isCodexConnectionEligibleForModel(c, model)) return false;
       return true;
     });
 
@@ -62,9 +64,11 @@ export async function getProviderCredentials(provider, excludeConnectionIds = nu
     connections.forEach(c => {
       const excluded = excludeSet.has(c.id);
       const locked = isModelLockActive(c, model);
-      if (excluded || locked) {
+      const planIneligible = !isCodexConnectionEligibleForModel(c, model);
+      if (excluded || locked || planIneligible) {
         const lockUntil = getEarliestModelLockUntil(c);
-        log.debug("AUTH", `  → ${c.id?.slice(0, 8)} | ${excluded ? "excluded" : ""} ${locked ? `modelLocked(${model}) until ${lockUntil}` : ""}`);
+        const plan = normalizeCodexPlan(c.providerSpecificData?.codexPlan || c.providerSpecificData?.chatgptPlanType);
+        log.debug("AUTH", `  → ${c.id?.slice(0, 8)} | ${excluded ? "excluded" : ""} ${locked ? `modelLocked(${model}) until ${lockUntil}` : ""} ${planIneligible ? `planIneligible(${plan})` : ""}`);
       }
     });
 
@@ -83,6 +87,11 @@ export async function getProviderCredentials(provider, excludeConnectionIds = nu
           lastError: earliestConn?.lastError || null,
           lastErrorCode: earliestConn?.errorCode || null
         };
+      }
+      const planEligibleCount = connections.filter(c => isCodexConnectionEligibleForModel(c, model)).length;
+      if (providerId === "codex" && model && planEligibleCount === 0) {
+        log.warn("AUTH", `${provider} | no plan-eligible Codex accounts for ${model}`);
+        return { noEligiblePlan: true, provider: providerId, model, message: `No eligible Codex account for ${model}` };
       }
       log.warn("AUTH", `${provider} | all ${connections.length} accounts unavailable`);
       return null;

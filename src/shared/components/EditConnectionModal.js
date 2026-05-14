@@ -21,6 +21,7 @@ export default function EditConnectionModal({ isOpen, connection, onSave, onClos
     organization: "",
   });
   const [cloudflareData, setCloudflareData] = useState({ accountId: "" });
+  const [codexData, setCodexData] = useState({ codexPlan: "paid", allowedModels: "" });
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState(null);
   const [validating, setValidating] = useState(false);
@@ -46,6 +47,13 @@ export default function EditConnectionModal({ isOpen, connection, onSave, onClos
       if (connection.provider === "cloudflare-ai" && connection.providerSpecificData) {
         setCloudflareData({ accountId: connection.providerSpecificData.accountId || "" });
       }
+      if (connection.provider === "codex") {
+        const psd = connection.providerSpecificData || {};
+        setCodexData({
+          codexPlan: psd.codexPlan || (psd.chatgptPlanType === "free" ? "free" : "paid"),
+          allowedModels: Array.isArray(psd.allowedModels) ? psd.allowedModels.join("\n") : (psd.allowedModels || ""),
+        });
+      }
       setTestResult(null);
       setValidationResult(null);
     }
@@ -54,6 +62,7 @@ export default function EditConnectionModal({ isOpen, connection, onSave, onClos
   const isOAuth = connection?.authType === "oauth";
   const isAzure = connection?.provider === "azure";
   const isCloudflareAi = connection?.provider === "cloudflare-ai";
+  const isCodex = connection?.provider === "codex";
   const isCompatible = connection
     ? (isOpenAICompatibleProvider(connection.provider) || isAnthropicCompatibleProvider(connection.provider))
     : false;
@@ -150,6 +159,14 @@ export default function EditConnectionModal({ isOpen, connection, onSave, onClos
       if (isCloudflareAi) {
         updates.providerSpecificData = { accountId: cloudflareData.accountId };
       }
+      if (isCodex) {
+        const allowedModels = codexData.allowedModels.split(/[\n,]/).map(v => v.trim()).filter(Boolean);
+        updates.providerSpecificData = {
+          ...(connection.providerSpecificData || {}),
+          codexPlan: codexData.codexPlan,
+          ...(allowedModels.length > 0 ? { allowedModels } : { allowedModels: [] }),
+        };
+      }
       
       await onSave(updates);
     } finally {
@@ -180,6 +197,32 @@ export default function EditConnectionModal({ isOpen, connection, onSave, onClos
           value={formData.priority}
           onChange={(e) => setFormData({ ...formData, priority: Number.parseInt(e.target.value, 10) || 1 })}
         />
+
+        {isCodex && (
+          <div className="rounded-lg border border-border bg-sidebar/50 p-4">
+            <h3 className="mb-3 text-sm font-semibold">Codex Routing</h3>
+            <div className="flex flex-col gap-3">
+              <label className="flex flex-col gap-1 text-sm">
+                <span className="font-medium">Plan group</span>
+                <select
+                  value={codexData.codexPlan}
+                  onChange={(e) => setCodexData({ ...codexData, codexPlan: e.target.value })}
+                  className="h-10 rounded-xl border border-border bg-surface px-3 text-sm text-text-main outline-none focus:border-primary/60"
+                >
+                  <option value="free">Free</option>
+                  <option value="paid">Other / Plus / Pro / Team</option>
+                </select>
+              </label>
+              <Input
+                label="Allowed models override"
+                value={codexData.allowedModels}
+                onChange={(e) => setCodexData({ ...codexData, allowedModels: e.target.value })}
+                placeholder="gpt-5.5\ngpt-5.2"
+                hint="Optional. One model per line or comma-separated. Empty = use default plan rules."
+              />
+            </div>
+          </div>
+        )}
 
         {!isOAuth && (
           <>
