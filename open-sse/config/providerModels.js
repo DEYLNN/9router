@@ -249,6 +249,9 @@ export const PROVIDER_MODELS = {
   morph: [
     { id: "morph-v3-fast", name: "Morph V3 Fast" },
     { id: "morph-compactor", name: "Morph Compactor" },
+    { id: "morph-minimax27-230b", name: "Morph MiniMax 27 230B" },
+    { id: "morph-qwen36-27b", name: "Morph Qwen 3.6 27B" },
+    { id: "morph-qwen35-397b", name: "Morph Qwen 3.5 397B" },
     { id: "morph-embedding-v4", name: "Morph Embedding V4", type: "embedding" },
   ],
   openai: [
