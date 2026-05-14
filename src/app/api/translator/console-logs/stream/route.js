@@ -12,6 +12,16 @@ function formatUsageLine(line) {
   return `[USAGE] ${displayTs} | ${provider} | ${model} | account=${account} | in=${input} | out=${output} | ${status}`;
 }
 
+function dedupeLines(lines) {
+  const seen = new Set();
+  return lines.filter((line) => {
+    const key = String(line);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
 async function getInitialConsoleLogs() {
   const runtimeLogs = getConsoleLogs();
   let usageLogs = [];
@@ -20,7 +30,7 @@ async function getInitialConsoleLogs() {
   } catch (error) {
     usageLogs = [`[WARN] Failed to load SQLite usage logs: ${error.message}`];
   }
-  return [...usageLogs, ...runtimeLogs].slice(-300);
+  return dedupeLines([...usageLogs, ...runtimeLogs]).slice(-300);
 }
 
 export async function GET(request) {

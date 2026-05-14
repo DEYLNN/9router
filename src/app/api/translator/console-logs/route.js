@@ -11,10 +11,20 @@ function formatUsageLine(line) {
   return `[USAGE] ${displayTs} | ${provider} | ${model} | account=${account} | in=${input} | out=${output} | ${status}`;
 }
 
+function dedupeLines(lines) {
+  const seen = new Set();
+  return lines.filter((line) => {
+    const key = String(line);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
 export async function GET() {
   try {
     const usageLogs = (await getRecentLogs(120)).reverse().map(formatUsageLine);
-    const logs = [...usageLogs, ...getConsoleLogs()].slice(-300);
+    const logs = dedupeLines([...usageLogs, ...getConsoleLogs()]).slice(-300);
     return NextResponse.json({ success: true, logs, dataStore: "sqlite" });
   } catch (error) {
     console.error("Error getting console logs:", error);
