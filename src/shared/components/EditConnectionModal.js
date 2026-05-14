@@ -212,17 +212,31 @@ export default function EditConnectionModal({ isOpen, connection, onSave, onClos
           <div className="rounded-lg border border-border bg-sidebar/50 p-4">
             <h3 className="mb-3 text-sm font-semibold">Codex Routing</h3>
             <div className="flex flex-col gap-3">
-              <label className="flex flex-col gap-1 text-sm">
-                <span className="font-medium">Plan group</span>
-                <select
-                  value={codexData.codexPlan}
-                  onChange={(e) => setCodexData({ ...codexData, codexPlan: e.target.value })}
-                  className="h-10 rounded-xl border border-border bg-surface px-3 text-sm text-text-main outline-none focus:border-primary/60"
-                >
-                  <option value="free">Free</option>
-                  <option value="paid">Other / Plus / Pro / Team</option>
-                </select>
-              </label>
+              <div className="flex flex-col gap-2 text-sm">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="font-medium">Plan group</span>
+                  <span className="text-xs text-text-muted">Routing label</span>
+                </div>
+                <div className="grid grid-cols-2 gap-2 rounded-2xl border border-border bg-bg p-1.5">
+                  {[
+                    { value: "free", label: "Free", hint: "Free account" },
+                    { value: "paid", label: "Other", hint: "Plus / Pro / Team" },
+                  ].map((option) => {
+                    const active = codexData.codexPlan === option.value;
+                    return (
+                      <button
+                        key={option.value}
+                        type="button"
+                        onClick={() => setCodexData({ ...codexData, codexPlan: option.value })}
+                        className={`rounded-xl px-3 py-2 text-left transition-all ${active ? "bg-surface text-text-main shadow-sm ring-1 ring-primary/30" : "text-text-muted hover:bg-surface/70 hover:text-text-main"}`}
+                      >
+                        <span className="block text-sm font-semibold">{option.label}</span>
+                        <span className="block text-[11px] leading-4 opacity-75">{option.hint}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between gap-3">
                   <span className="text-sm font-medium">Blocked models</span>
