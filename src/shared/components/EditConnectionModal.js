@@ -7,6 +7,7 @@ import Input from "@/shared/components/Input";
 import Button from "@/shared/components/Button";
 import Badge from "@/shared/components/Badge";
 import { isOpenAICompatibleProvider, isAnthropicCompatibleProvider } from "@/shared/constants/providers";
+import { getModelsByProviderId } from "open-sse/config/providerModels.js";
 
 export default function EditConnectionModal({ isOpen, connection, onSave, onClose }) {
   const [formData, setFormData] = useState({
@@ -21,7 +22,7 @@ export default function EditConnectionModal({ isOpen, connection, onSave, onClos
     organization: "",
   });
   const [cloudflareData, setCloudflareData] = useState({ accountId: "" });
-  const [codexData, setCodexData] = useState({ codexPlan: "paid", allowedModels: "" });
+  const [codexData, setCodexData] = useState({ codexPlan: "paid", blockedModels: [] });
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState(null);
   const [validating, setValidating] = useState(false);
@@ -51,7 +52,7 @@ export default function EditConnectionModal({ isOpen, connection, onSave, onClos
         const psd = connection.providerSpecificData || {};
         setCodexData({
           codexPlan: psd.codexPlan || (psd.chatgptPlanType === "free" ? "free" : "paid"),
-          allowedModels: Array.isArray(psd.allowedModels) ? psd.allowedModels.join("\n") : (psd.allowedModels || ""),
+          blockedModels: Array.isArray(psd.blockedModels) ? psd.blockedModels : [],
         });
       }
       setTestResult(null);
@@ -66,6 +67,16 @@ export default function EditConnectionModal({ isOpen, connection, onSave, onClos
   const isCompatible = connection
     ? (isOpenAICompatibleProvider(connection.provider) || isAnthropicCompatibleProvider(connection.provider))
     : false;
+  const codexModels = isCodex ? getModelsByProviderId("codex").filter((m) => !m.type || m.type === "llm") : [];
+  const defaultBlockedModels = codexData.codexPlan === "free" ? ["gpt-5.5"] : [];
+  const effectiveBlockedModels = new Set([...defaultBlockedModels, ...codexData.blockedModels]);
+  const toggleBlockedModel = (modelId) => {
+    setCodexData((prev) => {
+      const set = new Set(prev.blockedModels || []);
+      if (set.has(modelId)) set.delete(modelId); else set.add(modelId);
+      return { ...prev, blockedModels: [...set] };
+    });
+  };
 
   const handleTest = async () => {
     if (!connection?.provider) return;
@@ -160,11 +171,10 @@ export default function EditConnectionModal({ isOpen, connection, onSave, onClos
         updates.providerSpecificData = { accountId: cloudflareData.accountId };
       }
       if (isCodex) {
-        const allowedModels = codexData.allowedModels.split(/[\n,]/).map(v => v.trim()).filter(Boolean);
         updates.providerSpecificData = {
           ...(connection.providerSpecificData || {}),
           codexPlan: codexData.codexPlan,
-          ...(allowedModels.length > 0 ? { allowedModels } : { allowedModels: [] }),
+          blockedModels: codexData.blockedModels,
         };
       }
       
@@ -213,13 +223,30 @@ export default function EditConnectionModal({ isOpen, connection, onSave, onClos
                   <option value="paid">Other / Plus / Pro / Team</option>
                 </select>
               </label>
-              <Input
-                label="Allowed models override"
-                value={codexData.allowedModels}
-                onChange={(e) => setCodexData({ ...codexData, allowedModels: e.target.value })}
-                placeholder="gpt-5.5\ngpt-5.2"
-                hint="Optional. One model per line or comma-separated. Empty = use default plan rules."
-              />
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-sm font-medium">Blocked models</span>
+                  <span className="text-xs text-text-muted">Click to toggle</span>
+                </div>
+                <div className="flex flex-wrap gap-2 rounded-xl border border-border bg-bg p-3">
+                  {codexModels.map((model) => {
+                    const blocked = effectiveBlockedModels.has(model.id);
+                    const defaultBlocked = defaultBlockedModels.includes(model.id);
+                    return (
+                      <button
+                        key={model.id}
+                        type="button"
+                        onClick={() => toggleBlockedModel(model.id)}
+                        className={`rounded-full border px-3 py-1 text-xs font-semibold transition-colors ${blocked ? "border-red-500/30 bg-red-500/10 text-red-600" : "border-border bg-surface text-text-muted hover:border-primary/40 hover:text-primary"}`}
+                        title={defaultBlocked ? "Blocked by free-plan default" : "Toggle blocked model"}
+                      >
+                        {model.id}{defaultBlocked ? " · default" : ""}
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="text-xs text-text-muted">Free plan defaults block gpt-5.5. Red badges are skipped by router for this account.</p>
+              </div>
             </div>
           </div>
         )}

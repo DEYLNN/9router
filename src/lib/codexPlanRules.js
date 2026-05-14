@@ -6,18 +6,21 @@ export function normalizeCodexPlan(plan) {
   return value === "free" ? "free" : "paid";
 }
 
-export function parseAllowedModels(value) {
+export function parseModelList(value) {
   if (Array.isArray(value)) return value.map(String).map(v => v.trim()).filter(Boolean);
   if (typeof value === "string") return value.split(/[\n,]/).map(v => v.trim()).filter(Boolean);
   return [];
 }
 
+export function getBlockedCodexModels(connection) {
+  const psd = connection?.providerSpecificData || {};
+  const customBlocked = parseModelList(psd.blockedModels);
+  const plan = normalizeCodexPlan(psd.codexPlan || psd.chatgptPlanType);
+  const defaults = plan === "free" ? [...CODEX_FREE_BLOCKED_MODELS] : [];
+  return [...new Set([...defaults, ...customBlocked])];
+}
+
 export function isCodexConnectionEligibleForModel(connection, model) {
   if (!model || connection?.provider !== "codex") return true;
-  const psd = connection.providerSpecificData || {};
-  const customAllowed = parseAllowedModels(psd.allowedModels);
-  if (customAllowed.length > 0) return customAllowed.includes(model);
-  const plan = normalizeCodexPlan(psd.codexPlan || psd.chatgptPlanType);
-  if (CODEX_FREE_BLOCKED_MODELS.has(model) && plan === "free") return false;
-  return true;
+  return !getBlockedCodexModels(connection).includes(model);
 }
