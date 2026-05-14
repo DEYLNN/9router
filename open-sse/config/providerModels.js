@@ -38,25 +38,17 @@ export const PROVIDER_MODELS = {
   ],
   cx: withCodexReviewModels([  // OpenAI Codex
     { id: "gpt-5.5", name: "GPT 5.5" },
+    { id: "gpt-5.5-xhigh", name: "GPT 5.5 (xHigh)" },
+    { id: "gpt-5.5-high", name: "GPT 5.5 (High)" },
+    { id: "gpt-5.5-medium", name: "GPT 5.5 (Medium)" },
+    { id: "gpt-5.5-low", name: "GPT 5.5 (Low)" },
     { id: "gpt-5.4", name: "GPT 5.4" },
-    // GPT 5.3 Codex - all thinking levels
     { id: "gpt-5.3-codex", name: "GPT 5.3 Codex" },
     { id: "gpt-5.3-codex-xhigh", name: "GPT 5.3 Codex (xHigh)" },
     { id: "gpt-5.3-codex-high", name: "GPT 5.3 Codex (High)" },
     { id: "gpt-5.3-codex-low", name: "GPT 5.3 Codex (Low)" },
     { id: "gpt-5.3-codex-none", name: "GPT 5.3 Codex (None)" },
-    { id: "gpt-5.3-codex-spark", name: "GPT 5.3 Codex Spark" },
-    // Mini - medium and high only
-    { id: "gpt-5.1-codex-mini", name: "GPT 5.1 Codex Mini" },
-    { id: "gpt-5.1-codex-mini-high", name: "GPT 5.1 Codex Mini (High)" },
-    // Other models
-    { id: "gpt-5.2-codex", name: "GPT 5.2 Codex" },
     { id: "gpt-5.2", name: "GPT 5.2" },
-    { id: "gpt-5.1-codex-max", name: "GPT 5.1 Codex Max" },
-    { id: "gpt-5.1-codex", name: "GPT 5.1 Codex" },
-    { id: "gpt-5.1", name: "GPT 5.1" },
-    { id: "gpt-5-codex", name: "GPT 5 Codex" },
-    { id: "gpt-5-codex-mini", name: "GPT 5 Codex Mini" },
     // Image models (uses image_generation tool, requires Plus/Pro plan)
     { id: "gpt-5.4-image", name: "GPT 5.4 Image", type: "image", capabilities: ["text2img", "edit"], params: ["size", "quality", "background", "image_detail", "output_format"] },
     { id: "gpt-5.3-image", name: "GPT 5.3 Image", type: "image", capabilities: ["text2img", "edit"], params: ["size", "quality", "background", "image_detail", "output_format"] },
