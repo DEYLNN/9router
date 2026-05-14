@@ -4,6 +4,7 @@ import { MAX_RATE_LIMIT_COOLDOWN_MS } from "open-sse/config/errorConfig.js";
 import { resolveProviderId, FREE_PROVIDERS } from "@/shared/constants/providers.js";
 import * as log from "../utils/logger.js";
 import { isCodexConnectionEligibleForModel, normalizeCodexPlan } from "@/lib/codexPlanRules.js";
+import { isCodexConnectionQuotaAvailable } from "@/lib/codexQuotaCache.js";
 
 // Mutex to prevent race conditions during account selection
 let selectionMutex = Promise.resolve();
@@ -53,22 +54,36 @@ export async function getProviderCredentials(provider, excludeConnectionIds = nu
     }
 
     // Filter out model-locked and excluded connections
-    const availableConnections = connections.filter(c => {
+    const prefilteredConnections = connections.filter(c => {
       if (excludeSet.has(c.id)) return false;
       if (isModelLockActive(c, model)) return false;
       if (!isCodexConnectionEligibleForModel(c, model)) return false;
       return true;
     });
 
+    const quotaUnavailableIds = new Set();
+    const availableConnections = [];
+    for (const c of prefilteredConnections) {
+      if (providerId === "codex") {
+        const quotaAvailable = await isCodexConnectionQuotaAvailable(c);
+        if (!quotaAvailable) {
+          quotaUnavailableIds.add(c.id);
+          continue;
+        }
+      }
+      availableConnections.push(c);
+    }
+
     log.debug("AUTH", `${provider} | available: ${availableConnections.length}/${connections.length}`);
     connections.forEach(c => {
       const excluded = excludeSet.has(c.id);
       const locked = isModelLockActive(c, model);
       const planIneligible = !isCodexConnectionEligibleForModel(c, model);
-      if (excluded || locked || planIneligible) {
+      const quotaUnavailable = quotaUnavailableIds.has(c.id);
+      if (excluded || locked || planIneligible || quotaUnavailable) {
         const lockUntil = getEarliestModelLockUntil(c);
         const plan = normalizeCodexPlan(c.providerSpecificData?.codexPlan || c.providerSpecificData?.chatgptPlanType);
-        log.debug("AUTH", `  → ${c.id?.slice(0, 8)} | ${excluded ? "excluded" : ""} ${locked ? `modelLocked(${model}) until ${lockUntil}` : ""} ${planIneligible ? `planIneligible(${plan})` : ""}`);
+        log.debug("AUTH", `  → ${c.id?.slice(0, 8)} | ${excluded ? "excluded" : ""} ${locked ? `modelLocked(${model}) until ${lockUntil}` : ""} ${planIneligible ? `planIneligible(${plan})` : ""} ${quotaUnavailable ? "quotaReached" : ""}`);
       }
     });
 
