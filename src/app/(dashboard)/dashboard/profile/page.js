@@ -350,11 +350,20 @@ export default function ProfilePage() {
   const observabilityEnabled = settings.enableObservability === true;
 
   return (
-    <div className="max-w-2xl mx-auto px-4 sm:px-0">
-      <div className="flex flex-col gap-6">
+    <div className="flex min-w-0 flex-col gap-6 px-1 sm:px-0">
+      <Card className="p-5 sm:p-6">
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <span className="material-symbols-outlined text-primary">manage_accounts</span>
+            <h1 className="text-xl font-semibold text-text-main sm:text-2xl">Profile & Settings</h1>
+          </div>
+          <p className="max-w-2xl text-sm text-text-muted">Manage local storage, security, routing preferences, network proxy, and observability.</p>
+        </div>
+      </Card>
+      <div className="grid min-w-0 grid-cols-1 gap-4 xl:grid-cols-2">
         {/* Local Mode Info */}
-        <Card>
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+        <Card className="p-5 sm:p-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-4">
             <div className="flex items-center gap-3 sm:gap-4">
               <div className="size-10 sm:size-12 rounded-lg bg-green-500/10 text-green-500 flex items-center justify-center shrink-0">
                 <span className="material-symbols-outlined text-xl sm:text-2xl">computer</span>
@@ -372,13 +381,13 @@ export default function ProfilePage() {
                 <p className="text-xs sm:text-sm text-text-muted font-mono break-all">~/.9router/db/data.sqlite</p>
               </div>
             </div>
-            <div className="flex flex-col sm:flex-row gap-2">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
               <Button
                 variant="secondary"
                 icon="download"
                 onClick={handleExportDatabase}
                 loading={dbLoading}
-                className="w-full sm:w-auto"
+                className="w-full"
               >
                 Download Backup
               </Button>
@@ -387,7 +396,7 @@ export default function ProfilePage() {
                 icon="upload"
                 onClick={() => importFileRef.current?.click()}
                 disabled={dbLoading}
-                className="w-full sm:w-auto"
+                className="w-full"
               >
                 Import Backup
               </Button>
@@ -408,7 +417,7 @@ export default function ProfilePage() {
         </Card>
 
         {/* Security */}
-        <Card>
+        <Card className="p-5 sm:p-6">
           <div className="flex items-center gap-3 mb-4">
             <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0">
               <span className="material-symbols-outlined text-[20px]">shield</span>
@@ -490,7 +499,7 @@ export default function ProfilePage() {
         </Card>
 
         {/* Routing Preferences */}
-        <Card>
+        <Card className="p-5 sm:p-6">
           <div className="flex items-center gap-3 mb-4">
             <div className="p-2 rounded-lg bg-blue-500/10 text-blue-500 shrink-0">
               <span className="material-symbols-outlined text-[20px]">route</span>
@@ -581,7 +590,7 @@ export default function ProfilePage() {
         </Card>
 
         {/* Network */}
-        <Card>
+        <Card className="p-5 sm:p-6">
           <div className="flex items-center gap-3 mb-4">
             <div className="p-2 rounded-lg bg-purple-500/10 text-purple-500 shrink-0">
               <span className="material-symbols-outlined text-[20px]">wifi</span>
@@ -653,7 +662,7 @@ export default function ProfilePage() {
         </Card>
 
         {/* Observability Settings */}
-        <Card>
+        <Card className="p-5 sm:p-6">
           <div className="flex items-center gap-3 mb-4">
             <div className="p-2 rounded-lg bg-orange-500/10 text-orange-500 shrink-0">
               <span className="material-symbols-outlined text-[20px]">monitoring</span>
@@ -676,7 +685,7 @@ export default function ProfilePage() {
         </Card>
 
         {/* App Info */}
-        <div className="text-center text-xs sm:text-sm text-text-muted py-4">
+        <div className="text-center text-xs sm:text-sm text-text-muted py-4 xl:col-span-2">
           <p>{APP_CONFIG.name} v{APP_CONFIG.version}</p>
           <p className="mt-1">Local Mode - All data stored on your machine</p>
         </div>
