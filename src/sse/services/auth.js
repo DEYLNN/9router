@@ -197,7 +197,12 @@ export async function markAccountUnavailable(connectionId, status, errorText, pr
 
   // Provider-specific precise cooldown (e.g. codex usage_limit_reached resets_at) overrides backoff
   let shouldFallback, cooldownMs, newBackoffLevel;
-  if (resetsAtMs && resetsAtMs > Date.now()) {
+  const lowerError = typeof errorText === "string" ? errorText.toLowerCase() : JSON.stringify(errorText || "").toLowerCase();
+  if (provider === "codex" && status === 429 && lowerError.includes("usage limit has been reached")) {
+    shouldFallback = true;
+    cooldownMs = 6 * 60 * 60 * 1000;
+    newBackoffLevel = 0;
+  } else if (resetsAtMs && resetsAtMs > Date.now()) {
     shouldFallback = true;
     cooldownMs = Math.min(resetsAtMs - Date.now(), MAX_RATE_LIMIT_COOLDOWN_MS);
     newBackoffLevel = 0;
