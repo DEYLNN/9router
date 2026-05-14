@@ -65,6 +65,8 @@ import { GET as modelsGet, PUT as modelsPut } from "../../src/app/api/models/rou
 import { GET as modelAvailabilityGet, POST as modelAvailabilityPost } from "../../src/app/api/models/availability/route.js";
 import { GET as initGet } from "../../src/app/api/init/route.js";
 import { GET as oauthGet, POST as oauthPost } from "../../src/app/api/oauth/[provider]/[action]/route.js";
+import { GET as consoleLogsGet, DELETE as consoleLogsDelete } from "../../src/app/api/translator/console-logs/route.js";
+import { GET as consoleLogsStreamGet } from "../../src/app/api/translator/console-logs/stream/route.js";
 
 const app = new Hono();
 const port = Number(process.env.PORT || process.env.HONO_PORT || 8323);
@@ -235,6 +237,10 @@ app.get("/api/providers/client", providersHandler);
 app.get("/api/auth-files", (c) => nextRouteHandler(c, authFilesGet));
 app.post("/api/auth-files", (c) => nextRoutePostHandler(c, authFilesPost));
 app.post("/api/auth-files/refresh-codex", (c) => nextRoutePostHandler(c, authFilesRefreshCodexPost));
+
+app.get("/api/translator/console-logs", (c) => nextRouteHandler(c, consoleLogsGet));
+app.delete("/api/translator/console-logs", (c) => nextRouteHandler(c, consoleLogsDelete));
+app.get("/api/translator/console-logs/stream", (c) => nextRouteHandler(c, consoleLogsStreamGet));
 
 app.options("/v1/chat/completions", corsOptions);
 app.options("/api/v1/chat/completions", corsOptions);

@@ -118,6 +118,7 @@ export async function proxy(request) {
     pathname === "/api/usage" ||
     pathname.startsWith("/api/usage/") ||
     pathname.startsWith("/api/oauth/") ||
+    pathname.startsWith("/api/translator/") ||
     pathname.startsWith("/api/v1") ||
     pathname === "/v1" ||
     pathname.startsWith("/v1/") ||
