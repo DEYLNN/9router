@@ -13,11 +13,40 @@ const LOG_LEVEL_COLORS = {
   USAGE: "text-primary",
 };
 
+function formatJakartaTime(date) {
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Asia/Jakarta",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  }).format(date).replace(",", "");
+}
+
+function normalizeConsoleTime(line) {
+  const value = String(line);
+  const isoMatch = value.match(/^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z)(.*)$/);
+  if (isoMatch) {
+    const date = new Date(isoMatch[1]);
+    if (!Number.isNaN(date.getTime())) return `[${formatJakartaTime(date)} WIB]${isoMatch[2]}`;
+  }
+
+  const shortMatch = value.match(/^\[(\d{2}:\d{2}:\d{2})\](.*)$/);
+  if (shortMatch) {
+    return `[${shortMatch[1]} server]${shortMatch[2]}`;
+  }
+
+  return value;
+}
+
 function colorLine(line) {
-  const match = line.match(/\[(\w+)\]/g);
+  const displayLine = normalizeConsoleTime(line);
+  const match = displayLine.match(/\[(\w+)\]/g);
   const levelTag = match ? match[1]?.replace(/\[|\]/g, "") : null;
   const color = LOG_LEVEL_COLORS[levelTag] || "text-text-main";
-  return <span className={color}>{line}</span>;
+  return <span className={color}>{displayLine}</span>;
 }
 
 export default function ConsoleLogClient() {
