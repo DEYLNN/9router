@@ -68,7 +68,7 @@ export default function EditConnectionModal({ isOpen, connection, onSave, onClos
     ? (isOpenAICompatibleProvider(connection.provider) || isAnthropicCompatibleProvider(connection.provider))
     : false;
   const codexModels = isCodex ? getModelsByProviderId("codex").filter((m) => !m.type || m.type === "llm") : [];
-  const defaultBlockedModels = codexData.codexPlan === "free" ? ["gpt-5.5"] : [];
+  const defaultBlockedModels = [];
   const effectiveBlockedModels = new Set([...defaultBlockedModels, ...codexData.blockedModels]);
   const toggleBlockedModel = (modelId) => {
     setCodexData((prev) => {
@@ -245,7 +245,7 @@ export default function EditConnectionModal({ isOpen, connection, onSave, onClos
                     );
                   })}
                 </div>
-                <p className="text-xs text-text-muted">Free plan defaults block gpt-5.5. Red badges are skipped by router for this account.</p>
+                <p className="text-xs text-text-muted">Default is allow all. Red badges are skipped by router for this account.</p>
               </div>
             </div>
           </div>

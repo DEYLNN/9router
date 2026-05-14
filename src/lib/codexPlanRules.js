@@ -1,4 +1,4 @@
-export const CODEX_FREE_BLOCKED_MODELS = new Set(["gpt-5.5"]);
+export const CODEX_FREE_BLOCKED_MODELS = new Set();
 
 export function normalizeCodexPlan(plan) {
   const value = String(plan || "").trim().toLowerCase();
