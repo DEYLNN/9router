@@ -243,7 +243,7 @@ export default function AuthFilesPage() {
             <button
               type="button"
               onClick={() => setProviderDropdownOpen((v) => !v)}
-              className="flex h-10 w-full items-center justify-between gap-3 rounded-xl border border-white/10 bg-[#0f0f12] px-3 text-left text-sm text-text-main transition-colors hover:border-primary/40 hover:bg-white/[0.04]"
+              className="flex h-10 w-full items-center justify-between gap-3 rounded-xl border border-border bg-surface px-3 text-left text-sm text-text-main transition-colors hover:border-primary/40 hover:bg-primary/5"
             >
               <span className="flex min-w-0 items-center gap-2">
                 {selectedProvider.id === "all" ? (
@@ -252,20 +252,20 @@ export default function AuthFilesPage() {
                   <ProviderIcon src={`/providers/${selectedProvider.id}.png`} alt={selectedProvider.label} size={20} className="size-5 rounded object-contain" fallbackText={selectedProvider.label.slice(0, 2).toUpperCase()} />
                 )}
                 <span className="truncate">{selectedProvider.label}</span>
-                <span className="rounded-full bg-white/10 px-1.5 py-0.5 text-[10px] text-text-muted">{selectedProvider.count}</span>
+                <span className="rounded-full bg-sidebar px-1.5 py-0.5 text-[10px] text-text-muted">{selectedProvider.count}</span>
               </span>
               <span className="material-symbols-outlined text-[18px] text-text-muted">expand_more</span>
             </button>
             {providerDropdownOpen && (
               <>
                 <button type="button" className="fixed inset-0 z-30 bg-transparent" onClick={() => setProviderDropdownOpen(false)} aria-label="Close provider filter" />
-                <div className="absolute left-0 right-0 z-40 mt-2 max-h-80 overflow-y-auto rounded-2xl border border-white/10 bg-[#151519]/95 p-1.5 shadow-2xl shadow-black/40 backdrop-blur">
+                <div className="absolute left-0 right-0 z-40 mt-2 max-h-80 overflow-y-auto rounded-2xl border border-border bg-surface/95 p-1.5 shadow-xl shadow-black/10 backdrop-blur">
                   {[{ id: "all", label: "All provider types", count: payload.total }, ...providerTypes].map((item) => (
                     <button
                       key={item.id}
                       type="button"
                       onClick={() => { setProviderType(item.id); setProviderDropdownOpen(false); }}
-                      className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-colors ${providerType === item.id ? "bg-primary/10 text-primary" : "text-text-main hover:bg-white/10"}`}
+                      className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-colors ${providerType === item.id ? "bg-primary/10 text-primary" : "text-text-main hover:bg-primary/5"}`}
                     >
                       {item.id === "all" ? (
                         <span className="material-symbols-outlined text-[20px]">apps</span>
@@ -273,7 +273,7 @@ export default function AuthFilesPage() {
                         <ProviderIcon src={`/providers/${item.id}.png`} alt={item.label} size={22} className="size-[22px] rounded object-contain" fallbackText={item.label.slice(0, 2).toUpperCase()} />
                       )}
                       <span className="min-w-0 flex-1 truncate">{item.label}</span>
-                      <span className="rounded-full bg-white/10 px-1.5 py-0.5 text-[10px] text-text-muted">{item.count}</span>
+                      <span className="rounded-full bg-sidebar px-1.5 py-0.5 text-[10px] text-text-muted">{item.count}</span>
                       {providerType === item.id && <span className="material-symbols-outlined text-[18px]">check</span>}
                     </button>
                   ))}
@@ -286,7 +286,7 @@ export default function AuthFilesPage() {
             <button
               type="button"
               onClick={() => setSortDropdownOpen((v) => !v)}
-              className="flex h-10 w-full items-center justify-between gap-3 rounded-xl border border-white/10 bg-[#0f0f12] px-3 text-sm text-text-main transition-colors hover:border-primary/40 hover:bg-white/[0.04]"
+              className="flex h-10 w-full items-center justify-between gap-3 rounded-xl border border-border bg-surface px-3 text-sm text-text-main transition-colors hover:border-primary/40 hover:bg-primary/5"
             >
               <span className="flex items-center gap-2"><span className="material-symbols-outlined text-[18px] text-text-muted">sort</span>{sortLabels[sort]}</span>
               <span className="material-symbols-outlined text-[18px] text-text-muted">expand_more</span>
@@ -294,9 +294,9 @@ export default function AuthFilesPage() {
             {sortDropdownOpen && (
               <>
                 <button type="button" className="fixed inset-0 z-30 bg-transparent" onClick={() => setSortDropdownOpen(false)} aria-label="Close sort filter" />
-                <div className="absolute left-0 right-0 z-40 mt-2 rounded-2xl border border-white/10 bg-[#151519]/95 p-1.5 shadow-2xl shadow-black/40 backdrop-blur">
+                <div className="absolute left-0 right-0 z-40 mt-2 rounded-2xl border border-border bg-surface/95 p-1.5 shadow-xl shadow-black/10 backdrop-blur">
                   {Object.entries(sortLabels).map(([key, label]) => (
-                    <button key={key} type="button" onClick={() => { setSort(key); setSortDropdownOpen(false); }} className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm transition-colors ${sort === key ? "bg-primary/10 text-primary" : "text-text-main hover:bg-white/10"}`}>
+                    <button key={key} type="button" onClick={() => { setSort(key); setSortDropdownOpen(false); }} className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm transition-colors ${sort === key ? "bg-primary/10 text-primary" : "text-text-main hover:bg-primary/5"}`}>
                       {label}
                       {sort === key && <span className="material-symbols-outlined text-[18px]">check</span>}
                     </button>
