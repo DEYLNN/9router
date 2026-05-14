@@ -5,17 +5,18 @@ import { Card, Button } from "@/shared/components";
 import { CONSOLE_LOG_CONFIG } from "@/shared/constants/config";
 
 const LOG_LEVEL_COLORS = {
-  LOG: "text-green-400",
-  INFO: "text-blue-400",
-  WARN: "text-yellow-400",
-  ERROR: "text-red-400",
-  DEBUG: "text-purple-400",
+  LOG: "text-emerald-600",
+  INFO: "text-blue-600",
+  WARN: "text-amber-600",
+  ERROR: "text-red-600",
+  DEBUG: "text-violet-600",
+  USAGE: "text-primary",
 };
 
 function colorLine(line) {
   const match = line.match(/\[(\w+)\]/g);
   const levelTag = match ? match[1]?.replace(/\[|\]/g, "") : null;
-  const color = LOG_LEVEL_COLORS[levelTag] || "text-green-400";
+  const color = LOG_LEVEL_COLORS[levelTag] || "text-text-main";
   return <span className={color}>{line}</span>;
 }
 
@@ -73,7 +74,7 @@ export default function ConsoleLogClient() {
         </div>
         <div
           ref={logRef}
-          className="bg-black rounded-b-lg p-4 text-xs font-mono h-[calc(100vh-220px)] overflow-y-auto"
+          className="h-[calc(100vh-220px)] overflow-y-auto rounded-b-lg border-t border-border bg-bg p-4 font-mono text-xs leading-relaxed text-text-main"
         >
           {logs.length === 0 ? (
             <span className="text-text-muted">No console logs yet.</span>
