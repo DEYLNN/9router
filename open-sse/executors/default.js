@@ -12,7 +12,17 @@ export class DefaultExecutor extends BaseExecutor {
   }
 
   transformRequest(model, body) {
-    const transformed = injectReasoningContent({ provider: this.provider, model, body });
+    let transformed = injectReasoningContent({ provider: this.provider, model, body });
+    if (this.provider === "xiaomi-mimo-plan-sgp") {
+      const messages = Array.isArray(transformed.messages)
+        ? transformed.messages.map(({ reasoning_content, reasoning, thinking, ...message }) => message)
+        : transformed.messages;
+      transformed = { ...transformed, messages };
+      delete transformed.reasoning;
+      delete transformed.thinking;
+      delete transformed.include_reasoning;
+      delete transformed.enable_thinking;
+    }
     if (this.provider === "nous-portal") {
       const extra = { ...(transformed.extra_body || {}) };
       if (!extra.tags) extra.tags = ["product=hermes-agent"];
