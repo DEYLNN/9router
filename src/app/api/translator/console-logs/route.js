@@ -11,10 +11,20 @@ function formatUsageLine(line) {
   return `[USAGE] ${displayTs} | ${provider} | ${model} | account=${account} | in=${input} | out=${output} | ${status}`;
 }
 
+function getDedupeKey(line) {
+  const value = String(line);
+  const parts = value.split(" | ");
+  if (parts.length >= 7 && /^\d{4}-\d{2}-\d{2}T/.test(parts[0])) {
+    const second = parts[0].replace(/\.\d{3}Z$/, "Z");
+    return [second, ...parts.slice(1, 7)].join(" | ");
+  }
+  return value;
+}
+
 function dedupeLines(lines) {
   const seen = new Set();
   return lines.filter((line) => {
-    const key = String(line);
+    const key = getDedupeKey(line);
     if (seen.has(key)) return false;
     seen.add(key);
     return true;
