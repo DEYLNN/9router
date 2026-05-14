@@ -401,7 +401,11 @@ export async function POST(request) {
               },
             },
           };
-          const cfg = validationConfigs[provider];
+          const cfg = validationConfigs[provider] || {
+            url: PROVIDER_ENDPOINTS[provider] || endpoints?.[provider],
+            method: "GET",
+          };
+          if (!cfg.url) throw new Error(`No validation endpoint configured for ${provider}`);
           const res = await fetch(cfg.url, {
             method: cfg.method,
             headers: {
